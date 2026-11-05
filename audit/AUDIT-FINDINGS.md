@@ -14,8 +14,9 @@ Files in this folder:
 
 ---
 
-## 1. The 8 things that matter most
+## 1. The 9 things that matter most
 
+0. **Urgent: all 15 titles break Amazon's new title rule.** Since 07/27/2026 the limit is 75 characters, plus a new 125-character "Item Highlights" field. Our titles are 127–172 characters. Amazon's AI rewrites titles that stay too long, and brand owners get only 14 days to review the rewrite. **Check "Review Listing Changes" in Seller Central now.** (Source: Amazon forum staff posts. See `amazon-rules-checklist.md` §1.)
 1. **The low rating comes from having very few reviews.** Our 15 dental mirror ASINs have only **9 ratings in total**. One unhappy buyer can pull a whole family down to 3.4★ or 2.0★. The fix is more honest reviews (Vine, the Request a Review button) plus fixing the cause of the one real complaint.
 2. **Shoppers can't find us.** ILLUCO does not appear in the first 48 results for "dental mirror", "mouth mirror dental", "dental mirror with light", "dental photography mirror" or "double sided dental mirror". We rank only for long-tail terms such as "anti fog dental mirror" and "autoclavable dental mirror".
 3. **We charge 2 to 4 times more per mirror than professional brands, with no proof on the page.** ILLUCO's handle 5-pack works out to $19–$28 per mirror. Hu-Friedy is $9.19, Zirc Crystal HD $8.00 and Artman sets $4.60. 3 of our 5 written reviews say "expensive".
@@ -49,8 +50,11 @@ Other ILLUCO products found (not audited yet): dermatoscopes IDS-1000, IDS-1100,
 ## 3. Listing content audit
 
 ### Titles
+**New rule (rollout since 07/27/2026):** a title is max **75 characters**. Extra detail goes in **Item Highlights** (max 125 characters). Both fields count for search. Our titles: A = 152, B = 139, C = 127, D = 171 characters. Every title needs a full rewrite, not a trim.
+
 | Problem | Where | Fix |
 |---|---|---|
+| Title is 127–172 characters, but the limit is now 75 | All | 75-character title + 125-character Item Highlights |
 | Brand name is missing from the title field. It shows only in the browser tab. | All | Start every title with "ILLUCO". |
 | "Autoclavable 100X" reads like magnification | All | "Autoclavable up to 100 Cycles" |
 | No mirror size (#4 / 22 mm) | A, C | Add the size to the title and bullet 1 |
@@ -65,6 +69,8 @@ Other ILLUCO products found (not audited yet): dermatoscopes IDS-1000, IDS-1100,
 - **B (head pack):** 5 bullets of only 49–84 characters, the weakest content we have. It needs size, thread type, a list of compatible handles, care instructions and box contents.
 - **C (single):** 5 clean bullets, but they copy the 5-pack.
 - **D (photo):** It says "competitive pricing" at $165 and "unparalleled quality". Remove both. It also needs the size of each shape and the number of mirrors per box.
+- **Bullet rule breaks:** A bullet 7 (269 characters), D bullet 1 (298) and D bullet 2 (264) are over the 255-character limit. The handle-pack bullets use ALL-CAPS headers, which agency guides say to avoid.
+- **Claims check:** Good news: there are no "FDA approved", "antibacterial" or "sterile" claims in any title or bullet. Keep it that way (see the rules checklist §12).
 - **Description:** Blank on all listings. That is normal when A+ is live, but the plain-text fallback is empty.
 
 ### Specs and attributes (item details table)
@@ -95,7 +101,8 @@ Other ILLUCO products found (not audited yet): dermatoscopes IDS-1000, IDS-1100,
 - **Photo mirror image 6 has a typo:** "Autocalvable".
 - **A+ banners cut text across image edges.** For example, "Our direct coating method…" starts on one banner and finishes on the next. This looks broken on mobile.
 - **A+ has no comparison chart.** Nothing helps the buyer choose between the handle pack, head pack, single mirror and photo mirrors, or cross-sell between them.
-- **A+ alt text is empty** on every module.
+- **A+ alt text is empty** on every module. Amazon may have removed this field in the US and now writes alt text with AI; check in A+ Content Manager.
+- **Premium A+ is now free** for brand owners (since May 2026, per Amazon notice quoted by agencies). It allows video, hotspots and carousels. We should use it for the rebuild.
 - **The single mirror's A+** shows "1x, 2x, 3x Magnification" and "Replaceable Heads". That ASIN is 1X only.
 - **The Brand Store exists** ("Visit the Illuco Store"). Its layout is not reviewed yet; that is next. The brand is written "Illuco" in some places and "ILLUCO" in others.
 
@@ -188,17 +195,40 @@ Buyers in this category are complaining about exactly what ILLUCO claims to solv
 
 ---
 
-## 8. Early recommendations (need approval before 11/10 sign-off)
+## 8. Amazon rules: what they mean for ILLUCO
+
+Full checklist with sources: `amazon-rules-checklist.md`. These rules hit our plan directly:
+
+| Rule | What it means for us |
+|---|---|
+| Titles: max 75 characters plus 125-character Item Highlights (since 07/27/2026) | All 15 titles must be rewritten. Check Amazon's AI rewrites now (14-day window). |
+| Bullets: max 255 characters, no ALL CAPS, claims must be provable | Shorten 3 bullets. Keep test reports for 99%, 100 cycles and 40%. |
+| Coupons need ≥2.5★ (1–4 reviews) or ≥3.0★ (5+ reviews). Deals and Prime Exclusive Discounts need ≥3.0★ and Prime. Peak events may need 3.5★. | **B (2.0★) can't run coupons now.** A (3.4★) is below the 3.5★ peak-event bar. C and D are FBM, so no Prime discounts or deals. |
+| Vine needs FBA and fewer than 30 reviews. Fee per parent: $0 (1–2 units), $75 (3–10), $200 (11–30). | A and B can enroll now. C and D need to move to FBA first. |
+| Reviews: no incentives, no asking only happy buyers. Inserts must be neutral. FTC rule (Oct 2024) allows fines. | Use only Request a Review and Vine. Product inserts carry care instructions only. |
+| A+, Store and ads: no "best-selling", no guarantees, no unproven comparisons, one comparison chart (own products only) | Remove "Best selling dental mirrors" (Brand Story) and "Quality guaranteed" (A+). Prove or drop "40% clearer". |
+| Reference ("was") prices must be backed by real sales (since 04/23/2026) | No fake strike-through prices in any promotion. |
+| Subscribe & Save fits repeat-purchase items | Reusable mirrors probably don't qualify. Use coupons and Prime Exclusive Discounts instead. |
+| Amazon Attribution + Brand Referral Bonus (~10% of sales from tagged outside traffic) | Give Chiru, Shery and Annabelle their own tags. Outside traffic also earns a bonus. |
+| FDA: mouth mirror = Class I, 21 CFR 872.4565, code EAX. 510(k)-exempt only within 872.9 limits. Registration, listing and QMSR (since 02/02/2026) still apply. | Keep proof of FDA registration and exemption ready (Amazon can ask). Never say "FDA approved" or use the FDA logo. Check with regulatory before marketing to home users (intended-use limit). |
+| Battery and LED rules | Don't apply to our mirrors (no LED). They will apply to the loupe headlight and dermatoscopes later. |
+
+Not verified (needs a Seller Central check): the exact coupon and deal rating floors, whether dental mirrors are gated, and whether US A+ still has an alt-text field.
+
+---
+
+## 9. Early recommendations (need approval before 11/10 sign-off)
 
 **A. Fix now (small, low risk). Ready once the manager says OK:**
+0. **Today:** check "Review Listing Changes" in Seller Central for Amazon AI title rewrites, and accept, edit or reject them inside the 14-day window.
 1. Fix the photo mirror model number ("IDMXXX") and the wrong weights and dimensions.
 2. Fix the "Autocalvable" typo on the photo mirror image.
-3. Remove "competitive pricing" and "unparalleled" from the photo mirror bullets.
-4. Remove or support "Best selling" (Brand Story) and "Quality guaranteed" (A+).
-5. Turn on Request a Review for every order, and confirm Vine enrollment for families A, B and D.
+3. Remove "competitive pricing" and "unparalleled" from the photo mirror bullets, and cut the 3 bullets that run over 255 characters.
+4. Remove "Best selling" (Brand Story) and "Quality guaranteed" (A+).
+5. Use the Request a Review button on every order (5–30 days after delivery). Enroll families A and B in Vine now; C and D after they move to FBA.
 
 **B. Big changes (after approval):**
-1. **Titles, bullets and backend terms rewrite**, starting with family B (head pack, weakest content) and family A (handle pack, most sales).
+1. **Rewrite titles (75 characters plus Item Highlights), bullets and backend terms.** Start with family B (head pack, weakest content) and family A (handle pack, most sales).
 2. **New image set for each family:** a proof image (ghost-image and reflectance comparison), a size and thread chart, an in-use clinical photo, what's in the box, and a clearer 1X/2X/3X demo.
 3. **A+ rebuild:** mobile-first modules, an ILLUCO comparison chart (handle pack, heads, single, photo), alt text on every image, and no prohibited claims.
 4. **Video:** 15–30 s demos (fog test, ghost-image test, autoclave proof, size). Reuse them for Sponsored Brands Video.

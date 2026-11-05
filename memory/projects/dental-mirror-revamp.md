@@ -119,3 +119,4 @@ The dental mirror listings have low star ratings and some negative reviews. That
 ## Notes / decisions log
 - 11/05/2026: Brief received and saved. Nothing changed on Amazon yet.
 - 11/05/2026: Public-data audit done (listings, reviews, 14 keyword searches, 13 competitors, Amazon rules). Key findings: only 9 ratings across 15 ASINs; not visible on head terms; 2–4× price per mirror vs pro brands; 1★ coating complaint to investigate; risky claims in Brand Story/A+. Waiting on Seller Central/Ads data (see audit/NEEDS-LIST.md).
+- 11/05/2026: Amazon rules checklist done (audit/amazon-rules-checklist.md). Urgent: all 15 titles are over the new 75-char limit (Amazon AI may rewrite; 14-day review window). Head pack (2.0★) is below the coupon floor; C/D are FBM so no Vine, PED or deals until moved to FBA. No FDA/antibacterial claims found in our listings.

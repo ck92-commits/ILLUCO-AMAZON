@@ -40,6 +40,7 @@
 - Dental mirrors first, then the rest of the catalog.
 - Promotions and incentives must follow Amazon policy. Never offer incentives for reviews.
 - Main deliverable: an Excel report, one row per ASIN (rating, review count, sales, CVR, PPC performance, top complaints, recommended fixes).
+- Amazon rules to always apply (full list: audit/amazon-rules-checklist.md): titles max **75 chars** + 125-char Item Highlights (since 07/27/2026); bullets max 255 chars; never "FDA approved"/FDA logo, "antibacterial", "best-selling" or "guaranteed"; claims like 99% / 100 cycles / 40% need test proof.
 
 ## Preferences
 - (none recorded yet)
