@@ -32,6 +32,8 @@
 |------|------|
 | **Dental Mirror Revamp** | Fix low ratings/negative reviews on dental mirrors, then rebuild Store, listings, images, A+, video, SEO, PPC and outside traffic. **Initial findings due Tue 11/10/2026. Full timeline due Fri 11/20/2026.** |
 → Details: memory/projects/dental-mirror-revamp.md · Original brief: memory/projects/dental-mirror-revamp-brief.md
+→ Audit (11/05): audit/AUDIT-FINDINGS.md · audit/NEEDS-LIST.md · audit/amazon-rules-checklist.md · audit/ILLUCO_Dental_Mirror_ASIN_Tracker.xlsx
+→ Mirror families: **A** handle 5-pack (6 ASINs) · **B** head-only 5-pack (3) · **C** single mirror (1) · **D** photo mirrors (5)
 
 ## Rules (Dental Mirror Revamp)
 - **No major listing changes and no ad-budget increases until the manager has reviewed the initial findings (due 11/10).**

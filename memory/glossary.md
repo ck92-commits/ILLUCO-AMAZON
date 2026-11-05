@@ -29,7 +29,13 @@ Shorthand and Amazon terms used on ILLUCO work.
 | the Store | ILLUCO Amazon brand Store |
 | backend terms | Hidden "Search Terms" field on a listing |
 | Attribution | Amazon Attribution tracking links for off-Amazon traffic |
-| the Excel report | Per-ASIN tracker: rating, reviews, sales, CVR, PPC, complaints, fixes |
+| the Excel report | Per-ASIN tracker: rating, reviews, sales, CVR, PPC, complaints, fixes (audit/ILLUCO_Dental_Mirror_ASIN_Tracker.xlsx) |
+| Family A / B / C / D | Dental mirror families: A handle 5-pack, B head-only 5-pack, C single mirror, D photo mirrors |
+| IDM series | ILLUCO dental mouth mirrors (handle pack + heads) |
+| IPM series | ILLUCO intraoral photo mirrors |
+| IDS series | ILLUCO dermatoscopes |
+| #4 / #5 | Mouth mirror head sizes (#4 ≈ 22 mm, #5 ≈ 24 mm). ILLUCO heads appear to be #4 |
+| Vine | Amazon Vine: Amazon-run program that gets early reviews from invited reviewers |
 
 ## Nicknames → Full Names
 | Nickname | Person |

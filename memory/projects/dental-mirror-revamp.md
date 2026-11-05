@@ -45,18 +45,18 @@ The dental mirror listings have low star ratings and some negative reviews. That
 - [ ] List missing or confusing information (use review complaints and Q&A as input)
 
 ### 3. Product images
-- [ ] Audit current image stacks per ASIN
+- [x] Audit current image stacks per ASIN
 - [ ] Specify new main image, infographics, comparison chart, close-ups and lifestyle shots
 - [ ] Agree one consistent image direction per ASIN with the design team
 
 ### 4. A+ Content
-- [ ] Audit A+ on priority ASINs
+- [x] Audit A+ on priority ASINs
 - [ ] Build a stronger brand banner and a model comparison chart
 - [ ] Show quality, features and differences between models
 - [ ] QA on desktop and mobile
 
 ### 5. Product videos
-- [ ] Find which ASINs lack video or have a weak one
+- [x] Find which ASINs lack video or have a weak one (C and D have none)
 - [ ] Script short demos: features, usage, reflection quality, close-up details
 - [ ] Re-cut the demos for Sponsored Brands Video
 
@@ -82,14 +82,14 @@ The dental mirror listings have low star ratings and some negative reviews. That
 - [ ] Recommend budgets from sales, CVR and profitability. **Needs approval before any increase.**
 
 ### 9. Customer reviews and product quality
-- [ ] Pull every 1-, 2- and 3-star review per ASIN
-- [ ] Group complaints by theme per ASIN
+- [x] Pull every 1-, 2- and 3-star review per ASIN
+- [x] Group complaints by theme per ASIN
 - [ ] Look into recurring product issues (escalate quality problems; listing copy can't fix those)
 - [ ] Recommend listing changes that set accurate expectations
 
 ### 10. Competitor research
-- [ ] Pick the main dental mirror competitors
-- [ ] Compare price, rating, review count, images, video, A+ and keywords
+- [x] Pick the main dental mirror competitors
+- [x] Compare price, rating, review count, images, video, A+ and keywords (public data, 11/05)
 - [ ] Record where competitors are better and where ILLUCO can win
 
 ### 11. Action plan and reporting
@@ -105,5 +105,17 @@ The dental mirror listings have low star ratings and some negative reviews. That
 - Reviews and ratings export, plus Voice of the Customer / return reasons
 - Current Store pages, A+ modules and video inventory
 
+## Product line (found in audit 11/05/2026)
+| Family | ASINs | Price | Fulfilment | Rating |
+|---|---|---|---|---|
+| A. Handle 5-Pack (IDM series, 1X/2X/3X × dark/light blue) | B0FCZBD1KY, B0F84VWGG5, B0F84TKGLS, B0FCMVZH31, B0F85B5BDC, B0F857HKBG | $95–$140 | FBA | 3.4★ (5) |
+| B. Head-Only 5-Pack (#4 cone socket, 1X/2X/3X) | B0FBPG5CS9, B0FCHH2SQB, B0FCJY3H9H | $60–$105 | FBA | 2.0★ (2) |
+| C. Single Mirror w/ Handle | B0G2DYRY7T | $19.99 | FBM | 5.0★ (2) |
+| D. Photo Mirror (IPM series: S/M/L occlusal, lingual, buccal) | B0F86CJ7R6, B0FCNG7T9P, B0F86DNNSV, B0FCNRP7NF, B0FCN9V5G4 | $165 | FBM | none |
+- Seller: ILLUCO USA (FBA for A and B). Brand Store: "Illuco".
+- Other ILLUCO products: IDS dermatoscopes (B0F81HQMD2, B0F7YPNMWK, B0F7Z2TP29, B0FSM14R8P), loupe headlight (B0F8CVN4W3).
+- Audit outputs: `audit/` (AUDIT-FINDINGS.md, NEEDS-LIST.md, amazon-rules-checklist.md, ILLUCO_Dental_Mirror_ASIN_Tracker.xlsx, data/).
+
 ## Notes / decisions log
 - 11/05/2026: Brief received and saved. Nothing changed on Amazon yet.
+- 11/05/2026: Public-data audit done (listings, reviews, 14 keyword searches, 13 competitors, Amazon rules). Key findings: only 9 ratings across 15 ASINs; not visible on head terms; 2–4× price per mirror vs pro brands; 1★ coating complaint to investigate; risky claims in Brand Story/A+. Waiting on Seller Central/Ads data (see audit/NEEDS-LIST.md).
