@@ -116,7 +116,21 @@ The dental mirror listings have low star ratings and some negative reviews. That
 - Other ILLUCO products: IDS dermatoscopes (B0F81HQMD2, B0F7YPNMWK, B0F7Z2TP29, B0FSM14R8P), loupe headlight (B0F8CVN4W3).
 - Audit outputs: `audit/` (AUDIT-FINDINGS.md, NEEDS-LIST.md, amazon-rules-checklist.md, ILLUCO_Dental_Mirror_ASIN_Tracker.xlsx, data/).
 
+## UPC list (received 11/06/2026, `audit/data/source/ILLUCO_DM_UPS_1.xlsx`)
+| Product | Model | UPC |
+|---|---|---|
+| Grand Dental Mirror 1x (Dark Blue) | IDM-2C101DB | 810194860836 |
+| Grand Dental Mirror 1x (Light Blue) | IDM-2C101LB | 810194860843 |
+| Grand Dental Mirror 2x (Dark Blue) | IDM-2C102DB | 810194860850 |
+| Grand Dental Mirror 2x (Light Blue) | IDM-2C102LB | 810194860867 |
+| Double-sided Dental Mirror (Dark Blue) | IDM-2CD41DB | 810194860874 |
+| Double-sided Dental Mirror (Light Blue) | IDM-2CD41LB | 810194860881 |
+| Double-Sided Dental Mirror Head | IDM-3CD41H | 810194860898 |
+- All 7 check digits are valid. None were found on Amazon (by UPC or model) on 11/06. ILLUCO has no double-sided mirror live.
+- Open: are these new launches or the same as family A? What does "Grand" mean (#5?), and what is the pack count? Why no 3X? GS1 ownership? UPCs of the 15 live ASINs?
+
 ## Notes / decisions log
 - 11/05/2026: Brief received and saved. Nothing changed on Amazon yet.
 - 11/05/2026: Public-data audit done (listings, reviews, 14 keyword searches, 13 competitors, Amazon rules). Key findings: only 9 ratings across 15 ASINs; not visible on head terms; 2–4× price per mirror vs pro brands; 1★ coating complaint to investigate; risky claims in Brand Story/A+. Waiting on Seller Central/Ads data (see audit/NEEDS-LIST.md).
 - 11/05/2026: Amazon rules checklist done (audit/amazon-rules-checklist.md). Urgent: all 15 titles are over the new 75-char limit (Amazon AI may rewrite; 14-day review window). Head pack (2.0★) is below the coupon floor; C/D are FBM so no Vine, PED or deals until moved to FBA. No FDA/antibacterial claims found in our listings.
+- 11/06/2026: UPC list received (7 products: Grand 1X/2X dark/light blue, double-sided dark/light blue, double-sided head). Not on Amazon yet. Double-sided (and maybe #5 "Grand") fill gaps the competitor scan found. Waiting on answers to the open questions above.

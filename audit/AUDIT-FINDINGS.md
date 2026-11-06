@@ -195,6 +195,36 @@ Buyers in this category are complaining about exactly what ILLUCO claims to solv
 
 ---
 
+## 7b. UPC list received 11/06/2026
+
+File: `data/source/ILLUCO_DM_UPS_1.xlsx` (copy as CSV: `data/ILLUCO_DM_UPCs_2026-11-06.csv`). Also in the Excel tab "UPC Catalog".
+
+| Product | Model | UPC | On Amazon today? |
+|---|---|---|---|
+| Grand Dental Mirror 1x (Dark Blue) | IDM-2C101DB | 810194860836 | Not found |
+| Grand Dental Mirror 1x (Light Blue) | IDM-2C101LB | 810194860843 | Not found |
+| Grand Dental Mirror 2x (Dark Blue) | IDM-2C102DB | 810194860850 | Not found |
+| Grand Dental Mirror 2x (Light Blue) | IDM-2C102LB | 810194860867 | Not found |
+| Double-sided Dental Mirror (Dark Blue) | IDM-2CD41DB | 810194860874 | Not found |
+| Double-sided Dental Mirror (Light Blue) | IDM-2CD41LB | 810194860881 | Not found |
+| Double-Sided Dental Mirror Head | IDM-3CD41H | 810194860898 | Not found |
+
+**What we checked:**
+- All 7 UPCs are valid 12-digit UPC-A codes (the check digits are correct).
+- Searching Amazon for each UPC and for each model number returns nothing. A search for "ILLUCO double sided dental mirror" shows only our 15 live ASINs. **ILLUCO has no double-sided mirror on Amazon today.**
+- The model codes don't match the live listings. Live model numbers read "1X Magnification Dark Blue Handle" or the placeholder "IDMXXX".
+
+**Why it matters:** **Double-sided mirrors** are a gap the competitor scan found. Hu-Friedy, Artman, JMU and MEDKRAFT all sell double-sided cone-socket mirrors. If "Grand" means a larger head (#5), it also fills the **#5 size gap**. These products line up directly with what competitors win on.
+
+**Open questions (in `NEEDS-LIST.md`):**
+1. Are these new products to launch, or the same items as the live handle 5-pack (family A)?
+2. What does "Grand" mean (#5 size?), and what is the pack count?
+3. Why is there no 3X in the list?
+4. Are the UPCs GS1-licensed to ILLUCO? Amazon checks this when you create a new listing.
+5. What are the UPCs of the 15 live ASINs? The All Listings report has them.
+
+---
+
 ## 8. Amazon rules: what they mean for ILLUCO
 
 Full checklist with sources: `amazon-rules-checklist.md`. These rules hit our plan directly:

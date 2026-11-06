@@ -19,57 +19,60 @@ Items needed by **11/06–11/09** block the 11/10 findings review. **Item 1 is u
 | 7 | Full list of ALL active ILLUCO ASINs with parent/child structure (dental mirrors + dermatoscopes + headlight + any others) | Public search found 15 mirror ASINs; we may be missing some | Cenk (Inventory report) | 11/09/2026 |
 | 8 | Current backend search terms, item attributes and A+ content list per ASIN | Baseline before rewrite | Cenk (Seller Central) | 11/09/2026 |
 | 9 | Landed cost / margin per ASIN and target ACoS | Needed to set PPC budgets and any price change | Manager / Finance | 11/09/2026 |
-| 10 | Vine status: which parents are enrolled, units left, Vine credits/cost | Plan to grow review count fast and within the rules | Cenk (Seller Central) | 11/09/2026 |
+| 10 | UPC for each of the 15 live ASINs (All Listings report, product-id column) | Match live ASINs to the UPC list; check for duplicates | Cenk (Seller Central) | 11/09/2026 |
+| 11 | Vine status: which parents are enrolled, units left, Vine credits/cost | Plan to grow review count fast and within the rules | Cenk (Seller Central) | 11/09/2026 |
 
 ## Product facts to confirm (product / supplier / QC)
 
 | # | What we need | Why | From | Needed by |
 |---|---|---|---|---|
-| 11 | Mirror head size for handle pack and single mirror (#4 = 22 mm?) and why no #5 option | Dentists buy by size; most competitors sell #5 | Product / supplier | 11/13/2026 |
-| 12 | Thread / socket standard (cone socket, simple stem, European thread) + list of handle brands it fits | Review says heads only fit specific handles | Product / supplier | 11/13/2026 |
-| 13 | Test reports: 99% reflectance, 100 autoclave cycles, '40% clearer', German glass source | Claims need proof (Amazon may ask); proof also sells | Product / supplier | 11/13/2026 |
-| 14 | Root-cause check on 1-star 'only clear the first couple of times' (lot, cleaning method, coating) | Fix the product before pushing traffic | Product / QC | 11/13/2026 |
-| 15 | Care and cleaning instructions (allowed chemicals, ultrasonic yes/no, max temp) | Prevent coating damage; add to listing and insert | Product / supplier | 11/13/2026 |
-| 16 | Handle material, total length, weight, single- or double-sided mirror, magnification focal distance | Missing specs confuse buyers | Product / supplier | 11/13/2026 |
-| 17 | Photo mirrors: pieces per box, exact size of all 5 shapes, single- or double-sided, why FBM | Price clarity and Prime | Product / ops | 11/13/2026 |
+| 12 | Mirror head size for handle pack and single mirror (#4 = 22 mm?) and why no #5 option | Dentists buy by size; most competitors sell #5 | Product / supplier | 11/13/2026 |
+| 13 | Thread / socket standard (cone socket, simple stem, European thread) + list of handle brands it fits | Review says heads only fit specific handles | Product / supplier | 11/13/2026 |
+| 14 | Test reports: 99% reflectance, 100 autoclave cycles, '40% clearer', German glass source | Claims need proof (Amazon may ask); proof also sells | Product / supplier | 11/13/2026 |
+| 15 | Root-cause check on 1-star 'only clear the first couple of times' (lot, cleaning method, coating) | Fix the product before pushing traffic | Product / QC | 11/13/2026 |
+| 16 | Care and cleaning instructions (allowed chemicals, ultrasonic yes/no, max temp) | Prevent coating damage; add to listing and insert | Product / supplier | 11/13/2026 |
+| 17 | Handle material, total length, weight, single- or double-sided mirror, magnification focal distance | Missing specs confuse buyers | Product / supplier | 11/13/2026 |
+| 18 | What are the 7 products in the UPC list (Grand 1X/2X, double-sided, double-sided head)? New launches or the same items as live ASINs? What does 'Grand' mean (size #5?), pack count, and why no 3X? | Decide: new listings, new variations in families A/B, or UPC fixes | Product team / manager | 11/09/2026 |
+| 19 | Photo mirrors: pieces per box, exact size of all 5 shapes, single- or double-sided, why FBM | Price clarity and Prime | Product / ops | 11/13/2026 |
 
 ## Compliance
 
 | # | What we need | Why | From | Needed by |
 |---|---|---|---|---|
-| 18 | Regulatory check: is the FDA 510(k) exemption (21 CFR 872.4565, code EAX) valid for our materials, and can we market to home users (21 CFR 872.9 intended-use limit)? | Needed before any consumer-focused offer or new claims | Regulatory consultant / manager | 11/13/2026 |
-| 19 | FDA establishment registration + device listing status for dental mirrors (and the correct device class / product code) | Medical-device rules; what claims we can make | Regulatory / manager | 11/13/2026 |
+| 20 | Confirm the UPCs (prefix 0810194860) are GS1-licensed to ILLUCO and match the brand in GS1's database | Amazon checks UPCs against GS1; a mismatch blocks new listings | Product / ops | 11/13/2026 |
+| 21 | Regulatory check: is the FDA 510(k) exemption (21 CFR 872.4565, code EAX) valid for our materials, and can we market to home users (21 CFR 872.9 intended-use limit)? | Needed before any consumer-focused offer or new claims | Regulatory consultant / manager | 11/13/2026 |
+| 22 | FDA establishment registration + device listing status for dental mirrors (and the correct device class / product code) | Medical-device rules; what claims we can make | Regulatory / manager | 11/13/2026 |
 
 ## Creative assets (design team)
 
 | # | What we need | Why | From | Needed by |
 |---|---|---|---|---|
-| 20 | Original hi-res files (2000 px+) for all product images, logo files, brand colours and fonts | Image and A+ rebuild | Design team | 11/16/2026 |
-| 21 | Product samples of every SKU for new photos + video (fog test, ghost-image test, size, in-use) | New images + SB Video | Ops -> Design team | 11/16/2026 |
-| 22 | Existing video files (the video on handle + head families) and any raw footage | Re-edit for SB Video and other ASINs | Design team | 11/16/2026 |
+| 23 | Original hi-res files (2000 px+) for all product images, logo files, brand colours and fonts | Image and A+ rebuild | Design team | 11/16/2026 |
+| 24 | Product samples of every SKU for new photos + video (fog test, ghost-image test, size, in-use) | New images + SB Video | Ops -> Design team | 11/16/2026 |
+| 25 | Existing video files (the video on handle + head families) and any raw footage | Re-edit for SB Video and other ASINs | Design team | 11/16/2026 |
 
 ## Access
 
 | # | What we need | Why | From | Needed by |
 |---|---|---|---|---|
-| 23 | Seller Central roles for Cenk: Brand Registry, A+, Brand Store, Brand Analytics, Vine, Amazon Attribution, Ads console | Needed to audit and implement | Account admin | 11/09/2026 |
-| 24 | Google Ads account (Chiru) and social accounts (Shery) to set up Amazon Attribution tags | Measure outside traffic | Chiru, Shery | 11/16/2026 |
+| 26 | Seller Central roles for Cenk: Brand Registry, A+, Brand Store, Brand Analytics, Vine, Amazon Attribution, Ads console | Needed to audit and implement | Account admin | 11/09/2026 |
+| 27 | Google Ads account (Chiru) and social accounts (Shery) to set up Amazon Attribution tags | Measure outside traffic | Chiru, Shery | 11/16/2026 |
 
 ## Tools
 
 | # | What we need | Why | From | Needed by |
 |---|---|---|---|---|
-| 25 | Keyword volume tool (Helium 10, Jungle Scout or similar) or confirm Brand Analytics is enough | Search volume for long-tail keyword plan | Manager | 11/10/2026 |
+| 28 | Keyword volume tool (Helium 10, Jungle Scout or similar) or confirm Brand Analytics is enough | Search volume for long-tail keyword plan | Manager | 11/10/2026 |
 
 ## Decisions and approvals (manager)
 
 | # | What we need | Why | From | Needed by |
 |---|---|---|---|---|
-| 26 | Who is the main buyer: dental pros only, or pros + home users? (top sellers are $5-$10 home mirrors) | Sets keywords, images, price ladder | Manager | 11/10/2026 |
-| 27 | Approve Vine enrollment for each parent family (cost per parent) | Fastest compliant way to more reviews | Manager | 11/10/2026 |
-| 28 | Approve moving single mirror + photo mirrors to FBA | Prime badge and faster delivery | Manager | 11/10/2026 |
-| 29 | Approve listing rewrites (titles, bullets, specs) and A+ / Brand Story fixes | Rule: no major changes before review | Manager | 11/10/2026 |
-| 30 | PPC budget range and target ACoS after audit | Rule: no budget increase before review | Manager | 11/10/2026 |
+| 29 | Who is the main buyer: dental pros only, or pros + home users? (top sellers are $5-$10 home mirrors) | Sets keywords, images, price ladder | Manager | 11/10/2026 |
+| 30 | Approve Vine enrollment for each parent family (cost per parent) | Fastest compliant way to more reviews | Manager | 11/10/2026 |
+| 31 | Approve moving single mirror + photo mirrors to FBA | Prime badge and faster delivery | Manager | 11/10/2026 |
+| 32 | Approve listing rewrites (titles, bullets, specs) and A+ / Brand Story fixes | Rule: no major changes before review | Manager | 11/10/2026 |
+| 33 | PPC budget range and target ACoS after audit | Rule: no budget increase before review | Manager | 11/10/2026 |
 
 ## Tool limits found during the audit
 
