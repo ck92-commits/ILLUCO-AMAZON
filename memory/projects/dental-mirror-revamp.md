@@ -127,10 +127,19 @@ The dental mirror listings have low star ratings and some negative reviews. That
 | Double-sided Dental Mirror (Light Blue) | IDM-2CD41LB | 810194860881 |
 | Double-Sided Dental Mirror Head | IDM-3CD41H | 810194860898 |
 - All 7 check digits are valid. None were found on Amazon (by UPC or model) on 11/06. ILLUCO has no double-sided mirror live.
-- Open: are these new launches or the same as family A? What does "Grand" mean (#5?), and what is the pack count? Why no 3X? GS1 ownership? UPCs of the 15 live ASINs?
+- 11/18: Cenk confirmed these 7 mirrors **will be listed on Amazon** (new launch). Kit: `listing-launch/NEW-MIRROR-LISTING-KIT.md` + `listing-launch/ILLUCO_New_Mirror_Listing_Input.xlsx`.
+- Still open: what "Grand" means (#5?), pack count, head size, single/double-sided, why no 3X, GS1 ownership, UPCs of the 15 live ASINs.
+- Same table (11/18) also lists 5 loupes, not on Amazon yet: IAL-1055 5.5x Angled (810194860782), IFL-1030G 3.0x Flip-Up Headband (810194860171), IAL-1030F 3.0x Ergo Flip-Up (810194860751), IAL-1040F 4.0x Ergo Flip-Up (810194860768), IAL-1055F 5.5x Ergo Flip-Up (810194860775).
+
+## Amazon listing facts (checked 11/18/2026)
+- Product type: PROFESSIONAL_HEALTHCARE (live ILLUCO mirrors, Hu-Friedy, Zirc, Ceonam; Artman uses LAB_SUPPLY).
+- Browse node 8297616011: Industrial & Scientific > Professional Dental Supplies > Handpieces & Instruments > Mirrors.
+- Live variation themes: families A/B use one combined "Model" selector; photo mirrors use "Size". New parents should use Colour + Magnification.
+- FBA: Amazon prep/label service ended 01/01/2026 (we prep); commingling ended 03/31/2026 (brand owners can ship on UPC; verify). Glass must pass 3-ft drop test or be bubble-wrapped/overboxed.
 
 ## Notes / decisions log
 - 11/05/2026: Brief received and saved. Nothing changed on Amazon yet.
 - 11/05/2026: Public-data audit done (listings, reviews, 14 keyword searches, 13 competitors, Amazon rules). Key findings: only 9 ratings across 15 ASINs; not visible on head terms; 2–4× price per mirror vs pro brands; 1★ coating complaint to investigate; risky claims in Brand Story/A+. Waiting on Seller Central/Ads data (see audit/NEEDS-LIST.md).
 - 11/05/2026: Amazon rules checklist done (audit/amazon-rules-checklist.md). Urgent: all 15 titles are over the new 75-char limit (Amazon AI may rewrite; 14-day review window). Head pack (2.0★) is below the coupon floor; C/D are FBM so no Vine, PED or deals until moved to FBA. No FDA/antibacterial claims found in our listings.
 - 11/06/2026: UPC list received (7 products: Grand 1X/2X dark/light blue, double-sided dark/light blue, double-sided head). Not on Amazon yet. Double-sided (and maybe #5 "Grand") fill gaps the competitor scan found. Waiting on answers to the open questions above.
+- 11/18/2026: Phase 2 started: new mirror listings. Built the listing kit (what we need from Amazon, what we need from ILLUCO, listing blueprint, launch plan) in `listing-launch/`. Proposed parents: P1 Grand (4 SKUs, Colour + Magnification), P2 Double-Sided (2 SKUs, Colour), double-sided head standalone.

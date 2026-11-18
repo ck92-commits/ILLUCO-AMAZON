@@ -34,6 +34,8 @@
 → Details: memory/projects/dental-mirror-revamp.md · Original brief: memory/projects/dental-mirror-revamp-brief.md
 → Audit (11/05): audit/AUDIT-FINDINGS.md · audit/NEEDS-LIST.md · audit/amazon-rules-checklist.md · audit/ILLUCO_Dental_Mirror_ASIN_Tracker.xlsx
 → Mirror families: **A** handle 5-pack (6 ASINs) · **B** head-only 5-pack (3) · **C** single mirror (1) · **D** photo mirrors (5)
+→ **New launch (11/18):** 7 new mirror UPCs (Grand 1X/2X, Double-Sided, Double-Sided Head) → listing-launch/NEW-MIRROR-LISTING-KIT.md · listing-launch/ILLUCO_New_Mirror_Listing_Input.xlsx. Loupes (5 UPCs) come next.
+→ Amazon product type for mirrors: **PROFESSIONAL_HEALTHCARE**, browse node **8297616011** (Dental Mirrors)
 
 ## Rules (Dental Mirror Revamp)
 - **No major listing changes and no ad-budget increases until the manager has reviewed the initial findings (due 11/10).**

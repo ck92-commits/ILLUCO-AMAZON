@@ -35,7 +35,12 @@ Shorthand and Amazon terms used on ILLUCO work.
 | IPM series | ILLUCO intraoral photo mirrors |
 | Grand Dental Mirror | ILLUCO mirror line in the UPC list (IDM-2C101/2C102, 1X/2X, dark/light blue); meaning of "Grand" not yet confirmed |
 | IDM-2CD41 / IDM-3CD41H | ILLUCO double-sided mirror with handle / double-sided head (UPC list, not on Amazon yet) |
-| UPC list | audit/data/source/ILLUCO_DM_UPS_1.xlsx, received 11/06/2026 |
+| UPC list | audit/data/source/ILLUCO_DM_UPS_1.xlsx (11/06); full table incl. loupes: listing-launch/data/ILLUCO_UPC_table_2026-11-18.tsv |
+| PROFESSIONAL_HEALTHCARE | Amazon product type used for dental mirrors |
+| 8297616011 | Amazon browse node: Dental Mirrors |
+| IAL / IFL series | ILLUCO loupes (IAL = angled / ergo flip-up, IFL = flip-up headband) |
+| P1 / P2 | Proposed new parents: P1 Grand Dental Mirror, P2 Double-Sided Dental Mirror |
+| Item Highlights | New 125-char Amazon field under the title (since 07/27/2026) |
 | IDS series | ILLUCO dermatoscopes |
 | #4 / #5 | Mouth mirror head sizes (#4 ≈ 22 mm, #5 ≈ 24 mm). ILLUCO heads appear to be #4 |
 | Vine | Amazon Vine: Amazon-run program that gets early reviews from invited reviewers |
