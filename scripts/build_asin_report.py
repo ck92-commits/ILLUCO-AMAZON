@@ -104,34 +104,85 @@ hdr = ['ASIN', 'Parent ASIN', 'Family', 'Variant', 'Price (live)', 'Rating', 'Ra
        'Sessions (Business Report 11/20)', 'Units', 'Sales ($)', 'Conversion rate', 'Ad spend ($)', 'Ad sales ($)', 'ACoS', 'TACoS',
        'Main customer complaints (evidence / hypothesis)', 'Recommended improvements', 'Priority', 'Owner', 'Status']
 gal = {'B0FCZBD1KY': 7, 'B0FBPG5CS9': 5, 'B0GGDQ15DD': 6, 'B0G2DYRY7T': 4, 'B0GGDGRHRR': 6, 'B0FCNG7T9P': 5}
-order = ['B0FCZBD1KY','B0F84VWGG5','B0F84TKGLS','B0FCMVZH31','B0F85B5BDC','B0F857HKBG',
-         'B0FBPG5CS9','B0FCHH2SQB','B0FCJY3H9H',
-         'B0GGDQ15DD','B0GGF37FSB','B0GGDV4J6B','B0GGD95T8Z','B0GGDS9MVF','B0GGDGRHRR','B0G2DYRY7T',
-         'B0FCNG7T9P','B0F86CJ7R6','B0F86DNNSV','B0FCNRP7NF','B0FCN9V5G4',
-         'B0F7YPNMWK','B0F81HQMD2','B0F7Z2TP29','B0FSM14R8P','B0F8CVN4W3']
-rows = []
-for a in order:
-    x = cat[a]
-    par = x.get('parent_asin')
-    fam, pri = FAM.get(par, (None, None))
-    if a in ('B0GGDGRHRR', 'B0G2DYRY7T'):
-        fam, pri = 'Single Mirror with Handle', 'P1'
-    if fam is None:
-        fam, pri = ('Headlight' if 'Headlight' in x['title'] else 'Dermatoscope'), 'P3'
-    variant = x['title'].split('(')[-1].rstrip(')') if '(' in x['title'] else x['title'][:40]
-    bsr = '; '.join(f"#{b['rank']:,} {b['category']}" for b in (x.get('best_sellers_rank') or [])) or 'None shown'
-    comp_txt, fix_txt = COMPLAINTS.get(fam, ('No ratings yet.', 'Fix browse classification and attribute errors (see Attribute Fixes tab of the update sheet).'))
-    if a == 'B0GGDGRHRR': comp_txt = 'Detached from its family. 1.0 star: "water shedding last for 1-2 sterilization cycles"; NCX 20% ("performance or quality not adequate"). ' + comp_txt
-    if a == 'B0G2DYRY7T': comp_txt = 'BEST SELLER (68 units, 16.8% conversion) but a standalone listing with its own 3.4 rating; duplicate of B0GGDQ15DD. A+ uses photo-mirror copy. ' + comp_txt
-    if a == 'B0F85B5BDC': comp_txt = 'This 3X Dark Blue variant carries the "not anti-fog or water-resistant" 1-star (with video). ' + comp_txt
-    if a == 'B0FCZBD1KY': comp_txt = 'Most traffic in the line (861 sessions) but 2.3% conversion; 9 FBA returns incl. 3 fog / "not as described". ' + comp_txt
-    if a == 'B0FCMVZH31': comp_txt = '600 sessions, 1.5% conversion - the weakest converter. ' + comp_txt
-    rows.append([a, par, fam, variant, (float(x['price'].replace('$','').replace(',','')) if x.get('price') else None), x.get('rating'), x.get('review_count'), bsr,
-                 x.get('estimated_monthly_sales'), 'FBA' if x.get('is_fba') else 'FBM / SFP', gal.get(a, len(x.get('images') or [])),
-                 BR.get(a, {}).get('sessions'), BR.get(a, {}).get('units'), BR.get(a, {}).get('sales'), None, None, None, None, None,
-                 comp_txt, fix_txt, pri, 'Cenk', 'Not started'])
+# Rows follow the upload: each parent, then its children (owner request 11/20). New parents and new products have
+# no ASIN until Amazon processes the upload, so they are listed by SKU.
+NEW_ROWS = {
+    'IDM-2CD41LB': ('A: Double-Sided 5-pack', 'Double-Sided 1X, Light Blue, 5 mirrors + 5 handles', 179.00),
+    'IDM-2CD41DB': ('A: Double-Sided 5-pack', 'Double-Sided 1X, Dark Blue, 5 mirrors + 5 handles', 179.00),
+    'IDM-2C101LB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 1X, Light Blue, 2 mirrors + 2 handles', 124.00),
+    'IDM-2C101DB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 1X, Dark Blue, 2 mirrors + 2 handles', 124.00),
+    'IDM-2C102LB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 2X, Light Blue, 2 mirrors + 2 handles', 129.00),
+    'IDM-2C102DB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 2X, Dark Blue, 2 mirrors + 2 handles', 129.00),
+    'IDM-3CD41H': ('B: Double-Sided heads', 'Double-Sided heads 1X, 5 pack, handles not included', 139.00),
+}
+NEWFAM = {}
+for _a in ('B0F84VWGG5', 'B0FCZBD1KY', 'B0FCMVZH31', 'B0F84TKGLS', 'B0F857HKBG', 'B0F85B5BDC'):
+    NEWFAM[_a] = 'A: 5-pack with handles'
+for _a in ('B0G2DYRY7T', 'B0GGF37FSB', 'B0GGDV4J6B', 'B0GGD95T8Z', 'B0GGDS9MVF', 'B0GGDGRHRR'):
+    NEWFAM[_a] = 'A: Single mirror with handle'
+for _a in ('B0FBPG5CS9', 'B0FCHH2SQB', 'B0FCJY3H9H'):
+    NEWFAM[_a] = 'B: Heads 5-pack'
+LAYOUT = [
+    ('parent', 'IDM-HANDLE-FAMILY-PARENT', 'PARENT A (new): ILLUCO UHD Dental Mirrors with Handles',
+     'Variation theme: Size / Color / Number of Items',
+     '18 listings under it: 12 existing (moved in) + 6 new. Its ASIN appears after Amazon processes the upload.'),
+    *[('asin', a) for a in ('B0F84VWGG5', 'B0FCZBD1KY', 'B0FCMVZH31', 'B0F84TKGLS', 'B0F857HKBG', 'B0F85B5BDC',
+                            'B0G2DYRY7T', 'B0GGF37FSB', 'B0GGDV4J6B', 'B0GGD95T8Z', 'B0GGDS9MVF', 'B0GGDGRHRR')],
+    *[('new', k) for k in ('IDM-2CD41LB', 'IDM-2CD41DB', 'IDM-2C101LB', 'IDM-2C101DB', 'IDM-2C102LB', 'IDM-2C102DB')],
+    ('parent', 'IDM-HEADS-FAMILY-PARENT', 'PARENT B (new): ILLUCO UHD Dental Mirror Heads', 'Variation theme: Size',
+     '4 listings under it: 3 existing (moved in) + 1 new. Its ASIN appears after Amazon processes the upload.'),
+    *[('asin', a) for a in ('B0FBPG5CS9', 'B0FCHH2SQB', 'B0FCJY3H9H')],
+    ('new', 'IDM-3CD41H'),
+    ('parent', 'B0FCPD1KKN', 'PARENT (live, unchanged): Dental Photo Mirror', 'Not in the upload (owner: left as is)',
+     '5 listings under it.'),
+    *[('asin', a) for a in ('B0FCNG7T9P', 'B0F86CJ7R6', 'B0F86DNNSV', 'B0FCNRP7NF', 'B0FCN9V5G4')],
+    ('section', 'NOT IN A FAMILY'),
+    *[('asin', a) for a in ('B0GGDQ15DD', 'B0F7YPNMWK', 'B0F81HQMD2', 'B0F7Z2TP29', 'B0FSM14R8P', 'B0F8CVN4W3')],
+]
+CHILD_OF_FAMILY = set()
+in_family = False
+rows, kinds = [], []
+for entry in LAYOUT:
+    kind = entry[0]
+    if kind == 'parent':
+        _, sku, label, theme, note = entry
+        rows.append([sku, '', label, theme] + [None] * 15 + [note, '', '', '', ''])
+        in_family = True
+    elif kind == 'section':
+        rows.append([entry[1]] + [None] * 23)
+        in_family = False
+    elif kind == 'new':
+        sku = entry[1]; famlabel, desc, price = NEW_ROWS[sku]
+        rows.append([sku, '(new)', famlabel, desc, price, None, None, 'New listing', None, 'FBA', 8, None, None, None,
+                     None, None, None, None, None, 'New listing: no reviews or sales yet.',
+                     'Created by the upload with the new copy and 8 kit images.', 'P1', 'Cenk', 'Not started'])
+    else:
+        a = entry[1]
+        x = cat[a]
+        par = x.get('parent_asin')
+        fam, pri = FAM.get(par, (None, None))
+        if a in ('B0GGDGRHRR', 'B0G2DYRY7T'):
+            fam, pri = 'Single Mirror with Handle', 'P1'
+        if fam is None:
+            fam, pri = ('Headlight' if 'Headlight' in x['title'] else 'Dermatoscope'), 'P3'
+        variant = x['title'].split('(')[-1].rstrip(')') if '(' in x['title'] else x['title'][:40]
+        bsr = '; '.join(f"#{b['rank']:,} {b['category']}" for b in (x.get('best_sellers_rank') or [])) or 'None shown'
+        comp_txt, fix_txt = COMPLAINTS.get(fam, ('No ratings yet.', 'Fix browse classification and attribute errors (see Attribute Fixes tab of the update sheet).'))
+        if a == 'B0GGDGRHRR': comp_txt = 'Detached from its family. 1.0 star: "water shedding last for 1-2 sterilization cycles"; NCX 20% ("performance or quality not adequate"). ' + comp_txt
+        if a == 'B0G2DYRY7T': comp_txt = 'BEST SELLER (68 units, 16.8% conversion) but a standalone listing with its own 3.4 rating; duplicate of B0GGDQ15DD. A+ uses photo-mirror copy. ' + comp_txt
+        if a == 'B0F85B5BDC': comp_txt = 'This 3X Dark Blue variant carries the "not anti-fog or water-resistant" 1-star (with video). ' + comp_txt
+        if a == 'B0FCZBD1KY': comp_txt = 'Most traffic in the line (861 sessions) but 2.3% conversion; 9 FBA returns incl. 3 fog / "not as described". ' + comp_txt
+        if a == 'B0FCMVZH31': comp_txt = '600 sessions, 1.5% conversion - the weakest converter. ' + comp_txt
+        if a == 'B0GGDQ15DD':
+            comp_txt = 'DUPLICATE of B0G2DYRY7T: not in the upload; merge it through a Seller Support case. ' + comp_txt
+        rows.append([a, par, NEWFAM.get(a, fam), variant, (float(x['price'].replace('$','').replace(',','')) if x.get('price') else None), x.get('rating'), x.get('review_count'), bsr,
+                     x.get('estimated_monthly_sales'), 'FBA' if x.get('is_fba') else 'FBM / SFP', gal.get(a, len(x.get('images') or [])),
+                     BR.get(a, {}).get('sessions'), BR.get(a, {}).get('units'), BR.get(a, {}).get('sales'), None, None, None, None, None,
+                     comp_txt, fix_txt, pri, 'Cenk', 'Not started'])
+    kinds.append(kind if kind != 'asin' and kind != 'new' else ('child' if in_family else 'single'))
+hdr[1] = 'Parent ASIN (live today)'
 r_ws = wb.create_sheet('ASIN Report')
-table(r_ws, hdr, rows, [12, 12, 20, 22, 9, 7, 8, 26, 10, 9, 8, 9, 8, 10, 9, 10, 10, 8, 8, 55, 50, 7, 9, 11], input_cols=(12, 13, 14, 16, 17))
+table(r_ws, hdr, rows, [26, 14, 26, 30, 9, 7, 8, 26, 10, 9, 8, 9, 8, 10, 9, 10, 10, 8, 8, 55, 50, 7, 9, 11], input_cols=(12, 13, 14, 16, 17))
 for i in range(2, len(rows) + 2):
     r_ws[f'O{i}'] = f'=IFERROR(M{i}/L{i},"")'; r_ws[f'O{i}'].number_format = '0.0%'
     r_ws[f'R{i}'] = f'=IFERROR(P{i}/Q{i},"")'; r_ws[f'R{i}'].number_format = '0.0%'
@@ -139,22 +190,28 @@ for i in range(2, len(rows) + 2):
     for col in 'NPQ': r_ws[f'{col}{i}'].number_format = '$#,##0'
     r_ws[f'E{i}'].number_format = '$#,##0.00'
     for col in 'OST': r_ws[f'{col}{i}'].font = BODY
-# example row comment
 r_ws.cell(1, 25, 'Critical reviews (opens signed-in)').font = HFONT; r_ws.cell(1, 25).fill = HFILL
 r_ws.cell(1, 25).alignment = Alignment(wrap_text=True); r_ws.column_dimensions['Y'].width = 16
-for i in range(2, len(rows) + 2):
+PFILL = PatternFill(fill_type='solid', fgColor='DDEBF7'); SFILL = PatternFill(fill_type='solid', fgColor='F0EFEC')
+for i, kind in zip(range(2, len(rows) + 2), kinds):
     a = r_ws[f'A{i}'].value; par = r_ws[f'B{i}'].value
-    link(r_ws[f'A{i}'], dp(a))
-    if par: link(r_ws[f'B{i}'], dp(par))
-    link(r_ws.cell(i, 25), reviews(a), '1-3 star reviews')
-r_ws['L2'].comment = Comment('Filled from BusinessReport-11-20-26.csv (Detail Page Sales and Traffic by Child Item). Paste a newer export to refresh.', 'audit')
+    if kind in ('parent', 'section'):
+        for j in range(1, 26):
+            c = r_ws.cell(i, j); c.fill = PFILL if kind == 'parent' else SFILL
+            c.font = Font(name=F, size=10, bold=True)
+        if str(a).startswith('B0'):
+            link(r_ws[f'A{i}'], dp(a))
+        continue
+    if kind == 'child':
+        r_ws[f'A{i}'].alignment = Alignment(vertical='top', indent=2)
+    if str(a).startswith('B0'):
+        link(r_ws[f'A{i}'], dp(a))
+        link(r_ws.cell(i, 25), reviews(a), '1-3 star reviews')
+    if par and str(par).startswith('B0'):
+        link(r_ws[f'B{i}'], dp(par))
+r_ws['L1'].comment = Comment('Filled from BusinessReport-11-20-26.csv (Detail Page Sales and Traffic by Child Item). Paste a newer export to refresh.', 'audit')
 dv = DataValidation(type='list', formula1='"Not started,In progress,Done,Blocked"', allow_blank=True)
 r_ws.add_data_validation(dv); dv.add(f'X2:X{len(rows)+1}')
-n = len(rows) + 3
-r_ws.cell(n, 1, 'Pending new listings (upload file ready)').font = Font(name=F, bold=True)
-for k, (sku, desc) in enumerate([('IDM-2C101LB/DB', 'Grand Size 10, 1X, 2-pack ($124)'), ('IDM-2C102LB/DB', 'Grand Size 10, 2X, 2-pack ($129)'),
-                                 ('IDM-2CD41LB/DB', 'Double-Sided Size 4, 5-pack ($179)'), ('IDM-3CD41H', 'Double-Sided heads (price, images TBD)')], 1):
-    r_ws.cell(n + k, 1, sku).font = BODY; r_ws.cell(n + k, 3, desc).font = BODY
 
 # ---------------- Reviews ----------------
 rv = wb.create_sheet('Review Analysis')
