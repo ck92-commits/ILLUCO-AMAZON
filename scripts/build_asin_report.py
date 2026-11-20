@@ -594,5 +594,7 @@ order = ['Summary', 'What I Need', 'ASIN Report', 'Upload Check', 'Listing Copy'
          'Competitors', 'Keywords', 'PPC Plan', 'PPC Apply', 'Images A+ Video', 'Image Kit', 'External Traffic', 'Action Plan']
 wb._sheets = [wb[n] for n in order]
 
+from xlsx_thin import thin_rows
+thin_rows(wb)   # owner: every row at the default thin height
 wb.save(OUT)
 print('saved')

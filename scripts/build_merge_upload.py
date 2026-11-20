@@ -221,14 +221,25 @@ if subprocess.run(['git', 'status', '--porcelain', 'image_kit'], capture_output=
 IMG_SHA = subprocess.run(['git', 'log', '-1', '--format=%H', '--', 'image_kit'], capture_output=True, text=True, check=True).stdout.strip()
 IMG_BASE = f'https://raw.githubusercontent.com/ck92-commits/ILLUCO-AMAZON/{IMG_SHA}/image_kit/'
 IMG_COLS = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']   # main image + other images 1-7
+# B0G2DYRY7T ships the black-shank version (owner, 11/20): its 4 current photos stay (main + other 1-3, left blank so
+# the partial update does not touch them) and 5 related kit images fill its empty slots (other 4-8).
+KEEP_CURRENT = {'B0G2DYRY7T': ['03_key_benefit', '07_care', '04_magnification', '05_comparison', '06_handle']}
 sku_asin = {p['sku']: p['asin'] for p in plan}
 for r in range(8, row):
     if t[f'D{r}'].value != 'Child':
         continue
     sku = t[f'A{r}'].value
-    folder = IMG_DIRS[sku if sku in IMG_DIRS else sku_asin[sku]]
+    key = sku if sku in IMG_DIRS else sku_asin[sku]
+    folder = IMG_DIRS[key]
     files = sorted(f.name for f in Path('image_kit', folder).glob('0[1-8]_*.jpg'))
     assert len(files) == 8, (folder, files)
+    if key in KEEP_CURRENT:
+        pick = [next(f for f in files if f.startswith(p)) for p in KEEP_CURRENT[key]]
+        for col in IMG_COLS[:4]:
+            c = t[f'{col}{r}']; c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
+        for col, name in zip(['X', 'Y', 'Z', 'AA', 'AB'], pick):
+            c = t[f'{col}{r}']; c.value = IMG_BASE + folder + '/' + name; c.fill = PatternFill(fill_type=None); c.comment = None
+        continue
     for col, name in zip(IMG_COLS, files):
         c = t[f'{col}{r}']
         c.value = IMG_BASE + folder + '/' + name
@@ -237,6 +248,8 @@ for r in range(8, row):
     c = t[f'AB{r}']; c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
 print('images linked at', IMG_SHA[:7])
 
+from xlsx_thin import thin_rows
+thin_rows(wb)   # owner: every row at the default thin height
 wb.save(OUT)
 with open(PLAN, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(plan[0].keys())); w.writeheader(); w.writerows(plan)
