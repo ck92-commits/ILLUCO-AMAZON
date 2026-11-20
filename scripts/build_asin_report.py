@@ -71,19 +71,36 @@ FAM = {
  'B0GGD9DVP9': ('Single Mirror with Handle', 'P1'), 'B0FCPD1KKN': ('Dental Photo Mirror', 'P2'),
 }
 COMPLAINTS = {
- '5-Pack with Handles': ('3.4 stars; about 35% of ratings are 1-star. Likely causes: fog expectation ("Fog-Resistant" in the title), '
-                         '3X blur or narrow view sold as "No Distortion", price versus value.',
-                         'New title and highlight; magnification guidance; drop "100X"; video; Vine; per-mirror savings versus the 1-pack.'),
- 'Replacement Heads 5-Pack': ('2.0 stars; 67% 1-star. Likely cause: heads do not fit the buyer\'s handle (cone socket never stated); heads-only pack confused with a kit.',
-                              'Title and bullet 2 now say "Cone Socket, Handles Not Included"; add a compatibility image; Vine.'),
- 'Single Mirror with Handle': ('5.0 on 1 rating in the family; orphan listings carry 3.4 (3) and 1.0 (1). Likely causes: image 2 shows five mirrors for a 1-pack; 3X Dark Blue blur.',
-                               'Merge orphans into the family; replace image 2 with a 1-mirror "what\'s in the box"; new copy; Vine.'),
- 'Dental Photo Mirror': ('No ratings; BSR #462. Priced $165 against $8-40 competitors with little proof of the difference.',
-                         'Model number placeholder "IDMXXX"; per-shape copy and dimensions; photo-result comparison images; Vine; consider price test.'),
+ '5-Pack with Handles': ('3.4 stars (5 ratings). Evidence: 1-star "really not anti-fog or water-resistant... retains more water droplets than regular '
+                         'front-surface mirrors" (3X Dark Blue); FBA returns "not really anti-fog", "does not stay dry when water gets sprayed - '
+                         'the description said it does", "foggy lense". Main cause: fog / water-repellent claim. Conversion is weak (2-3% on the '
+                         'highest-traffic children).',
+                         'Remove fog and 100-cycle claims (done in merge file); align price to illuco.com ($85/$115/$130); merge into one family; '
+                         'new images; ask supplier about coating durability.'),
+ 'Replacement Heads 5-Pack': ('2.0 stars, but the 1X sells best ($3,420, 17.4% conversion, half to business buyers). No complaint text available.',
+                              'Title and bullets now state "Cone Socket, Handles Not Included"; compatibility image; new heads family with the '
+                              'Double-Sided head; Amazon Business quantity pricing.'),
+ 'Single Mirror with Handle': ('Family 5.0, but 3X Dark Blue (B0GGDGRHRR) has a 1-star: "water shedding last for 1-2 sterilization cycles" and a 20% '
+                               'NCX rate. Image 2 shows five mirrors on a 1-pack.',
+                               'Merge all singles into family A; replace image 2; remove fog/100-cycle claims; respond to the NCX flag; supplier QA on coating.'),
+ 'Dental Photo Mirror': ('No ratings; 20 sessions and 1 sale in the report period. Left as is (owner decision).',
+                         'No change for now. Note: model number placeholder "IDMXXX" and price $165 vs $155 on illuco.com.'),
 }
+import csv as _csv, io as _io
+def _num(v):
+    v = (v or '').replace('$', '').replace(',', '').replace('%', '').strip()
+    try: return float(v)
+    except ValueError: return None
+BR = {}
+for r in _csv.DictReader(_io.StringIO(open('data/account/BusinessReport-11-20-26.csv', 'rb').read().decode('utf-8-sig'))):
+    a = r['(Child) ASIN']
+    if a in BR:   # keep the row with more sessions (an ASIN can appear under two parents)
+        if (_num(r['Sessions - Total']) or 0) <= (BR[a]['sessions'] or 0):
+            continue
+    BR[a] = dict(sessions=_num(r['Sessions - Total']), units=_num(r['Units Ordered']), sales=_num(r['Ordered Product Sales']))
 hdr = ['ASIN', 'Parent ASIN', 'Family', 'Variant', 'Price (live)', 'Rating', 'Ratings count', 'BSR (Dental Mirrors / category)',
        'Est. monthly units (3rd-party est.)', 'Fulfillment', 'Gallery images',
-       'Sessions 30d', 'Units 30d', 'Sales 30d ($)', 'Conversion rate', 'Ad spend 30d ($)', 'Ad sales 30d ($)', 'ACoS', 'TACoS',
+       'Sessions (Business Report 11/20)', 'Units', 'Sales ($)', 'Conversion rate', 'Ad spend ($)', 'Ad sales ($)', 'ACoS', 'TACoS',
        'Main customer complaints (evidence / hypothesis)', 'Recommended improvements', 'Priority', 'Owner', 'Status']
 gal = {'B0FCZBD1KY': 7, 'B0FBPG5CS9': 5, 'B0GGDQ15DD': 6, 'B0G2DYRY7T': 4, 'B0GGDGRHRR': 6, 'B0FCNG7T9P': 5}
 order = ['B0FCZBD1KY','B0F84VWGG5','B0F84TKGLS','B0FCMVZH31','B0F85B5BDC','B0F857HKBG',
@@ -103,12 +120,15 @@ for a in order:
     variant = x['title'].split('(')[-1].rstrip(')') if '(' in x['title'] else x['title'][:40]
     bsr = '; '.join(f"#{b['rank']:,} {b['category']}" for b in (x.get('best_sellers_rank') or [])) or 'None shown'
     comp_txt, fix_txt = COMPLAINTS.get(fam, ('No ratings yet.', 'Fix browse classification and attribute errors (see Attribute Fixes tab of the update sheet).'))
-    if a == 'B0GGDGRHRR': comp_txt = 'ORPHAN (outside family). 1.0 star on 1 rating, 3X Dark Blue. ' + comp_txt
-    if a == 'B0G2DYRY7T': comp_txt = 'ORPHAN duplicate of the 1X single mirror; best BSR in the line. 3.4 on 3 ratings (39% 1-star). A+ uses photo-mirror copy. ' + comp_txt
-    if a == 'B0F85B5BDC': comp_txt = 'This 3X Dark Blue variant carries a 1-star. ' + comp_txt
+    if a == 'B0GGDGRHRR': comp_txt = 'Detached from its family. 1.0 star: "water shedding last for 1-2 sterilization cycles"; NCX 20% ("performance or quality not adequate"). ' + comp_txt
+    if a == 'B0G2DYRY7T': comp_txt = 'BEST SELLER (68 units, 16.8% conversion) but a standalone listing with its own 3.4 rating; duplicate of B0GGDQ15DD. A+ uses photo-mirror copy. ' + comp_txt
+    if a == 'B0F85B5BDC': comp_txt = 'This 3X Dark Blue variant carries the "not anti-fog or water-resistant" 1-star (with video). ' + comp_txt
+    if a == 'B0FCZBD1KY': comp_txt = 'Most traffic in the line (861 sessions) but 2.3% conversion; 9 FBA returns incl. 3 fog / "not as described". ' + comp_txt
+    if a == 'B0FCMVZH31': comp_txt = '600 sessions, 1.5% conversion - the weakest converter. ' + comp_txt
     rows.append([a, par, fam, variant, (float(x['price'].replace('$','').replace(',','')) if x.get('price') else None), x.get('rating'), x.get('review_count'), bsr,
                  x.get('estimated_monthly_sales'), 'FBA' if x.get('is_fba') else 'FBM / SFP', gal.get(a, len(x.get('images') or [])),
-                 None, None, None, None, None, None, None, None, comp_txt, fix_txt, pri, 'Cenk', 'Not started'])
+                 BR.get(a, {}).get('sessions'), BR.get(a, {}).get('units'), BR.get(a, {}).get('sales'), None, None, None, None, None,
+                 comp_txt, fix_txt, pri, 'Cenk', 'Not started'])
 r_ws = wb.create_sheet('ASIN Report')
 table(r_ws, hdr, rows, [12, 12, 20, 22, 9, 7, 8, 26, 10, 9, 8, 9, 8, 10, 9, 10, 10, 8, 8, 55, 50, 7, 9, 11], input_cols=(12, 13, 14, 16, 17))
 for i in range(2, len(rows) + 2):
@@ -126,7 +146,7 @@ for i in range(2, len(rows) + 2):
     link(r_ws[f'A{i}'], dp(a))
     if par: link(r_ws[f'B{i}'], dp(par))
     link(r_ws.cell(i, 25), reviews(a), '1-3 star reviews')
-r_ws['L2'].comment = Comment('Input: Business Reports > Detail Page Sales and Traffic by Child Item, last 30 days, Sessions - Total. Example format: 412', 'audit')
+r_ws['L2'].comment = Comment('Filled from BusinessReport-11-20-26.csv (Detail Page Sales and Traffic by Child Item). Paste a newer export to refresh.', 'audit')
 dv = DataValidation(type='list', formula1='"Not started,In progress,Done,Blocked"', allow_blank=True)
 r_ws.add_data_validation(dv); dv.add(f'X2:X{len(rows)+1}')
 n = len(rows) + 3
@@ -253,7 +273,7 @@ kw.cell(len(K) + 3, 1, 'Search volume is not available from public data. Add Bra
 pp = wb.create_sheet('PPC Plan')
 pp.cell(1, 1, 'Break-even and bid calculator (inputs in yellow - replace placeholder assumptions with your margin and Ads data)').font = Font(name=F, bold=True, size=11)
 calc_hdr = ['Family', 'Avg price ($)', 'Margin before ads (%)', 'Expected CVR (%)', 'Target ACoS (% of margin)', 'Break-even ACoS', 'Target ACoS', 'Max CPC ($)', 'Daily clicks wanted', 'Daily budget ($)', 'Expected market CPC ($)']
-calc = [['5-Pack with Handles', 118, 0.55, 0.08, 0.6], ['Replacement Heads', 85, 0.6, 0.08, 0.6], ['Single Mirror', 26, 0.5, 0.1, 0.6],
+calc = [['5-Pack with Handles', 110, 0.55, 0.031, 0.6], ['Replacement Heads', 90, 0.6, 0.109, 0.6], ['Single Mirror', 23, 0.5, 0.124, 0.6],
         ['Photo Mirror', 165, 0.6, 0.05, 0.6], ['Grand + Double-Sided (launch)', 150, 0.55, 0.06, 0.9]]
 for j, h in enumerate(calc_hdr, 1):
     c = pp.cell(3, j, h); c.font = HFONT; c.fill = HFILL; c.alignment = Alignment(wrap_text=True)
@@ -265,14 +285,14 @@ for i, row in enumerate(calc, 4):
     for col in 'CDE': pp[f'{col}{i}'].number_format = '0%'
     pp[f'F{i}'] = f'=C{i}'; pp[f'G{i}'] = f'=C{i}*E{i}'; pp[f'H{i}'] = f'=B{i}*D{i}*G{i}'
     pp[f'I{i}'] = [10, 8, 10, 5, 15][i - 4]; pp[f'I{i}'].font = BLUE; pp[f'I{i}'].fill = INFILL
-    pp[f'K{i}'] = 1.2; pp[f'K{i}'].font = BLUE; pp[f'K{i}'].fill = INFILL; pp[f'K{i}'].number_format = '$#,##0.00'
+    pp[f'K{i}'] = 1.34; pp[f'K{i}'].font = BLUE; pp[f'K{i}'].fill = INFILL; pp[f'K{i}'].number_format = '$#,##0.00'
     pp[f'J{i}'] = f'=MIN(H{i},K{i})*I{i}'
     for col in 'FG': pp[f'{col}{i}'].number_format = '0.0%'
     for col in 'HJ': pp[f'{col}{i}'].number_format = '$#,##0.00'
     for col in 'FGHJ': pp[f'{col}{i}'].font = BODY
-pp['A9'] = 'Total daily budget (proposal - do not raise spend until approved)'; pp['A9'].font = Font(name=F, bold=True)
+pp['A9'] = 'Total daily budget (ON HOLD by owner 11/20 - reference only)'; pp['A9'].font = Font(name=F, bold=True)
 pp['J9'] = '=SUM(J4:J8)'; pp['J9'].number_format = '$#,##0.00'; pp['J9'].font = Font(name=F, bold=True)
-pp['A10'] = ('Assumptions: prices are live Amazon averages per family (2026-11-20). Margin, CVR and click targets are PLACEHOLDERS, not ILLUCO data - '
+pp['A10'] = ('Prices = illuco.com-aligned averages; CVR = Business Report 11/20 unit session % per family (launch row assumed); market CPC = $1.34 average from the SP campaign report (Aug 1-Nov 20). Margin and click targets are PLACEHOLDERS - '
              'replace margin with landed cost + FBA + referral fees, CVR with Business Report unit session %, and market CPC with the Ads search-term report. Budget = clicks x the lower of market CPC and Max CPC. Launch row uses 90% of margin as target ACoS to build initial reviews/rank.')
 pp['A10'].font = Font(name=F, size=8, italic=True); pp['A10'].alignment = Alignment(wrap_text=True); pp.merge_cells('A10:K10'); pp.row_dimensions[10].height = 40
 camp = [
@@ -305,6 +325,30 @@ audit = ['AUDIT CHECKLIST (run on the 60-day bulk sheet + search-term report)',
          '6. Budget caps: campaigns out of budget before 6pm with ACoS under target -> raise (after approval).']
 for k, t in enumerate(audit):
     c = pp.cell(27 + k, 1, t); c.font = Font(name=F, size=9, bold=(k == 0))
+_camp = list(_csv.DictReader(_io.StringIO(open('data/account/CHECK-_ILLUCO_3.csv', 'rb').read().decode('utf-8-sig'))))
+base = 35
+pp.cell(base, 1, 'CURRENT SPONSORED PRODUCTS CAMPAIGNS (Aug 1 - Nov 20, 2026; no Sponsored Brands or DSP running)').font = Font(name=F, bold=True, size=10)
+cols = ['Campaign Name', 'Status', 'Budget Amount', 'Targeting Type', 'Impressions', 'Clicks', 'Spend', '7 Day Total Orders (#)', '7 Day Total Sales ']
+for j, h in enumerate(['Campaign', 'Status', 'Daily budget', 'Targeting', 'Impressions', 'Clicks', 'Spend ($)', 'Orders', 'Sales ($)', 'ACoS', 'Conversion'], 1):
+    c = pp.cell(base + 1, j, h); c.font = HFONT; c.fill = HFILL
+for i, r in enumerate(_camp, base + 2):
+    for j, k in enumerate(cols, 1):
+        v = r[k]
+        if j >= 5:
+            v = _num(v)
+        c = pp.cell(i, j, v); c.font = BODY; c.border = BOX
+    pp.cell(i, 7).number_format = '$#,##0'; pp.cell(i, 9).number_format = '$#,##0'
+    pp.cell(i, 10, f'=IFERROR(G{i}/I{i},"")').number_format = '0.0%'
+    pp.cell(i, 11, f'=IFERROR(H{i}/F{i},"")').number_format = '0.0%'
+end_ = base + 1 + len(_camp)
+tr = end_ + 1
+pp.cell(tr, 1, 'Total').font = Font(name=F, bold=True)
+for col in 'EFGHI':
+    pp[f'{col}{tr}'] = f'=SUM({col}{base+2}:{col}{end_})'; pp[f'{col}{tr}'].font = Font(name=F, bold=True)
+pp[f'G{tr}'].number_format = '$#,##0'; pp[f'I{tr}'].number_format = '$#,##0'
+pp[f'J{tr}'] = f'=IFERROR(G{tr}/I{tr},"")'; pp[f'J{tr}'].number_format = '0.0%'
+pp[f'K{tr}'] = f'=IFERROR(H{tr}/F{tr},"")'; pp[f'K{tr}'].number_format = '0.0%'
+pp.cell(tr + 1, 1, 'Source: CHECK-_ILLUCO_3.csv (SP campaign report). Full search-term audit: analysis/ppc_audit.md.').font = Font(name=F, size=8, italic=True)
 
 # ---------------- Creative plan ----------------
 cr = wb.create_sheet('Images A+ Video')
@@ -375,6 +419,13 @@ table(dn, ['#', 'Type', 'What I need', 'Where to find it', 'Link', 'Why', 'Neede
 for i, (t, w, where, url, why, by) in enumerate(NEEDS, 3):
     if url: link(dn.cell(i, 5), url, 'Open')
 dn.freeze_panes = 'C3'
+from links import RECEIVED
+rb = len(NEEDS) + 5
+dn.cell(rb, 1, 'Already received 11/20 - thank you').font = Font(name=F, bold=True, size=11)
+for k, (what, src) in enumerate(RECEIVED, 1):
+    dn.cell(rb + k, 2, 'Done').font = Font(name=F, size=9, color='008000', bold=True)
+    dn.cell(rb + k, 3, what).font = BODY
+    dn.cell(rb + k, 4, src).font = BODY
 
 wb.save(OUT)
 print('saved')

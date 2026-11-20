@@ -18,9 +18,11 @@ B_LOOK = ("SEE THE DIFFERENCE AT FIRST LOOK: Most dental mirrors reflect only 60
           "ILLUCO's UHD front surface dielectric coating on German optical glass reflects 99%, for an "
           "image over 40% brighter, crisp, true to color and free of ghosting. Look into it once and "
           "you will notice it.")
-B_FOG = ("FOG-RESISTANT, AUTOCLAVE-RATED FOR 100 CYCLES: Water-repellent coating sheds saliva and "
-         "spray mid-procedure. Glass and coating are rated for 100 autoclave cycles. " + STERIL +
-         " Avoid abrasive wiping to protect the coating.")
+B_FOG = ("AUTOCLAVABLE, CARE MATTERS: " + STERIL + " A hydrophobic top coat helps water bead off; "
+         "like any coating it wears with repeated sterilization, so avoid abrasive wiping and chemical "
+         "residue to keep the surface at its best.")
+COAT = ("The mirror is autoclavable, and a hydrophobic top coat helps water bead off; like any coating "
+        "it wears with repeated sterilization. ")
 
 
 def mag_bullet(mag):
@@ -44,21 +46,19 @@ def kit(mag, color, sku_model, asin, rating, note=''):
         family='5-Pack with Handles', parent='B0FDCGG69J', asin=asin, mag=mag, color=color,
         model_suggested=sku_model, rating=rating,
         title=title,
-        highlight=("With Handles, Front Surface, Cone Socket, 99% Reflectance, Fog-Resistant, "
-                   "Autoclave-Rated 100 Cycles, No Ghost Image"),
+        highlight=("With Handles, Front Surface, Cone Socket, 99% Reflectance, No Ghost Image, "
+                   "Autoclavable"),
         bullets=[B_LOOK, mag_bullet(mag), HANDLE, B_FOG,
                  f"5 PACK WITH HANDLES: 5 Size 4 (22mm) front surface mirror heads ({magtxt}), 5 ergonomic "
                  f"anti-rotation handles ({color}) and an autoclave sterilization and care guide. Built "
                  "for general dentists, hygienists, orthodontists and dental students."],
         description=(INTRO + "Each kit puts that view on a standard Size 4 (22mm) cone socket head "
                      f"in {magtxt.lower()} and pairs it with an ergonomic anti-rotation handle that "
-                     "stays steady in a light or firm grip. A water-repellent coating keeps the view "
-                     "clear mid-procedure, and the glass and coating are rated for 100 autoclave cycles. "
-                     + STERIL + " Each kit includes 5 Size 4 mirror heads, 5 ergonomic handles and an "
+                     "stays steady in a light or firm grip. " + COAT + STERIL + " Each kit includes 5 Size 4 mirror heads, 5 ergonomic handles and an "
                      "autoclave sterilization and care guide. Available in 1X, 2X and 3X magnification "
                      "with Light Blue or Dark Blue handles."),
         keywords=("mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist "
-                  "orthodontist anti fog front surface number 4 professional dentist mirror for inside mouth "
+                  "orthodontist front surface number 4 professional dentist mirror for inside mouth "
                   "hd high definition magnifying concave set kit"),
         size='Size 4 (22mm)', items=5,
         included=f"5 Size 4 Mirror Heads, 5 Ergonomic Handles, Autoclave Sterilization & Care Guide",
@@ -72,7 +72,7 @@ def heads(mag, asin, model, rating, note=''):
         model_suggested=model, rating=rating,
         title=f"ILLUCO UHD Dental Mirror Heads, Size 4 (22mm), {mag}X, 5 Pack, Cone Socket",
         highlight=("Replacement Heads, Handles Not Included, Front Surface, 99% Reflectance, "
-                   "Fog-Resistant, Autoclave-Rated 100 Cycles"),
+                   "No Ghost Image, Autoclavable"),
         bullets=[B_LOOK,
                  "CONE SOCKET FIT, HANDLES NOT INCLUDED: Threads onto standard cone socket mirror handles, "
                  "including ILLUCO ergonomic anti-rotation handles. Not for simple stem or European-thread "
@@ -84,11 +84,10 @@ def heads(mag, asin, model, rating, note=''):
         description=(INTRO + f"These replacement heads bring that view to the handles you already use: "
                      f"standard Size 4 (22mm), {magtxt.lower()}, with a cone socket thread that fits cone "
                      "socket mirror handles including ILLUCO ergonomic handles (sold separately). They do "
-                     "not fit simple stem or European-thread handles. A water-repellent coating keeps the "
-                     "view clear, and the glass and coating are rated for 100 autoclave cycles. " + STERIL +
+                     "not fit simple stem or European-thread handles. " + COAT + STERIL +
                      " Each pack includes 5 mirror heads. Handles are not included."),
         keywords=("mouth mirror heads replacement refill tops screw on dentist dental instruments tooth teeth "
-                  "oral exam intraoral hygienist anti fog front surface number 4 professional dentist mirror "
+                  "oral exam intraoral hygienist front surface number 4 professional dentist mirror "
                   "hd high definition magnifying concave"),
         size='Size 4 (22mm)', items=5, included='5 Size 4 Mirror Heads',
         note=note)
@@ -101,18 +100,16 @@ def single(mag, color, asin, model, rating, note=''):
         model_suggested=model, rating=rating,
         title=f"ILLUCO UHD Dental Mirror, Size 4 (22mm), {mag}X, 1 Pack, {color}",
         highlight=("With Handle, Single Mirror, Front Surface, Cone Socket, 99% Reflectance, "
-                   "Fog-Resistant, Autoclave-Rated 100 Cycles"),
+                   "No Ghost Image, Autoclavable"),
         bullets=[B_LOOK, mag_bullet(mag), HANDLE, B_FOG,
                  f"1 MIRROR WITH HANDLE: Includes 1 Size 4 (22mm) front surface mirror head ({magtxt}) on 1 "
                  f"ergonomic anti-rotation handle ({color}). Ideal for dental students, a spare for the "
                  "operatory or a first try of ILLUCO. Equipping a practice? Choose the 5 Pack."],
         description=(INTRO + "This single mirror puts that view on a standard Size 4 (22mm) cone socket "
-                     f"head in {magtxt.lower()}, mounted on an ergonomic anti-rotation handle. A "
-                     "water-repellent coating keeps the view clear mid-procedure, and the glass and coating "
-                     "are rated for 100 autoclave cycles. " + STERIL + " Includes 1 mirror and 1 handle. "
+                     f"head in {magtxt.lower()}, mounted on an ergonomic anti-rotation handle. " + COAT + STERIL + " Includes 1 mirror and 1 handle. "
                      "Also available in 5 packs and as replacement heads."),
         keywords=("mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist "
-                  "student anti fog front surface number 4 professional dentist mirror for inside mouth hd "
+                  "student front surface number 4 professional dentist mirror for inside mouth hd "
                   "high definition magnifying concave single"),
         size='Size 4 (22mm)', items=1, included='1 Size 4 Mirror Head, 1 Ergonomic Handle',
         note=note)
@@ -167,31 +164,76 @@ def photo(shape):
               'Confirm whether the Amazon box also includes the travel pouch listed on illuco.com.'))
 
 
+# Photo mirrors stay as they are (owner decision 2026-11-20), so they are not in ROWS.
+# model = illuco.com variant SKU (public product feed, 2026-11-20); price = illuco.com regular price.
 ROWS = [
     kit(1, 'Dark Blue', 'IDM-2C41DB', 'B0FCZBD1KY', '3.4 (5 ratings, family)'),
     kit(1, 'Light Blue', 'IDM-2C41LB', 'B0F84VWGG5', 'family 3.4'),
     kit(2, 'Dark Blue', 'IDM-2C42DB', 'B0F84TKGLS', 'family 3.4'),
     kit(2, 'Light Blue', 'IDM-2C42LB', 'B0FCMVZH31', 'family 3.4'),
-    kit(3, 'Dark Blue', 'IDM-2C43DB', 'B0F85B5BDC', 'family 3.4 (this variant shows a 1-star)'),
+    kit(3, 'Dark Blue', 'IDM-2C43DB', 'B0F85B5BDC', 'family 3.4; 1-star: "not anti-fog or water-resistant"'),
     kit(3, 'Light Blue', 'IDM-2C43LB', 'B0F857HKBG', 'family 3.4'),
-    heads(1, 'B0FBPG5CS9', 'IDM-3C41NA', '2.0 (2 reviews, family)'),
-    heads(2, 'B0FCHH2SQB', 'IDM-3C42NA', 'family 2.0'),
-    heads(3, 'B0FCJY3H9H', 'IDM-3C43NA', 'family 2.0'),
-    single(1, 'Light Blue', 'B0GGDQ15DD', '', '5.0 (1 rating, family)',
-           'Variation value "Blue" -> rename to "Light Blue" to match the 5-pack and new Grand listings.'),
-    single(1, 'Dark Blue', 'B0GGF37FSB', '', 'family 5.0'),
-    single(2, 'Light Blue', 'B0GGDV4J6B', '', 'family 5.0', 'Rename "Blue" -> "Light Blue".'),
-    single(2, 'Dark Blue', 'B0GGD95T8Z', '', 'family 5.0'),
-    single(3, 'Light Blue', 'B0GGDS9MVF', '', 'family 5.0', 'Rename "Blue" -> "Light Blue".'),
-    single(3, 'Dark Blue', 'B0GGDGRHRR', '', '1.0 (1 rating) - ORPHAN',
-           'ORPHAN: not in family B0GGD9DVP9. Add as the missing "3X / Dark Blue" child so it shares the family rating.'),
-    single(1, 'Light Blue', 'B0G2DYRY7T', '', '3.4 (3 ratings) - ORPHAN, best BSR (#30 Dental Mirrors)',
-           'ORPHAN DUPLICATE of the 1X single mirror. Photos show a black shank. Confirm the product, then either '
-           'ask Seller Support to merge it into B0GGDQ15DD, or make it the 1X child and close B0GGDQ15DD. Its A+ '
-           'currently uses photo-mirror copy ("intraoral photos") - replace.'),
-    photo('Occlusal Large'), photo('Occlusal Medium'), photo('Occlusal Small'),
-    photo('Lingual'), photo('Buccal'),
+    heads(1, 'B0FBPG5CS9', 'IDM-3C41NA', '2.0 (family)'),
+    heads(2, 'B0FCHH2SQB', 'IDM-3C42NA', '2.0 (family)'),
+    heads(3, 'B0FCJY3H9H', 'IDM-3C43NA', '2.0 (family)'),
+    single(1, 'Light Blue', 'B0G2DYRY7T', 'IDM-2C41LB-1X', '3.4 (3 ratings); best seller: 68 units, 16.8% conversion',
+           'Becomes the 1X Light Blue child of the merged family (keeps its sales history). Confirm it ships the '
+           'current product (its photos show a black shank) and replace its photos and A+ (A+ describes photo mirrors).'),
+    single(1, 'Dark Blue', 'B0GGF37FSB', 'IDM-2C41DB-1X', '5.0 (family)'),
+    single(2, 'Light Blue', 'B0GGDV4J6B', 'IDM-2C41LB-2X', '5.0 (family)', 'Variation value "Blue" -> "Light Blue".'),
+    single(2, 'Dark Blue', 'B0GGD95T8Z', 'IDM-2C41DB-2X', '5.0 (family)'),
+    single(3, 'Light Blue', 'B0GGDS9MVF', 'IDM-2C41LB-3X', '5.0 (family)', 'Variation value "Blue" -> "Light Blue".'),
+    single(3, 'Dark Blue', 'B0GGDGRHRR', 'IDM-2C41DB-3X', '1.0 (1 rating): "water shedding last for 1-2 sterilization cycles"; NCX 20%',
+           'Detached from family B0GGD9DVP9; re-attached here as 3X Dark Blue. Answer the NCX flag in Voice of the Customer.'),
+    single(1, 'Light Blue', 'B0GGDQ15DD', 'IDM-2C41LB-1X', '5.0 (1 rating)',
+           'DUPLICATE of B0G2DYRY7T (same 1X Light Blue single). Not re-parented: open a Seller Support case to merge '
+           'this ASIN into B0G2DYRY7T so the two review histories combine, then close this offer.'),
 ]
+
+# Seller SKUs per ASIN. Verified = from ILLUCO's Listing Summary, FBA returns or reimbursement reports.
+# Inferred = FBA SKU follows the verified pattern but did not appear in any report: check in Manage All Inventory.
+SKUS = {
+    'B0FCZBD1KY': [('IDM2C41DB', 'verified')],
+    'B0F84VWGG5': [('IDM2C41LB', 'verified')],
+    'B0F84TKGLS': [('IDM2C42DB', 'verified')],
+    'B0FCMVZH31': [('IDM2C42LB', 'verified')],
+    'B0F85B5BDC': [('IDM2C43DB', 'verified')],
+    'B0F857HKBG': [('IDM2C43LB', 'inferred'), ('IDM2C43LB-FBM', 'verified')],
+    'B0FBPG5CS9': [('IDM3C41NA', 'verified')],
+    'B0FCHH2SQB': [('IDM3C42NA', 'inferred')],
+    'B0FCJY3H9H': [('IDM3C43NA', 'inferred')],
+    'B0G2DYRY7T': [('A2-3YBP-WRV7', 'verified')],
+    'B0GGF37FSB': [('IDM-2C41DB-1X', 'verified')],
+    'B0GGDV4J6B': [('IDM2C41LB-2X-FBA', 'verified'), ('IDM-2C41LB-2X', 'verified')],
+    'B0GGD95T8Z': [('IDM2C41DB-2X-FBA', 'verified'), ('IDM-2C41DB-2X', 'verified')],
+    'B0GGDS9MVF': [('IDM2C41LB-3X-FBA', 'verified'), ('IDM-2C41LB-3X', 'verified')],
+    'B0GGDGRHRR': [('IDM-2C41DB-3X-FBA', 'verified'), ('IDM-2C41DB-3X', 'verified')],
+    'B0GGDQ15DD': [('IDM2C41LB-1X-FBA', 'verified'), ('IDM-2C41LB-1X', 'verified')],
+}
+
+# illuco.com regular prices (no compare-at / promotion on 2026-11-20) and current Amazon prices.
+PRICE_DTC = {'IDM-2C41': 85.00, 'IDM-2C42': 115.00, 'IDM-2C43': 130.00,
+             'IDM-3C41NA': 69.00, 'IDM-3C42NA': 95.00, 'IDM-3C43NA': 105.00, 'IDM-3CD41H': 139.00,
+             'single-1': 17.99, 'single-2': 24.00, 'single-3': 27.00}
+
+
+def dtc_price(r):
+    if r['family'] == '5-Pack with Handles':
+        return PRICE_DTC[f"IDM-2C4{r['mag']}"]
+    if r['family'] == 'Replacement Heads 5-Pack':
+        return PRICE_DTC[r['model_suggested']]
+    return PRICE_DTC[f"single-{r['mag']}"]
+
+
+SIZE_A = {1: 'Size 4 (22mm) 1X', 2: 'Size 4 (22mm) 2X', 3: 'Size 4 (22mm) 3X'}
+SIZE_B = {1: 'Size 4 (22mm) Single-Sided 1X', 2: 'Size 4 (22mm) Single-Sided 2X', 3: 'Size 4 (22mm) Single-Sided 3X'}
+for r in ROWS:
+    r['skus'] = SKUS[r['asin']]
+    r['price_new'] = dtc_price(r)
+    if r['family'] == 'Replacement Heads 5-Pack':
+        r['new_family'], r['var_size'] = 'B', SIZE_B[r['mag']]
+    else:
+        r['new_family'], r['var_size'] = 'A', SIZE_A[r['mag']]
 
 ATTRIBUTE_FIXES = [
     ('B0F7YPNMWK', 'IDS-1100 Dermatoscope', 'Browse node is Home & Kitchen > Home Decor Accents; Unit Count "16 Ounce"',
@@ -213,7 +255,6 @@ ATTRIBUTE_FIXES = [
 CONFIRM = [
     'SKU for each ASIN (All Listings Report) - required for the partial-update upload',
     'Product type of the live listings is PROFESSIONAL_HEALTHCARE (same as the Grand file); if not, use that product type\'s template',
-    'Suggested model numbers follow the illuco.com pattern (IDM-2C41DB = 5-pack 1X Dark Blue; IDM-3C41NA = heads 1X); confirm 2X/3X codes',
     'B0G2DYRY7T is the same product as the 1X single mirror (its photos show a black shank)',
     'Photo-mirror dimensions for Occlusal Small, Lingual and Buccal; whether the Amazon box includes the travel pouch',
     'Double-Sided head (IDM-3CD41H) pack size = 5, cone socket, price, images and package dimensions',
