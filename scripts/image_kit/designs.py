@@ -312,107 +312,130 @@ def card_redraw(base, card_box, items, title_size=60, body_size=56, pad_x=72, pa
     return img
 
 
-ITEM_99 = ('99% Reflectance', 'Over 40% brighter than standard dental mirrors, which reflect 60–70%.')
+# Card copy (revised 2026-11-20 per ILLUCO's sales lead): lead with Ultra High Definition and add the
+# 5-minute autoclave as a time saver. The "100+ autoclave cycles" line is NOT used until the owner
+# confirms it directly (the original brief lists cycle-count claims as contradicted by reviews).
+ITEM_UHD = ('Ultra High Definition', '99% reflectance, true color and no ghost image.')
+ITEM_UHD_DS = ('Ultra High Definition', '99% reflectance on both faces, true color and no ghost image.')
+ITEM_BRIGHT = ('Over 40% Brighter', 'Than standard dental mirrors, which reflect 60–70%.')
 ITEM_FS = ('Front-Surface Dielectric Coating', 'Maximizes reflectivity while minimizing light loss.')
 ITEM_FS_LONG = ('Front-Surface Dielectric Coating',
                 'Maximizes reflectivity while minimizing light loss for a consistently sharp image.')
-ITEM_GHOST = ('No Ghost Image', 'A single, sharp reflection with no double image.')
-ITEM_DUR = ('Built for Long-Term Durability',
-            'Engineered to withstand repeated clinical use and sterilization cycles.')
+ITEM_AUTO = ('5-Minute Autoclave', '273°F (134°C) for just 5 minutes, faster than a standard 20-minute cycle.')
 ITEM_ERGO = ('Ergonomic, Anti-Rotation Design', 'Comfortable grip with stable positioning during use.')
 ITEM_CONE = ('Cone Socket Fit', 'Threads onto cone socket handles. Not for simple stem or European-thread handles.')
 
 
 def key_benefit_size4(color):
     base = A.img('card_lb' if color == 'lb' else 'card_db')
-    return card_redraw(base, (96, 96, 1107, 1903), [ITEM_99, ITEM_FS, ITEM_GHOST, ITEM_DUR, ITEM_ERGO])
+    return card_redraw(base, (96, 96, 1107, 1903), [ITEM_UHD, ITEM_BRIGHT, ITEM_FS, ITEM_AUTO, ITEM_ERGO])
 
 
 def key_benefit_heads():
-    return card_redraw(A.img('card_heads'), (96, 96, 1107, 1903), [ITEM_99, ITEM_FS, ITEM_GHOST, ITEM_DUR, ITEM_CONE])
+    return card_redraw(A.img('card_heads'), (96, 96, 1107, 1903),
+                       [ITEM_UHD, ITEM_BRIGHT, ITEM_FS, ITEM_AUTO, ITEM_CONE])
 
 
 def key_benefit_grand(color):
     base = A.img('grand01_lb' if color == 'lb' else 'grand01_db')
-    items = [('Expansive Field of View',
+    items = [ITEM_UHD,
+             ('Expansive Field of View',
               'Instantly view an entire quadrant or multiple teeth, reducing the need to pan or tilt.'),
-             ITEM_99, ITEM_FS_LONG, ITEM_GHOST, ITEM_DUR]
+             ITEM_BRIGHT, ITEM_FS_LONG, ITEM_AUTO]
     return card_redraw(base, (96, 72, 1290, 1939), items)
 
 
 def key_benefit_ds(color):
     base = A.img('dsdm01_lb' if color == 'lb' else 'dsdm01_db')
-    items = [('Dual-Sided Viewing', 'Two-sided reflection minimizes mirror changing during procedures.'),
-             ('99% Reflectance on Both Faces',
-              'Over 40% brighter than standard dental mirrors, which reflect 60–70%.'),
-             ITEM_FS_LONG, ITEM_GHOST]
+    items = [ITEM_UHD_DS,
+             ('Dual-Sided Viewing', 'Two-sided reflection minimizes mirror changing during procedures.'),
+             ITEM_FS_LONG, ITEM_AUTO]
     return card_redraw(base, (96, 72, 1068, 1939), items)
 
 
 def key_benefit_ds_heads():
-    """New: double-sided head on navy with the three core optical benefits."""
+    """New: double-sided head on navy, led by Ultra High Definition, with four benefit cards."""
     img = Image.new('RGB', (W, H), K.NAVY)
     img.paste(K.gradient((W, H), (0, 40, 84), (0, 70, 140), 'd'), (0, 0))
     d = ImageDraw.Draw(img)
-    K.text_block(d, (110, 120), '99% REFLECTANCE', 120, 'extrabold', K.WHITE, max_w=W - 220, display=True,
+    K.text_block(d, (90, 110), 'ULTRA HIGH DEFINITION', 120, 'extrabold', K.WHITE, max_w=W - 180, display=True,
                  max_lines=1, min_size=90, align='center')
-    K.text_block(d, (110, 280), 'on both faces of every head', 64, 'medium', (190, 215, 245), max_w=W - 220,
-                 max_lines=1, min_size=56, align='center')
+    K.text_block(d, (90, 268), '99% reflectance on both faces of every head', 64, 'medium', (190, 215, 245),
+                 max_w=W - 180, max_lines=1, min_size=56, align='center')
     hd = A.double_head()
-    ph = K.fit(hd, 1760, 600)
-    K.paste(img, ph, ((W - ph.width) / 2, 420), shadow=(0, 24, 30, 0.35))
-    # three benefit cards
+    ph = K.fit(hd, 1700, 520)
+    K.paste(img, ph, ((W - ph.width) / 2, 410), shadow=(0, 24, 30, 0.35))
     items = [('Front-surface dielectric coating', 'on German optical glass'),
-             ('No ghost image', 'one sharp reflection, no double image'),
-             ('Over 40% brighter', 'than standard 60–70% dental mirrors')]
-    cw, ch, gap = 570, 700, 45
-    x = (W - (3 * cw + 2 * gap)) / 2
-    y = 1150
-    for t, b in items:
-        K.aa_draw(img, lambda g, s, x=x: g.rounded_rectangle((x * s, y * s, (x + cw) * s, (y + ch) * s),
-                                                             radius=26 * s, fill=(255, 255, 255, 255)))
-        K.check_icon(img, (x + cw / 2, y + 110), 110)
-        th, _, _ = K.text_block(d, (x + 50, y + 210), t, 62, 'bold', K.CARD_TEXT, max_w=cw - 100, max_lines=3,
-                                min_size=56, align='center')
-        K.text_block(d, (x + 50, y + 210 + th + 30), b, 56, 'regular', K.NAVY_TEXT, max_w=cw - 100,
-                     max_lines=4, min_size=56, align='center')
-        x += cw + gap
+             ('No ghost image', 'one sharp, true-color reflection'),
+             ('Over 40% brighter', 'than standard 60–70% dental mirrors'),
+             ('5-minute autoclave', '273°F (134°C) for just 5 minutes')]
+    cw, ch, gx, gy = 880, 400, 40, 36
+    x0 = (W - (2 * cw + gx)) / 2
+    y0 = 1010
+    for i, (t, b) in enumerate(items):
+        x = x0 + (i % 2) * (cw + gx)
+        y = y0 + (i // 2) * (ch + gy)
+        K.aa_draw(img, lambda g, s, x=x, y=y: g.rounded_rectangle((x * s, y * s, (x + cw) * s, (y + ch) * s),
+                                                                  radius=26 * s, fill=(255, 255, 255, 255)))
+        K.check_icon(img, (x + 90, y + ch / 2), 100)
+        tw = cw - 200
+        th, _, _ = K.text_block(d, (0, 0), t, 62, 'bold', max_w=tw, max_lines=2, min_size=56, dry=True)
+        bh, _, _ = K.text_block(d, (0, 0), b, 56, 'regular', max_w=tw, max_lines=3, min_size=56, dry=True)
+        ty = y + (ch - (th + 22 + bh)) / 2
+        K.text_block(d, (x + 170, ty), t, 62, 'bold', K.CARD_TEXT, max_w=tw, max_lines=2, min_size=56)
+        K.text_block(d, (x + 170, ty + th + 22), b, 56, 'regular', K.NAVY_TEXT, max_w=tw, max_lines=3,
+                     min_size=56)
     return img
 
 
 # ================================================================ 04 MAGNIFICATION / SIZE / BOTH FACES
 def magnification_guide():
     img = white()
-    top = header(img, 'CHOOSE YOUR MAGNIFICATION', 'Size 4 (22 mm) heads in 1X, 2X or 3X')
+    top = header(img, '2X & 3X: SEE FINE DETAIL LARGER', 'Premium magnification · most mouth mirrors are 1X')
     footer_band(img)
     d = ImageDraw.Draw(img)
     art = A.img('mag_art')  # ILLUCO's 1x / 2x / 3x view circles
     centers = [(468, 1157), (1021, 1157), (1574, 1157)]
     r_src = 246
     cols = [(W / 6) * (1 + 2 * i) for i in range(3)]
-    diam = 580
-    labels = [('1X', 'True size', 'Widest area', 'General exams'),
-              ('2X', 'Detail 2× larger', 'Smaller area', 'Work closer'),
-              ('3X', 'Detail 3× larger', 'Smallest area', 'Work closest')]
-    y_c = top + 80
+    diam = 520
+    labels = [('1X', 'STANDARD', 'True size', 'Widest area', 'General exams'),
+              ('2X', 'PREMIUM', 'Detail 2× larger', 'Smaller area', 'Work closer'),
+              ('3X', 'PREMIUM', 'Detail 3× larger', 'Smallest area', 'Work closest')]
+    y_c = top + 95
+    # premium panel behind the 2X and 3X columns
+    pnl = (cols[1] - 310, top + 45, cols[2] + 300, y_c + diam + 605)
+    K.aa_draw(img, lambda g, s: g.rounded_rectangle([v * s for v in pnl], radius=36 * s, fill=K.PALE + (255,),
+                                                    outline=(170, 200, 240, 255), width=4 * s))
+    f_tag = K.font(56, 'bold')
     for (cx_src, cy_src), cx, lab in zip(centers, cols, labels):
-        c = K.circle_crop(art, (cx_src, cy_src), r_src, diam, ring=14, ring_color=(200, 222, 248))
+        premium = lab[1] == 'PREMIUM'
+        c = K.circle_crop(art, (cx_src, cy_src), r_src, diam, ring=14,
+                          ring_color=K.BLUE if premium else (200, 222, 248))
         K.paste(img, c, (cx - diam / 2, y_c), shadow=(0, 14, 20, 0.22))
-        K.text_line(d, (cx, y_c + diam + 40), lab[0], 150, 'extrabold', K.NAVY_TEXT, anchor='ma', display=True)
-        yy = y_c + diam + 230
-        K.text_line(d, (cx, yy), lab[1], 60, 'bold', K.BLUE, anchor='ma')
-        K.text_line(d, (cx, yy + 84), lab[2], 58, 'regular', K.NAVY_TEXT, anchor='ma')
-        K.text_line(d, (cx, yy + 168), lab[3], 58, 'regular', K.NAVY_TEXT, anchor='ma')
-    # arrow bar
-    ya = y_c + diam + 540
+        K.text_line(d, (cx, y_c + diam + 26), lab[0], 150, 'extrabold', K.BLUE if premium else K.NAVY_TEXT,
+                    anchor='ma', display=True)
+        tag_w = K.text_w(lab[1], f_tag) + 80
+        ty = y_c + diam + 210
+        tag = (cx - tag_w / 2, ty, cx + tag_w / 2, ty + 88)
+        tag_fill = K.BLUE if premium else (226, 231, 238)
+        K.aa_draw(img, lambda g, s, tag=tag, tag_fill=tag_fill: g.rounded_rectangle(
+            [v * s for v in tag], radius=44 * s, fill=tag_fill + (255,)))
+        d.text((cx, ty + 44), lab[1], font=f_tag, fill=K.WHITE if premium else K.GREY_TEXT, anchor='mm')
+        yy = ty + 120
+        K.text_line(d, (cx, yy), lab[2], 60, 'bold', K.BLUE if premium else K.NAVY_TEXT, anchor='ma')
+        K.text_line(d, (cx, yy + 82), lab[3], 58, 'regular', K.NAVY_TEXT, anchor='ma')
+        K.text_line(d, (cx, yy + 164), lab[4], 58, 'regular', K.NAVY_TEXT, anchor='ma')
+    # honest trade-off note
+    ya = y_c + diam + 665
     bar = K.gradient((1640, 22), (150, 190, 235), K.NAVY, 'h')
     img.paste(bar, (180, ya))
     K.aa_draw(img, lambda g, s: g.polygon([(1820 * s, (ya - 26) * s), (1880 * s, (ya + 11) * s),
                                            (1820 * s, (ya + 48) * s)], fill=K.NAVY + (255,)))
     K.text_line(d, (180, ya + 50), 'Wider view', 56, 'semibold', K.GREY_TEXT, anchor='la')
     K.text_line(d, (1880, ya + 50), 'More detail', 56, 'semibold', K.NAVY_TEXT, anchor='ra')
-    K.text_block(d, (150, ya + 190), 'Magnified mirrors enlarge detail but show a smaller area, so they work '
-                 'best held close to the tooth.', 56, 'regular', K.NAVY_TEXT, max_w=W - 300, max_lines=2,
+    K.text_block(d, (130, ya + 160), 'Magnified mirrors show a smaller area and work best held close to the '
+                 'tooth. Choose 1X for wide views.', 56, 'regular', K.NAVY_TEXT, max_w=W - 260, max_lines=2,
                  min_size=56, align='center')
     return img
 
@@ -502,8 +525,8 @@ def both_faces():
     K.text_line(d, (rx, y2), 'Face 2', 80, 'bold', K.NAVY_TEXT, anchor='ra', display=True)
     K.text_line(d, (rx, y2 + 100), '99% reflectance', 58, 'medium', K.BLUE, anchor='ra')
     # benefit list (centred block)
-    items = ['Same front-surface dielectric coating on both faces',
-             'No ghost image on either side',
+    items = ['Ultra high definition on both faces',
+             'Same front-surface dielectric coating on each side',
              'Size 4 (22 mm) head, 1X magnification']
     f = K.font(58, 'medium')
     bw = max(K.text_w(t, f) for t in items) + 110
@@ -537,35 +560,44 @@ def grand_diag_rgba(color='lb'):
 
 def chart_family_a():
     img = white()
-    top = header(img, 'COMPARE THE ILLUCO UHD LINE', 'Every handle model comes in Light Blue or Dark Blue', band_h=290)
+    top = header(img, 'ILLUCO ULTRA HIGH DEFINITION', 'Compare the line · every handle in Light Blue or Dark Blue',
+                 band_h=290)
     footer_band(img)
     d = ImageDraw.Draw(img)
     cols = ['Single', '5-Pack Kit', 'Double-Sided', 'Grand']
     x0, x1 = 50, W - 50
     cw = (x1 - x0) / 4
-    pb_top, pb_h = top + 24, 300
+    pb_top, pb_h = top + 22, 240
     photos = [(A.img('single_lb_main'), False), (A.img('kit_lb_box'), False),
               (A.ds_box_main('lb')[0], False), (K.trim(K.rotate_rgba(grand_pair_rgba('lb'), 45)), True)]
     for i, (ph, rgba) in enumerate(photos):
         cx0 = x0 + i * cw
         _fit_in_box(img, ph, (cx0 + 40, pb_top, cx0 + cw - 40, pb_top + pb_h), rgba=rgba)
-        K.text_line(d, (cx0 + cw / 2, pb_top + pb_h + 22), cols[i], 66, 'bold', K.NAVY_TEXT, anchor='ma',
+        K.text_line(d, (cx0 + cw / 2, pb_top + pb_h + 20), cols[i], 66, 'bold', K.NAVY_TEXT, anchor='ma',
                     display=True)
-    rows = [('HEAD SIZE', ['Size 4\n22 mm', 'Size 4\n22 mm', 'Size 4\n22 mm', 'Size 10\n34 mm']),
+    # a str value spans all four columns (same for every model)
+    rows = [('HEAD SIZE', ['Size 4 · 22 mm', 'Size 4 · 22 mm', 'Size 4 · 22 mm', 'Size 10 · 34 mm']),
             ('MIRROR FACES', ['1', '1', '2', '1']),
             ('MAGNIFICATION', ['1X · 2X · 3X', '1X · 2X · 3X', '1X', '1X · 2X']),
             ('HANDLES INCLUDED', ['1', '5', '5', '2']),
             ('MIRRORS PER PACK', ['1', '5', '5', '2']),
+            ('AUTOCLAVE', '5 min at 273°F (134°C) for every model'),
             ('BEST FOR', ['Trying ILLUCO\nor a spare', 'Stocking the\noperatory', 'Two mirror\nfaces in one',
                           'Whole-quadrant\nviews'])]
-    y = pb_top + pb_h + 112
+    y = pb_top + pb_h + 104
     band_h, lh, padv = 72, 64, 22
     f_val = K.font(56, 'medium')
+    seps = []
     for label, vals in rows:
         K.aa_draw(img, lambda g, s, y=y: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + band_h) * s),
                                                              radius=16 * s, fill=K.PALE + (255,)))
         K.text_line(d, (x0 + 34, y + band_h / 2), label, 56, 'bold', K.BLUE, anchor='lm')
         y += band_h
+        if isinstance(vals, str):
+            K.check_copy(vals)
+            d.text((W / 2, y + padv), vals, font=K.font(58, 'semibold'), fill=K.NAVY_TEXT, anchor='ma')
+            y += padv * 2 + lh - 10
+            continue
         nl = max(v.count('\n') + 1 for v in vals)
         for i, v in enumerate(vals):
             cxm = x0 + i * cw + cw / 2
@@ -574,26 +606,28 @@ def chart_family_a():
                 if K.text_w(ln, f_val) > cw - 20:
                     raise K.Overflow(ln)
                 d.text((cxm, y + padv + j * lh), ln, font=f_val, fill=K.NAVY_TEXT, anchor='ma')
+        seps.append((y, y + padv * 2 + nl * lh - 10))
         y += padv * 2 + nl * lh - 10
     if y > H - 60:
         raise K.Overflow(f'chart A overflow {y}')
-    # column separators through the value rows
-    for i in range(1, 4):
-        xx = x0 + i * cw
-        d.line((xx, pb_top + pb_h + 112, xx, y), fill=K.DIVIDER, width=2)
+    # column separators through the per-model value rows
+    for ya, yb in seps:
+        for i in range(1, 4):
+            xx = x0 + i * cw
+            d.line((xx, ya, xx, yb), fill=K.DIVIDER, width=2)
     return img
 
 
 def chart_family_b():
     img = white()
-    top = header(img, 'WHICH HEADS DO YOU NEED?', 'Replacement heads only, handles not included', band_h=290)
+    top = header(img, 'ULTRA HIGH DEFINITION HEADS', 'Single- or double-sided · handles not included', band_h=290)
     footer_band(img)
     d = ImageDraw.Draw(img)
     lab_w = 560
     x0, x1 = 60, W - 60
     cw = (x1 - x0 - lab_w) / 2
     cols = ['Single-Sided', 'Double-Sided']
-    pb_top, pb_h = top + 40, 330
+    pb_top, pb_h = top + 36, 290
     _fit_in_box(img, A.single_head(), (x0 + lab_w + 60, pb_top, x0 + lab_w + cw - 60, pb_top + pb_h), rgba=True,
                 shadow=(6, 10, 10, 0.12))
     _fit_in_box(img, A.double_head(), (x0 + lab_w + cw + 30, pb_top + 40, x1 - 30, pb_top + pb_h - 30),
@@ -607,15 +641,21 @@ def chart_family_b():
             ('Thread', ['Cone socket', 'Cone socket']),
             ('Handles included', ['No', 'No']),
             ('Heads per pack', ['5', '5']),
+            ('Autoclave', '5 min at 273°F (134°C) for both'),
             ('Best for', ['Replacing worn heads', 'Two faces per head'])]
-    y = pb_top + pb_h + 140
-    rh = 142
+    y = pb_top + pb_h + 130
+    rh = 134
     f_val = K.font(58, 'medium')
     for k, (label, vals) in enumerate(rows):
         if k % 2 == 0:
             K.aa_draw(img, lambda g, s, y=y: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + rh) * s),
                                                                  radius=18 * s, fill=K.PALE + (255,)))
         K.text_line(d, (x0 + 40, y + rh / 2), label, 58, 'bold', K.BLUE, anchor='lm')
+        if isinstance(vals, str):  # same for both heads: one value centred across both columns
+            K.check_copy(vals)
+            d.text((x0 + lab_w + cw, y + rh / 2), vals, font=K.font(58, 'semibold'), fill=K.NAVY_TEXT, anchor='mm')
+            y += rh
+            continue
         for i, v in enumerate(vals):
             K.check_copy(v)
             if K.text_w(v, f_val) > cw - 30:
@@ -681,7 +721,7 @@ def handle_size4(color):
     targets = [(px + head_c[0], py + head_c[1]), (px + jx + 18, py + jy + 4),
                (px + ph.width * 0.62, py + jy + (ph.height - jy) * 0.32)]
     x_text, w_text = 820, W - 820 - 90
-    items = [('Size 4 (22 mm) UHD head', '99% reflectance, no ghost image', targets[0], targets[0][1] - 70),
+    items = [('Size 4 (22 mm) UHD head', 'Ultra high definition, 99% reflectance', targets[0], targets[0][1] - 70),
              ('Cone socket thread', 'Replace the head, keep the handle', targets[1], py + jy - 60),
              ('Anti-rotation grip', f'Ergonomic shape, {cname}', targets[2], targets[2][1] - 60)]
     _callouts(img, d, items, x_text, w_text)
@@ -717,7 +757,7 @@ def handle_grand(color):
     targets = [(px + hx - 4, py + hy), (px + jx + 22, py + jy + 4),
                (px + ph.width * 0.62, py + jy + (ph.height - jy) * 0.35)]
     x_text, w_text = 820, W - 820 - 90
-    items = [('Grand Size 10 (34 mm) head', '99% reflectance, no ghost image', targets[0], py + hy - 70),
+    items = [('Grand Size 10 (34 mm) head', 'Ultra high definition, 99% reflectance', targets[0], py + hy - 70),
              ('Cone socket thread', 'The head threads into the handle', targets[1], py + jy - 60),
              ('Anti-rotation grip', f'Ergonomic shape, {cname}', targets[2], targets[2][1] - 60)]
     _callouts(img, d, items, x_text, w_text)
@@ -750,7 +790,7 @@ def handle_ds(color):
         else:
             K.leader(img, (x - 30, y + th / 2 + 6), target, color=K.BLUE)
 
-    callout(80, disc_left[1] - 120, 'Double-sided head', 'Size 4 (22 mm), 99% on both faces', disc_left, 720)
+    callout(80, disc_left[1] - 120, 'Double-sided head', 'Ultra high definition on both faces', disc_left, 720)
     callout(80, junction[1] - 300, 'Cone socket thread', 'Replace the head, keep the handle', junction, 620)
     callout(1150, H - 330, 'Anti-rotation grip', f'Ergonomic shape, {cname}', (grip[0] + 70, grip[1]),
             W - 1150 - 80, leader_from='left')
@@ -875,40 +915,53 @@ def _no_scrub(img, cx, cy, r, color):
 
 
 def care_card():
+    """Revised 2026-11-20 per ILLUCO's sales lead: the 5-minute cycle is the hero (time saver), and
+    longer cycles / higher heat strip the coating (the cause of the bad reviews)."""
     img = white()
-    top = header(img, 'CARE & STERILIZATION', 'Autoclave settings for mirror heads and handles')
+    top = header(img, 'CARE & STERILIZATION', 'Protect the high-definition coating')
     footer_band(img)
     d = ImageDraw.Draw(img)
     x0, x1 = 90, W - 90
-    y = top + 70
-    K.text_line(d, (x0 + 10, y), 'AUTOCLAVE AT', 60, 'bold', K.BLUE)
-    y += 110
-    ph_h = 270
-    for i, (temp, mins) in enumerate([('273°F (134°C)', '5 min'), ('250°F (121°C)', '20 min')]):
-        K.aa_draw(img, lambda g, s, y=y: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + ph_h) * s),
-                                                             radius=30 * s, fill=K.PALE + (255,)))
-        _thermo(img, x0 + 115, y + ph_h / 2 - 10, 160, K.NAVY_TEXT)
-        K.text_line(d, (x0 + 220, y + ph_h / 2), temp, 116, 'extrabold', K.NAVY_TEXT, anchor='lm', display=True)
-        mw = K.text_w(mins, K.font(104, 'bold', True))
-        K.text_line(d, (x1 - 50, y + ph_h / 2), mins, 104, 'bold', K.BLUE, anchor='rm', display=True)
-        _clock(img, x1 - 50 - mw - 80, y + ph_h / 2, 54, K.BLUE)
-        y += ph_h
-        if i == 0:
-            K.text_line(d, (W / 2, y + 45), 'or', 60, 'semibold', K.GREY_TEXT, anchor='mm')
-            y += 90
-    y += 70
+    y = top + 50
+    # hero: 5-minute autoclave
+    hero_h = 480
+    hero = K.round_corners(K.gradient((x1 - x0, hero_h), K.NAVY, K.BLUE_HEADER, 'h'), 34)
+    img.paste(hero, (x0, y), hero)
+    _clock(img, x0 + 175, y + hero_h / 2, 110, K.WHITE)
+    tx = x0 + 340
+    K.text_line(d, (tx, y + 62), '5-MINUTE AUTOCLAVE', 112, 'extrabold', K.WHITE, display=True)
+    K.text_line(d, (tx, y + 215), '273°F (134°C) for just 5 minutes', 78, 'bold', K.WHITE, display=True)
+    K.text_block(d, (tx, y + 335), 'Faster than a standard 20-minute instrument cycle', 58, 'medium',
+                 (190, 215, 245), max_w=x1 - tx - 40, max_lines=2, min_size=56)
+    y += hero_h + 50
+    # secondary option
+    sec_h = 190
+    K.aa_draw(img, lambda g, s: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + sec_h) * s), radius=30 * s,
+                                                    fill=K.PALE + (255,)))
+    _thermo(img, x0 + 115, y + sec_h / 2 - 8, 130, K.NAVY_TEXT)
+    K.text_line(d, (x0 + 230, y + sec_h / 2), 'or 20 minutes at 250°F (121°C)', 80, 'bold', K.NAVY_TEXT,
+                anchor='lm', display=True)
+    y += sec_h + 50
     # limit
-    K.aa_draw(img, lambda g, s: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + 230) * s), radius=30 * s,
+    warn_h = 340
+    K.aa_draw(img, lambda g, s: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + warn_h) * s), radius=30 * s,
                                                     fill=(253, 236, 236, 255)))
-    _warn(img, x0 + 115, y + 115, 130, K.RED)
-    K.text_line(d, (x0 + 220, y + 115), 'Do not exceed 277°F (136°C)', 88, 'bold', K.RED, anchor='lm',
-                display=True)
-    y += 300
+    _warn(img, x0 + 115, y + warn_h / 2, 130, K.RED)
+    w_title, w_sub = 'No 20-minute cycle at 273°F\nNever above 277°F (136°C)', 'Extra heat strips the high-definition coating'
+    th, _, _ = K.text_block(d, (0, 0), w_title, 72, 'bold', max_w=x1 - x0 - 280, max_lines=2, min_size=60,
+                            display=True, dry=True)
+    sh, _, _ = K.text_block(d, (0, 0), w_sub, 58, 'regular', max_w=x1 - x0 - 280, max_lines=1, min_size=56, dry=True)
+    ty = y + (warn_h - (th + 30 + sh + 14)) / 2
+    K.text_block(d, (x0 + 230, ty), w_title, 72, 'bold', K.RED, max_w=x1 - x0 - 280, max_lines=2, min_size=60,
+                 display=True)
+    K.text_block(d, (x0 + 230, ty + th + 30), w_sub, 58, 'regular', (150, 30, 30), max_w=x1 - x0 - 280,
+                 max_lines=1, min_size=56)
+    y += warn_h + 50
     # abrasive wiping
-    _no_scrub(img, x0 + 115, y + 110, 90, K.RED)
-    K.text_line(d, (x0 + 240, y + 30), 'Avoid abrasive wiping', 88, 'bold', K.NAVY_TEXT, display=True)
-    K.text_line(d, (x0 + 240, y + 145), 'Protects the front-surface coating', 60, 'regular', K.GREY_TEXT)
-    y += 300
+    _no_scrub(img, x0 + 115, y + 105, 88, K.RED)
+    K.text_line(d, (x0 + 240, y + 25), 'Avoid abrasive wiping', 86, 'bold', K.NAVY_TEXT, display=True)
+    K.text_line(d, (x0 + 240, y + 140), 'Protects the front-surface coating', 60, 'regular', K.GREY_TEXT)
+    y += 250
     K.text_block(d, (x0, y), "Follow your autoclave manufacturer's instructions.", 58, 'medium',
                  K.GREY_TEXT, max_w=x1 - x0, max_lines=1, min_size=56, align='center')
     if y + 80 > H - 46:
@@ -934,7 +987,7 @@ def lifestyle_lb():
     typ = A.img('life_typodont')
     big = K.rounded_photo(typ.crop((150, 0, 2048, 2048)), (big_w, big_h), 30)
     K.paste(img, big, (x0, y0))
-    K.text_block(d, (x0, y0 + big_h + 40), 'Bright, single-image view', 62, 'bold', K.NAVY_TEXT, max_w=big_w,
+    K.text_block(d, (x0, y0 + big_h + 40), 'Ultra high definition view', 62, 'bold', K.NAVY_TEXT, max_w=big_w,
                  max_lines=1, min_size=56, align='center')
     rx = x0 + big_w + gap
     rw = W - 70 - rx
@@ -948,7 +1001,7 @@ def lifestyle_lb():
                  max_lines=2, min_size=56, align='center')
     y2 = y0 + rh + 150 + gap
     K.paste(img, p2, (rx, y2))
-    K.text_block(d, (rx, y2 + rh + 22), 'Autoclavable at 273°F (134°C)', 58, 'bold', K.NAVY_TEXT, max_w=rw,
+    K.text_block(d, (rx, y2 + rh + 22), '5-minute autoclave at 273°F (134°C)', 58, 'bold', K.NAVY_TEXT, max_w=rw,
                  max_lines=2, min_size=56, align='center')
     return img
 
@@ -983,7 +1036,7 @@ def size_spec_single_head():
     K.text_line(d, ((dl + dr) / 2, py - 96), '22 mm', 84, 'bold', K.NAVY_TEXT, anchor='md', display=True)
     x_text, w_text = 1080, W - 1080 - 90
     bb = photo_bbox(ph)
-    items = [('Front-surface mirror', '99% reflectance, no ghost image', (dr - 10, py + geo['cy']),
+    items = [('Ultra high definition', 'Front-surface, 99% reflectance', (dr - 10, py + geo['cy']),
               py + geo['cy'] - 80),
              ('Cone socket thread', 'Fits cone socket handles', (px + (bb[0] + bb[2]) / 2 + 30, py + bb[3] - 60),
               py + bb[3] - 170)]
@@ -1020,7 +1073,7 @@ def size_spec_double_head():
     K.paste(img, ph, (ex, ey), shadow=(8, 12, 14, 0.14))
     K.text_line(d, (ex + ph.width / 2, ey + ph.height + 30), 'Side view', 58, 'semibold', K.GREY_TEXT,
                 anchor='ma')
-    items = ['Mirror on both faces', '99% reflectance', 'No ghost image', 'Cone socket thread']
+    items = ['Mirror on both faces', 'Ultra high definition', 'No ghost image', 'Cone socket thread']
     y = ey + ph.height + 190
     for t in items:
         K.check_icon(img, (ex + 60, y + 32), 76)

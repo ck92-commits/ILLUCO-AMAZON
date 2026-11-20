@@ -41,27 +41,40 @@ python3 -I scripts/image_kit/build_kit.py            # writes all images, manife
 |---|---|---|
 | 01 main | Single LB `617bfZwQclL`, single DB `61FcYqxQdHL`, kit DB `71549oTdxFL`, heads `617IX-IYsEL`, kit LB Shopify `light_blue.jpg` (flagged) | Double-Sided LB/DB: real kit photo from dsdm-03 / dsdm-03_db with the graphic header removed, on pure white (old mains showed 2 of 5 mirrors with handles cut off). Grand LB/DB: 2 cutouts of the full Grand mirror from grand-01 / grand-01_db (old main showed 1 of 2, handle cut off). Double-sided heads: 5 cutouts of the IDM-3CD41H head photo (needs reshoot) |
 | 02 in the box | dsdm-03 / dsdm-03_db (Double-Sided, correct count and colour) | Count callouts for single (1 mirror + 1 handle), 5-pack (5 heads + 5 handles + care guide), Grand (2 + 2 + care guide), heads (5 replacement heads, handles not included) |
-| 03 key benefit | none | Corrected redraws of the copy card in 7121KSv2hrL, 71fDe5PolUL, 71f0mMI002L, dsdm-01(_db), grand-01(_db); new card for double-sided heads |
-| 04 | none | 1X/2X/3X guide (uses ILLUCO's view circles), Size 4 vs Grand Size 10 at true 22 : 34 scale, both-faces diagram |
-| 05 comparison | none | Family A chart (Single / 5-Pack Kit / Double-Sided / Grand), family B chart (single vs double-sided heads) |
+| 03 key benefit | none | Corrected redraws of the copy card in 7121KSv2hrL, 71fDe5PolUL, 71f0mMI002L, dsdm-01(_db), grand-01(_db), each now led by "Ultra High Definition" and with a "5-Minute Autoclave" item; new "Ultra High Definition" card for double-sided heads |
+| 04 | none | "2X & 3X: see fine detail larger" guide (2X/3X marked premium, 1X standard; uses ILLUCO's view circles), Size 4 vs Grand Size 10 at true 22 : 34 scale, both-faces diagram |
+| 05 comparison | none | Family A chart headed "ILLUCO Ultra High Definition" (Single / 5-Pack Kit / Double-Sided / Grand), family B chart "Ultra High Definition Heads"; both have an autoclave row (5 min at 273°F / 134°C) |
 | 06 | none | Handle callouts per head type and colour; cone-socket compatibility for heads |
-| 07 care | none | One sterilization card for all groups |
+| 07 care | none | One care card for all groups, built around the 5-minute autoclave |
 | 08 | dsdm-04, grand-04 (stock "Professional Applications", flagged) | Lifestyle collage from ILLUCO's own Light Blue photos; head size-spec images for family B |
 
-### Copy fixes made in the corrected cards
-- grand-01 / grand-01_db: "quandrant" -> "quadrant"; "minimizing light" -> "minimizing light loss".
-- dsdm-01 / dsdm-01_db: "minimizing light" -> "minimizing light loss".
-- Removed every line implying fog / moisture resistance ("Stain-Resistant After Autoclaving: resists moisture
-  buildup", "Consistent, Spot-Free Performance") and replaced it with "No Ghost Image".
-- Heads card: "Universal Cone Socket Fit: compatible with most standard mirror handles" -> "Cone Socket Fit:
-  not for simple stem or European-thread handles".
-- Cards were condensed to 4-5 items so body copy is at least 56 px (headlines 96 px) at 2000 px.
-- Every string rendered by the scripts passes a guard (`kitlib.check_copy`) that rejects fog, "stays dry",
-  "100 autoclave cycles", "40% clearer", rhodium and the two typos.
+### Copy rules (revised 2026-11-20 with the sales lead's direction)
+- **Lead with Ultra High Definition**: 99% reflectance, front-surface dielectric coating on German optical glass,
+  true color, no ghost image. It is the first item on every key-benefit card and heads both comparison charts.
+- **2X and 3X are the premium feature**: "2X & 3X: see fine detail larger - most mouth mirrors are 1X". Always
+  keep the honest trade-off: magnified mirrors show a smaller area and work best close to the tooth.
+- **5-minute autoclave is the key care message and a time saver**: 273°F (134°C) for just 5 minutes, faster than
+  a standard 20-minute instrument cycle; secondary option 20 minutes at 250°F (121°C); no standard 20-minute
+  cycle at 273°F and never above 277°F (136°C), because extra heat strips the high-definition coating; avoid abrasive wiping; follow
+  the autoclave manufacturer's instructions.
+- **"100+ autoclave cycles (on the 5-minute setting)" is NOT in any image yet.** The revision request reported
+  the sales lead approved it, and `kitlib.check_copy` now accepts that exact form (plain "100 autoclave cycles"
+  and "100X" stay rejected; "100+" must sit next to the 5-minute qualifier). But the original brief listed cycle
+  counts as contradicted by reviews and returns, and this session's permission check blocked the edit that added
+  it. Once the owner confirms directly, add it to `ITEM_AUTO` in `designs.py` and to the care card, then rebuild.
+- **Fog is secondary**: never "anti-fog", "fog-proof", "fog-resistant" or "stays dry". A short "water-repellent
+  top coat" line is allowed but was left out; it did not fit naturally.
+- Never: "40% clearer", any rhodium percentage, or unverified specs (handle length/weight, "1/4 lambda").
+- Typos fixed: grand-01(_db) "quandrant" -> "quadrant"; grand-01(_db) and dsdm-01(_db) "minimizing light" ->
+  "minimizing light loss". The original moisture / "spot-free" lines are gone, and the heads card's "compatible
+  with most standard mirror handles" became "not for simple stem or European-thread handles".
+- Cards hold 4-5 items so body copy stays at least 56 px (headlines 96 px) at 2000 px.
+- Every rendered string passes `kitlib.check_copy`.
 
 ### Existing images NOT to use any more
 - `71Ciw0nr7KL`, `71fFYQpHu+L`, `71zox6KeqwL`, Shopify `illuco_dental_mirror_clarity.jpg`, `dental_mirror_reflectance.jpg`:
-  "100 autoclave cycles" and "40% clearer". `71fFYQpHu+L` also shows 5 mirrors on the 1-pack listings.
+  "100 AUTOCLAVE CYCLES" (no "+", no 5-minute qualifier) and "40% clearer". `71fFYQpHu+L` also shows 5 mirrors on
+  the 1-pack listings.
 - `71ycAyFx4CL`, `71KqSGYiXfL`, `71JgWcIxKeL`, Shopify `dielectric_coating_*.jpg`: "Prevents fogging".
 - `61U0VXj+XHL`, `61-ZXUS96xL`, `illuco_dental_mirror_specs.jpg`: unverified "Surface roughness 1/4 lambda" spec.
 - `7121KSv2hrL`, `71fDe5PolUL`, `71f0mMI002L`, `front_surface_dental_mirrors.jpg`, `dental_mirror_illuco.jpg`:

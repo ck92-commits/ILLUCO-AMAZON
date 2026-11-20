@@ -32,17 +32,31 @@ RED = (198, 40, 40)
 GREEN = (27, 128, 72)
 
 # ---------------------------------------------------------------- copy guard
+# Claims customer reviews / returns contradict, typos, and unsupported specs. A revision request relayed on
+# 2026-11-20 reports that ILLUCO's sales lead approved "100+ autoclave cycles" WITH the plus and the 5-minute
+# qualifier, so the guard lets that exact form through ("100 autoclave cycles" without the plus and "100X"
+# stay rejected). No image uses it yet: it waits for the owner's direct confirmation (see README).
 FORBIDDEN = [
-    r'\bfog', r'anti-?fog', r'stays? dry', r'100\s*autoclave', r'100\s*cycles', r'40%\s*clearer',
-    r'rhodium', r'quandrant', r'minimi[sz]ing light(?!\s+loss)', r'moisture', r'spot-free',
+    r'\bfog', r'anti-?fog', r'stays? dry', r'40%\s*clearer', r'rhodium', r'quandrant',
+    r'minimi[sz]ing light(?!\s+loss)', r'moisture', r'spot-free',
+    r'\b100(?!\+)\s*(?:autoclave|cycles)',      # "100 autoclave cycles" / "100 cycles" without the plus
+    r'\b100\s*x\b',                             # "100X" (reads as magnification)
 ]
+# "100+ ... cycles" must say which setting it applies to
+REQUIRE_WITH = [(r'100\+', r'5-minute|5 min|on this setting')]
 
 
-def check_copy(text):
+def check_copy(text, context=None):
+    """Reject forbidden claims. `context` (e.g. the whole card or image copy) is used for the
+    "100+ cycles needs the 5-minute qualifier" rule; defaults to the text itself."""
     t = text.lower()
     for pat in FORBIDDEN:
         if re.search(pat, t):
             raise ValueError(f'forbidden/unsupported claim in copy: {pat!r} in {text!r}')
+    ctx = (context or text).lower()
+    for pat, need in REQUIRE_WITH:
+        if re.search(pat, t) and not re.search(need, ctx):
+            raise ValueError(f'claim {pat!r} needs a qualifier ({need!r}) in {text!r}')
     return text
 
 
@@ -115,10 +129,10 @@ class Overflow(Exception):
 
 
 def text_block(draw, xy, text, size, weight='regular', fill=NAVY_TEXT, max_w=1800, line_h=1.22,
-               align='left', display=False, max_lines=None, min_size=None, dry=False, tracking=0):
+               align='left', display=False, max_lines=None, min_size=None, dry=False, tracking=0, context=None):
     """Draw wrapped text with its top at xy. Shrinks (not below min_size) to respect max_lines.
     Returns (height, size_used, n_lines)."""
-    check_copy(text)
+    check_copy(text, context)
     size_used = size
     while True:
         f = font(size_used, weight, display)
@@ -147,8 +161,8 @@ def text_block(draw, xy, text, size, weight='regular', fill=NAVY_TEXT, max_w=180
     return height, size_used, len(lines)
 
 
-def text_line(draw, xy, text, size, weight='regular', fill=NAVY_TEXT, anchor='la', display=False):
-    check_copy(text)
+def text_line(draw, xy, text, size, weight='regular', fill=NAVY_TEXT, anchor='la', display=False, context=None):
+    check_copy(text, context)
     f = font(size, weight, display)
     draw.text(xy, text, font=f, fill=fill, anchor=anchor)
     return text_w(text, f)

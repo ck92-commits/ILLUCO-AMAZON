@@ -16,16 +16,13 @@ INTRO = ("ILLUCO UHD mirrors are built for one thing: an ultra high definition v
          "only 60-70% of available light; ILLUCO's front-surface dielectric coating on German optical glass reflects "
          "99%, so the image is over 40% brighter, sharp, true to color and free of the ghost images that cause "
          "visual fatigue. ")
-CARE = ("Care is fast: autoclave for just 5 minutes at 273°F (134°C), or 20 minutes at 250°F (121°C). Do not run "
-        "longer cycles or exceed 277°F (136°C), because extra heat strips the coating. On the 5-minute setting the "
-        "coating is rated for 100+ autoclave cycles, and the mirror stays usable after that. ")
+CARE = ("Care is fast: autoclave for just 5 minutes at 273°F (134°C), or 20 minutes at 250°F (121°C). Do not use "
+        "the standard 20-minute cycle at 273°F or any setting above 277°F (136°C): the extra heat strips the coating "
+        "and the mirror loses its high-definition view. On the 5-minute setting the coating is rated for 100+ "
+        "autoclave cycles, and the mirror stays usable after that. ")
 B_HD = ("ULTRA HIGH DEFINITION VIEW: ILLUCO's front-surface dielectric coating on German optical glass reflects 99% "
         "of light, versus 60-70% for standard dental mirrors. The image is over 40% brighter, sharp and true to "
         "color, with no ghost image, so fine detail is easy to see.")
-B_AUTO = ("5-MINUTE AUTOCLAVE, 100+ CYCLES: Sterilize in just 5 minutes at 273°F (134°C), faster than a standard "
-          "20-minute instrument cycle (or 20 minutes at 250°F / 121°C). Do not run longer cycles or exceed 277°F "
-          "(136°C); extra heat strips the coating. On the 5-minute setting the coating is rated for 100+ cycles, "
-          "and the mirror stays usable after that.")
 HANDLE = ("ERGONOMIC ANTI-ROTATION HANDLE: The textured, finger-indented handle stays steady in a light or firm "
           "grip, even with wet gloves. The Size 4 head uses a standard cone socket, so ILLUCO replacement heads "
           "thread straight on.")
@@ -58,10 +55,11 @@ def lead_case(bullet):
     return ' '.join(words) + ':' + rest
 
 
-B_AUTO = ("5-MINUTE AUTOCLAVE SAVES TIME: Ready again after just 5 minutes at 273°F (134°C), a faster turnaround than a "
-          "standard 20-minute instrument cycle (or 20 minutes at 250°F / 121°C). Longer cycles or more than 277°F "
-          "(136°C) strip the coating. On the 5-minute setting the coating is rated for 100+ cycles, and the mirror "
-          "stays usable after that.")
+B_AUTO = ("5-MINUTE AUTOCLAVE SAVES TIME: Sterilize in just 5 minutes at 273°F (134°C) instead of a standard "
+          "20-minute cycle, so mirrors are back in use sooner. Do not use the standard 20-minute cycle at 273°F or "
+          "any setting above 277°F (136°C): the extra heat strips the coating. The alternative is 20 minutes at "
+          "250°F (121°C). On the 5-minute setting the coating is rated for 100+ cycles, and the mirror stays usable "
+          "after that.")
 # names kept for older imports
 B_LOOK, B_FOG, COAT, STERIL = B_HD, B_AUTO, CARE, ''
 

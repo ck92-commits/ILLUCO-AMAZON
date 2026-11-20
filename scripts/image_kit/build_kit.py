@@ -114,34 +114,37 @@ REG = {
                      '"5 replacement heads - handles not included" callout.'),
     # 03 KEY BENEFIT -----------------------------------------------------------------------
     'kb_size4_lb': (lambda: D.key_benefit_size4('lb'), 'new (corrected redraw of ' + E + U['card_lb'] + ')', 'ready',
-                    'Card redrawn with corrected copy at >=56 px: removed "Stain-Resistant After Autoclaving - '
-                    'resists moisture buildup" and "Consistent, Spot-Free Performance" (moisture/fog implications); '
-                    'added "No Ghost Image". Do not reuse 71Ciw0nr7KL / 71fFYQpHu+L ("100 autoclave cycles", "40% '
-                    'clearer"), 71ycAyFx4CL / 71KqSGYiXfL ("prevents fogging") or 61-ZXUS96xL (unverified 1/4 lambda).'),
+                    'Card redrawn at >=56 px, led by "Ultra High Definition" (99% reflectance, true color, no ghost '
+                    'image), then Over 40% Brighter, Front-Surface Dielectric Coating, 5-Minute Autoclave, Ergonomic '
+                    'Anti-Rotation Design. Removed the original moisture / "spot-free" lines. Do not reuse '
+                    '71Ciw0nr7KL / 71fFYQpHu+L ("100 autoclave cycles", "40% clearer"), 71ycAyFx4CL / 71KqSGYiXfL '
+                    '("prevents fogging") or 61-ZXUS96xL (unverified 1/4 lambda).'),
     'kb_size4_db': (lambda: D.key_benefit_size4('db'), 'new (corrected redraw of ' + E + U['card_db'] + ')', 'ready',
-                    'Dark Blue version of the corrected card (same copy changes as Light Blue).'),
+                    'Dark Blue version of the same card (Ultra High Definition first, 5-Minute Autoclave added).'),
     'kb_ds_lb': (lambda: D.key_benefit_ds('lb'), 'new (corrected redraw of ' + E + U['dsdm01_lb'] + ')', 'ready',
-                 'Fixed "minimizing light" -> "minimizing light loss"; replaced "Consistent, Spot-Free Performance" '
-                 'with "No Ghost Image"; condensed to 4 items so body text is >=56 px (durability and handle are '
-                 'covered by slots 6-7).'),
+                 'Led by "Ultra High Definition" (99% on both faces); Dual-Sided Viewing; Front-Surface Dielectric '
+                 'Coating with "minimizing light" fixed to "minimizing light loss"; 5-Minute Autoclave. Replaced '
+                 '"Consistent, Spot-Free Performance"; 4 items so body text is >=56 px.'),
     'kb_ds_db': (lambda: D.key_benefit_ds('db'), 'new (corrected redraw of ' + E + U['dsdm01_db'] + ')', 'ready',
-                 'Same corrections as dsdm-01, on the Dark Blue base.'),
+                 'Same card as dsdm-01 corrected, on the Dark Blue base.'),
     'kb_grand_lb': (lambda: D.key_benefit_grand('lb'), 'new (corrected redraw of ' + E + U['grand01_lb'] + ')',
-                    'ready', 'Fixed "quandrant" -> "quadrant" and "minimizing light" -> "minimizing light loss"; '
-                    'condensed to 5 items at >=56 px ("Clinical Photography Ready" and "Ergonomic" dropped; handle '
-                    'covered in slot 6); added "No Ghost Image".'),
+                    'ready', 'Led by "Ultra High Definition"; "quandrant" -> "quadrant" and "minimizing light" -> '
+                    '"minimizing light loss"; Over 40% Brighter; 5-Minute Autoclave. "Clinical Photography Ready", '
+                    '"Durability" and "Ergonomic" dropped to keep >=56 px (handle covered in slot 6).'),
     'kb_grand_db': (lambda: D.key_benefit_grand('db'), 'new (corrected redraw of ' + E + U['grand01_db'] + ')',
-                    'ready', 'Same corrections as grand-01, on the Dark Blue base.'),
+                    'ready', 'Same card as grand-01 corrected, on the Dark Blue base.'),
     'kb_heads_ss': (lambda: D.key_benefit_heads(), 'new (corrected redraw of ' + E + U['card_heads'] + ')', 'ready',
-                    'Replaced "Universal Cone Socket Fit - compatible with most standard mirror handles" with "Cone '
-                    'Socket Fit - not for simple stem or European-thread handles"; replaced moisture / spot-free '
-                    'lines with "No Ghost Image". Do not reuse 71JgWcIxKeL ("prevents fogging") or 71zox6KeqwL '
-                    '("100 autoclave cycles", "40% clearer").'),
+                    'Led by "Ultra High Definition"; 5-Minute Autoclave added; "Universal Cone Socket Fit - '
+                    'compatible with most standard mirror handles" replaced by "Cone Socket Fit - not for simple '
+                    'stem or European-thread handles"; moisture / spot-free lines removed. Do not reuse 71JgWcIxKeL '
+                    '("prevents fogging") or 71zox6KeqwL ("100 autoclave cycles", "40% clearer").'),
     'kb_heads_ds': (lambda: D.key_benefit_ds_heads(), 'new (photo: ' + E + U['double_head'] + ')', 'ready',
-                    'No existing double-sided-head infographic; head only, no handles shown.'),
+                    'Headline "Ultra High Definition" (99% on both faces) + front-surface coating, no ghost image, '
+                    '40% brighter, 5-minute autoclave; head only, no handles shown.'),
     # 04 MAGNIFICATION / SIZE / BOTH FACES ---------------------------------------------------
     'mag': (lambda: D.magnification_guide(), 'new (view circles from ' + E + U['mag_art'] + ')', 'ready',
-            '1X vs 2X vs 3X: detail larger, smaller area, work closer to the tooth. Reuses ILLUCO\'s three view '
+            '"2X & 3X: see fine detail larger - most mouth mirrors are 1X": 2X/3X highlighted as premium, 1X as '
+            'standard; keeps the honest note (smaller area, work close to the tooth). Reuses ILLUCO\'s three view '
             'circles from its existing "Choose your magnification" art.'),
     'size_grand': (lambda: D.size_guide_grand(), 'new (photos: ' + E + U['single_head'] + ' ; ' + E +
                    U['grand_main_lb'] + ')', 'ready',
@@ -153,11 +156,13 @@ REG = {
     # 05 COMPARISON -----------------------------------------------------------------------
     'chart_a': (lambda: D.chart_family_a(), 'new (photos: ' + E + U['single_lb_main'] + ' ; ' + E + U['kit_lb_box'] +
                 ' ; ' + E + U['dsdm03_lb'] + ' ; ' + E + U['grand01_lb'] + ')', 'ready',
-                'Shared family-A chart: Single / 5-Pack Kit / Double-Sided / Grand x head size, faces, '
-                'magnifications, handles included, mirrors per pack, best for.'),
+                'Shared family-A chart headed "ILLUCO Ultra High Definition": Single / 5-Pack Kit / Double-Sided / '
+                'Grand x head size, faces, magnifications, handles included, mirrors per pack, autoclave (5 min at '
+                '273°F / 134°C), best for.'),
     'chart_b': (lambda: D.chart_family_b(), 'new (photos: ' + E + U['single_head'] + ' ; ' + E + U['double_head'] +
-                ')', 'ready', 'Shared family-B chart: single-sided vs double-sided heads (incl. thread, handles not '
-                'included).'),
+                ')', 'ready', 'Shared family-B chart headed "Ultra High Definition Heads": single- vs double-sided '
+                '(size, faces, magnification, thread, handles not included, pack, autoclave 5 min at 273°F / '
+                '134°C, best for).'),
     # 06 HANDLE / COMPATIBILITY -------------------------------------------------------------
     'handle_size4_lb': (lambda: D.handle_size4('lb'), 'new (photo: ' + E + U['single_lb_main'] + ', rotated)', 'ready',
                         'Anti-rotation ergonomic handle + cone socket callouts; notes it takes ILLUCO Size 4 heads.'),
@@ -179,13 +184,18 @@ REG = {
                   'Same compatibility message for the double-sided head.'),
     # 07 CARE -----------------------------------------------------------------------------
     'care': (lambda: D.care_card(), 'new', 'ready',
-             '273°F (134°C) 5 min or 250°F (121°C) 20 min; do not exceed 277°F (136°C); avoid abrasive wiping. '
-             'No cycle-count or fog claims.'),
+             'Hero: "5-MINUTE AUTOCLAVE - 273°F (134°C) for just 5 minutes", faster than a standard 20-minute '
+             'instrument cycle; "or 20 minutes at 250°F (121°C)"; "No 20-minute cycle at 273°F / Never above '
+             '277°F (136°C) - extra heat strips the high-definition coating"; avoid abrasive wiping; follow the '
+             'autoclave maker\'s instructions. No fog or water-repellent line. "100+ autoclave cycles" is not '
+             'shown pending the owner\'s direct confirmation (see README).'),
     # 08 APPLICATIONS / SPEC ----------------------------------------------------------------
     'life_lb': (lambda: D.lifestyle_lb(), 'new (photos: ' + E + U['life_typodont'] + ' ; ' + E + U['life_glove'] +
                 ' ; ' + E + U['life_tray'] + ')', 'ready',
-                'Real ILLUCO Light Blue mirror photos (typodont, gloved hand, instrument tray). The typodont and '
-                'glove photos come from the orphan listing B0G2DYRY7T - confirm they show the current product.'),
+                'Real ILLUCO Light Blue mirror photos (typodont, gloved hand, instrument tray) captioned "Ultra high '
+                'definition view", "Ergonomic anti-rotation grip", "5-minute autoclave at 273°F (134°C)". The '
+                'typodont and glove photos come from the orphan listing B0G2DYRY7T - confirm they show the current '
+                'product.'),
     'app_dsdm04': (lambda: D.applications_reuse('dsdm04'), E + U['dsdm04'], 'needs design review',
                    'ILLUCO "Professional Applications" reused as-is (resized 3000 -> 2000 px). The tiles are stock '
                    'photos; the mirrors shown are not ILLUCO instruments - replace with real clinical photos when '
