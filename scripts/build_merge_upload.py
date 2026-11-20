@@ -70,7 +70,7 @@ def new_row_copy(sku, color):
         return title, hl, b1, desc, kw
     # IDM-3CD41H double-sided heads
     title = "ILLUCO Double-Sided UHD Dental Mirror Heads, Size 4 (22mm), 5 Pack"
-    hl = "Ultra High Definition on Both Sides, Replacement Heads, Handles Not Included, Cone Socket, 1X, 5-Minute Autoclave, 100+ Cycles"
+    hl = "Ultra High Definition on Both Sides, Cone Socket, Handles Not Included, 1X, 5-Minute Autoclave, 100+ Cycles"
     b1 = ("ULTRA HIGH DEFINITION ON BOTH FACES: ILLUCO's front-surface dielectric coating on German optical glass "
           "reflects 99% of light on both sides, versus 60-70% for standard dental mirrors. The image is over 40% "
           "brighter, sharp and true to color, with no ghost image.")
@@ -95,7 +95,7 @@ def put(vals, flags=None, note=None):
 # ---- parents ----
 put({'A': PA, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TA, 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable',
      'G': 'ILLUCO UHD Dental Mirrors with Handles, 1X, 2X and 3X Magnifying, Size 4 and Grand Size 10',
-     'H': 'Ultra High Definition, 99% Reflectance, No Ghost Image, 5-Minute Autoclave, 100+ Cycles, Single, 5 Pack, Double-Sided and Grand',
+     'H': 'Ultra High Definition, 99% Reflectance, No Ghost Image, 5-Minute Autoclave, 100+ Cycles, Single, 5 Pack and Double-Sided',
      'AD': INTRO + ('Choose the format that fits your operatory: single Size 4 (22mm) mirrors or 5-pack kits in 1X, or 2X and 3X '
                     'magnifying for fine detail (most mouth mirrors stop at 1X); the Double-Sided Size 4 with 99% reflectance on both '
                     'faces; or the Grand Size 10 (34mm) for a 2.4x wider view. Every mirror comes on an ergonomic anti-rotation '
@@ -298,6 +298,41 @@ for r in range(8, row):
 pos = {t[f'A{r}'].value: r for r in range(8, row)}
 plan.sort(key=lambda p: pos.get(p['sku'].replace(' (INFERRED)', ''), 10 ** 6))
 print('row order:', ' | '.join(f"{t[f'A{r}'].value}" for r in range(8, row)))
+
+# ---- fixes for Amazon's upload review (owner screenshot, 11/20) ----
+# Item Highlight max 125 characters; Included Components short (the long lists were rejected); item thickness is
+# required on new listings (parents too); the new Double-Sided heads need package size and weight.
+YEL_NOTE = 'ILLUCO audit'
+def components(r):
+    size = str(t[f'BB{r}'].value or ''); n = int(float(t[f'AY{r}'].value or 0)); fam = 'A' if t[f'E{r}'].value == PA else 'B'
+    if 'Grand' in size:
+        return f'{n} Grand Mirrors and {n} Handles'
+    if 'Double-Sided' in size:
+        return f'{n} Double-Sided Mirrors and {n} Handles' if fam == 'A' else f'{n} Double-Sided Mirror Heads'
+    if fam == 'B':
+        return f'{n} Mirror Heads'
+    return '1 Mirror Head and 1 Handle' if n == 1 else f'{n} Mirror Heads and {n} Handles'
+THICK = {'A': ('0.4', 'Estimate: the handle is about 10 mm (0.4 in) at its thickest, judged from product photos. '
+                      'Measure one and correct if different.'),
+         'B': ('0.15', 'Estimate: a mirror head is about 4 mm (0.15 in) thick. Measure one and correct if different.')}
+for r in range(8, row):
+    is_parent = t[f'D{r}'].value == 'Parent'
+    fam = ('A' if t[f'A{r}'].value == PA else 'B') if is_parent else ('A' if t[f'E{r}'].value == PA else 'B')
+    if not is_parent:
+        t[f'BM{r}'] = components(r)
+        assert len(t[f'BM{r}'].value) <= 40, t[f'BM{r}'].value
+    assert len(t[f'H{r}'].value or '') <= 125, (t[f'A{r}'].value, len(t[f'H{r}'].value))
+    if str(t[f'C{r}'].value).startswith('Create'):
+        val, note = THICK[fam]
+        t[f'BV{r}'] = val; t[f'BW{r}'] = val; t[f'BX{r}'] = 'Inches'
+        t[f'BV{r}'].fill = YEL; t[f'BV{r}'].comment = Comment(note, YEL_NOTE)
+    if t[f'A{r}'].value == 'IDM-3CD41H':
+        for col, v in (('EO', '8.27'), ('EP', 'Inches'), ('EQ', '3.94'), ('ER', 'Inches'), ('ES', '1.38'), ('ET', 'Inches'),
+                       ('EU', '0.3'), ('EV', 'Pounds')):
+            t[f'{col}{r}'] = v
+        t[f'EO{r}'].comment = Comment('Estimate: same box size as the Double-Sided 5-pack kit (8.27 x 3.94 x 1.38 in) and about '
+                                      '0.3 lb (the single-sided heads list 3.2 oz). Measure the heads box and correct; FBA '
+                                      're-measures at check-in.', YEL_NOTE)
 
 from xlsx_thin import thin_rows
 thin_rows(wb)   # owner: every row at the default thin height

@@ -114,6 +114,19 @@ for r in rows:
         bad = [w for w in caps.findall(b) if w not in ('ILLUCO', 'UHD')]
         if bad:
             add('WARN', r, col, f'all-caps words: {bad[:4]}')
+    h = t[f'H{r}'].value or ''
+    if len(h) > 125:
+        add('ERROR', r, 'H', f'Item Highlight {len(h)} > 125 characters (Amazon rejects it)')
+    bm = t[f'BM{r}'].value or ''
+    if len(bm) > 50:
+        add('ERROR', r, 'BM', f'Included Components {len(bm)} characters: Amazon rejected 87+; keep it short')
+    if str(t[f'C{r}'].value).startswith('Create'):
+        if not t[f'BV{r}'].value or not t[f'BX{r}'].value:
+            add('ERROR', r, 'BV', 'item thickness and its unit are required on new listings')
+        if t[f'D{r}'].value == 'Child':
+            for col in ('EO', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV'):
+                if not t[f'{col}{r}'].value:
+                    add('ERROR', r, col, 'package size and weight (with units) are required on new listings')
     kw = t[f'AJ{r}'].value or ''
     if len(kw.encode()) > 249:
         add('ERROR', r, 'AJ', f'keywords {len(kw.encode())} bytes > 249')
