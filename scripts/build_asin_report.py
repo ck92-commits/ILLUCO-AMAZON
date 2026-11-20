@@ -445,25 +445,31 @@ def _style_block(ws, first_row, last_row, ncols, wrap=True):
 uc = wb.create_sheet('Upload Check', 3)
 uc.cell(1, 1, 'ILLUCO_Amazon_UPLOAD.xlsx - what it contains and the pre-upload check').font = Font(name=F, bold=True, size=12)
 rows_up = _csv('data/build/upload_rows.csv')
-sections = [('1 new parent', 'New parent listings (created)'), ('2 new child', 'New products (created)'),
-            ('3 existing child', 'Existing listings (moved into the families + new copy; price unchanged)'),
-            ('4 not re-parented', 'Not in the upload')]
+# same order as the upload: Parent A and its children, Parent B and its children
+sections = [('A', 'Parent A: ILLUCO UHD Dental Mirrors with Handles (IDM-HANDLE-FAMILY-PARENT) and its children'),
+            ('B', 'Parent B: ILLUCO UHD Dental Mirror Heads (IDM-HEADS-FAMILY-PARENT) and its children'),
+            ('-', 'Not in the upload')]
+TYPE = {'1 new parent': 'PARENT (new)', '2 new child': 'Child (new product)', '3 existing child': 'Child (existing listing)',
+        '4 not re-parented': 'Seller Support case'}
 r0 = 3
 for key, label in sections:
-    items = [x for x in rows_up if x['section'] == key]
+    items = [x for x in rows_up if x['family'] == key]
     uc.cell(r0, 1, f'{label}: {len(items)} rows').font = Font(name=F, bold=True, size=10)
     r0 += 1
-    for j, h in enumerate(['SKU', 'ASIN', 'Family', 'Size value', 'Color', 'Items', 'Action', 'Amazon price now', 'Price in upload', 'Note'], 1):
+    for j, h in enumerate(['Type', 'SKU', 'ASIN', 'Size value', 'Color', 'Items', 'Action', 'Amazon price now', 'Price in upload', 'Note'], 1):
         c = uc.cell(r0, j, h); c.font = HFONT; c.fill = HFILL
     for x in items:
         r0 += 1
-        vals = [x['sku'], x['asin'], x['family'], x['size'], x['color'], x['items'], x['action'], x['price_old'], x['price_new'], x['note']]
+        is_parent = x['section'] == '1 new parent'
+        vals = [TYPE[x['section']], x['sku'], x['asin'], x['size'], x['color'], x['items'], x['action'], x['price_old'], x['price_new'], x['note']]
         for j, v in enumerate(vals, 1):
-            c = uc.cell(r0, j, v); c.font = BODY; c.alignment = Alignment(wrap_text=True, vertical='top'); c.border = BOX
+            c = uc.cell(r0, j, v); c.font = Font(name=F, size=10, bold=is_parent); c.alignment = Alignment(wrap_text=True, vertical='top'); c.border = BOX
+            if is_parent:
+                c.fill = PatternFill(fill_type='solid', fgColor='DDEBF7')
+        if not is_parent:
+            uc.cell(r0, 2).alignment = Alignment(vertical='top', indent=2)
         if x['asin'].startswith('B0'):
-            link(uc.cell(r0, 2), dp(x['asin']))
-        if '(INFERRED)' in x['sku']:
-            uc.cell(r0, 1).fill = INFILL
+            link(uc.cell(r0, 3), dp(x['asin']))
     r0 += 2
 chk = _csv('data/build/upload_check.csv')
 uc.cell(r0, 1, f"Automated check against the template's own rules: {sum(1 for x in chk if x['level']=='ERROR')} errors, "
@@ -481,7 +487,7 @@ uc.cell(r0, 1, 'Only Amazon can check these (the processing report shows them af
 for k, txt in enumerate(['The live listings use product type PROFESSIONAL_HEALTHCARE (if a row says "product type mismatch", change column B for that row to the type shown on the Edit listing page)',
                          'The 7 new UPCs are registered to ILLUCO in GS1'], 1):
     uc.cell(r0 + k, 1, f'{k}. {txt}').font = BODY
-for col, wdt in zip('ABCDEFGHIJ', (22, 13, 7, 28, 11, 6, 30, 9, 9, 60)):
+for col, wdt in zip('ABCDEFGHIJ', (22, 30, 13, 28, 11, 6, 30, 12, 12, 60)):
     uc.column_dimensions[col].width = wdt
 
 # ---- Listing Copy ----
@@ -489,7 +495,12 @@ lc = wb.create_sheet('Listing Copy', 4)
 lhdr = ['ASIN', 'Family', 'Mag', 'Color', 'Current title (live)', 'NEW title', 'Chars', 'NEW Item Highlight', 'Bullet 1', 'Bullet 2',
         'Bullet 3', 'Bullet 4', 'Bullet 5', 'Description', 'Backend keywords', 'Model no.', 'SKU(s)', 'Price', 'New family / size value', 'Note']
 lrows = []
-for rr in _ROWS:
+def _lc_key(rr):   # same order as the upload: family A (5-packs, then singles), family B (heads), duplicate last
+    if rr['asin'] == 'B0GGDQ15DD':
+        return (9, 0, 0, 0)
+    sub = 0 if ('5' in rr['family'] and 'Pack' in rr['family'] and rr['new_family'] == 'A') else 1
+    return (0 if rr['new_family'] == 'A' else 1, sub, rr['mag'], 0 if rr['color'] == 'Light Blue' else 1)
+for rr in sorted(_ROWS, key=_lc_key):
     live = cat.get(rr['asin'], {})
     lrows.append([rr['asin'], rr['family'], f"{rr['mag']}X", rr['color'], live.get('title'), rr['title'], len(rr['title']), rr['highlight'],
                   *rr['bullets'], rr['description'], rr['keywords'], rr['model_suggested'],

@@ -248,6 +248,57 @@ for r in range(8, row):
     c = t[f'AB{r}']; c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
 print('images linked at', IMG_SHA[:7])
 
+# ---- order the rows parent -> its children (owner: "Parent A, its children, Parent B, its children") ----
+# Within a family: 5-packs, singles, Double-Sided, Grand (heads: single-sided, then double-sided); then 1X/2X/3X,
+# Light Blue before Dark Blue. Parent rows are bold on a light fill and child SKUs are indented (formatting only).
+import re as _re
+from openpyxl.styles import Font, Alignment
+SUB_ORDER = {'kit': 0, 'single': 1, 'ds': 2, 'grand': 3, 'heads': 0, 'ds_heads': 1}
+COLOR_ORDER = {'Light Blue': 0, 'Dark Blue': 1}
+def row_key(r):
+    sku = t[f'A{r}'].value
+    if t[f'D{r}'].value == 'Parent':
+        return (0 if sku == PA else 1, 0, 0, '', 0, '')
+    fam = 0 if t[f'E{r}'].value == PA else 1
+    size = str(t[f'BB{r}'].value or '')
+    items = int(float(t[f'AY{r}'].value or 0))
+    if 'Grand' in size:
+        sub = 'grand'
+    elif 'Double-Sided' in size:
+        sub = 'ds' if fam == 0 else 'ds_heads'
+    elif fam == 1:
+        sub = 'heads'
+    else:
+        sub = 'kit' if items == 5 else 'single'
+    m = _re.search(r'(\d)X$', size)
+    return (fam, 1, SUB_ORDER[sub], m.group(1) if m else '9', COLOR_ORDER.get(t[f'BA{r}'].value, 2), sku)
+order = sorted(range(8, row), key=row_key)
+maxc = t.max_column
+snap = [[(t.cell(r, c_).value, copy.copy(t.cell(r, c_)._style), copy.copy(t.cell(r, c_).comment) if t.cell(r, c_).comment else None)
+         for c_ in range(1, maxc + 1)] for r in order]
+for r in range(8, row):
+    for c_ in range(1, maxc + 1):
+        t.cell(r, c_).comment = None
+for i, cells in enumerate(snap):
+    r = 8 + i
+    for c_, (v, st, cm) in enumerate(cells, 1):
+        cell = t.cell(r, c_)
+        cell.value = v; cell._style = st; cell.comment = cm
+PARENT_FILL = PatternFill(fill_type='solid', fgColor='DDEBF7')
+for r in range(8, row):
+    if t[f'D{r}'].value == 'Parent':
+        for c_ in range(1, maxc + 1):
+            cell = t.cell(r, c_)
+            if not (cell.fill and cell.fill.fill_type and str(cell.fill.fgColor.rgb).endswith('FFFF00')):
+                cell.fill = PARENT_FILL
+            f_ = copy.copy(cell.font); f_.bold = True; cell.font = f_
+    else:
+        a_ = t[f'A{r}'].alignment
+        t[f'A{r}'].alignment = Alignment(horizontal='left', vertical=a_.vertical, indent=2)
+pos = {t[f'A{r}'].value: r for r in range(8, row)}
+plan.sort(key=lambda p: pos.get(p['sku'].replace(' (INFERRED)', ''), 10 ** 6))
+print('row order:', ' | '.join(f"{t[f'A{r}'].value}" for r in range(8, row)))
+
 from xlsx_thin import thin_rows
 thin_rows(wb)   # owner: every row at the default thin height
 wb.save(OUT)
