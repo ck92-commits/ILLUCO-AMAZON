@@ -41,12 +41,13 @@ lines = [
  ('', False),
  ('Key findings (updated with ILLUCO account data, Nov 20)', True),
  ('1. The fog / water-repellent promise fails: 1-star "really not anti-fog or water-resistant" (3X Dark Blue 5-pack) and FBA returns "not really anti-fog", "does not stay dry when water gets sprayed", "foggy lense".', False),
- ('2. The top coat wears fast: 1-star on B0GGDGRHRR "water shedding last for 1-2 sterilization cycles"; 20% NCX on that SKU. "100 autoclave cycles" is not supported.', False),
+ ('2. The coating gets cooked off: 1-star on B0GGDGRHRR "water shedding last for 1-2 sterilization cycles"; 20% NCX on that SKU. Sales team: customers run a standard 20-minute cycle instead of ILLUCO\'s 5 minutes at 273°F; on the 5-minute cycle the coating is rated for 100+ cycles.', False),
  ('3. The best seller (B0G2DYRY7T: 68 units, 16.8% conversion) is a standalone listing with its own 3.4 rating; B0GGDGRHRR had dropped out of its family.', False),
  ('4. The 5-pack gets the most traffic but converts at 1.3-8.3% per child (2.3% on the 861-session 1X Dark Blue) and is priced $10 above illuco.com.', False),
  ('5. Heads 1X is the top earner ($3,420, 17.4% conversion; half the units to business buyers) despite a 2.0 rating.', False),
  ('6. Sponsored Products Aug 1-Nov 20: $3,059 spend, $8,400 sales, 36.4% ACoS; the dermatoscope campaign spent $740 for 2 orders.', False),
- ('Fix: listings/ILLUCO_Dental_Mirrors_MERGE_UPLOAD.xlsx merges all mirrors (except photo mirrors) into two families, removes the contradicted claims and aligns prices with illuco.com.', False),
+ ('7. Sales team (Claudia): the coating is cooked off by standard 20-minute autoclave cycles because the 5-minute instructions are almost hidden; lead with High Definition, sell 2X / 3X as premium, make the 5-minute autoclave a time saver, say 100+ cycles.', False),
+ ('Fix: ILLUCO_Amazon_UPLOAD.xlsx (the only upload) merges all mirrors except photo mirrors into two families, rewrites the copy to the sales direction and aligns prices with illuco.com. Upload Check tab: 0 errors.', False),
  ('', False),
  ('How to read', True),
  ('Yellow cells with blue text are inputs. Paste Seller Central numbers there; CVR, ACoS and TACoS calculate automatically.', False),
@@ -60,7 +61,7 @@ base_ = len(lines) + 2
 s.cell(base_, 1, 'Links').font = Font(name=F, bold=True, size=10)
 for k, (txt, url) in enumerate([('ILLUCO Brand Store on Amazon', STORE), ('All ILLUCO USA listings (seller storefront)', SELLER_STOREFRONT),
                                  ('illuco.com dental mirrors', 'https://illuco.com/collections/dental-mirrors'),
-                                 ('Listing update sheet (GitHub)', GH + 'listings/Existing_Listings_Update_Sheet.xlsx'),
+                                 ('The upload file (GitHub)', GH + 'ILLUCO_Amazon_UPLOAD.xlsx'),
                                  ('Grand / Double-Sided upload file (GitHub)', GH + 'listings/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_READY.xlsx'),
                                  ('Drive image folder', 'https://drive.google.com/drive/folders/112-y6c3etIb17RGpJH-nvIgKgCBrRnYQ')], 1):
     link(s.cell(base_ + k, 1), url, txt, size=10)
@@ -75,14 +76,14 @@ COMPLAINTS = {
                          'front-surface mirrors" (3X Dark Blue); FBA returns "not really anti-fog", "does not stay dry when water gets sprayed - '
                          'the description said it does", "foggy lense". Main cause: fog / water-repellent claim. Conversion is weak (2-3% on the '
                          'highest-traffic children).',
-                         'Remove fog and 100-cycle claims (done in merge file); align price to illuco.com ($85/$115/$130); merge into one family; '
+                         'Lead with Ultra High Definition, sell 2X / 3X as premium, make the 5-minute autoclave and 100+ cycles prominent, fog secondary (upload file); align price to illuco.com ($85/$115/$130); merge into one family; '
                          'new images; ask supplier about coating durability.'),
  'Replacement Heads 5-Pack': ('2.0 stars, but the 1X sells best ($3,420, 17.4% conversion, half to business buyers). No complaint text available.',
                               'Title and bullets now state "Cone Socket, Handles Not Included"; compatibility image; new heads family with the '
                               'Double-Sided head; Amazon Business quantity pricing.'),
  'Single Mirror with Handle': ('Family 5.0, but 3X Dark Blue (B0GGDGRHRR) has a 1-star: "water shedding last for 1-2 sterilization cycles" and a 20% '
                                'NCX rate. Image 2 shows five mirrors on a 1-pack.',
-                               'Merge all singles into family A; replace image 2; remove fog/100-cycle claims; respond to the NCX flag; supplier QA on coating.'),
+                               'Merge all singles into family A; replace image 2; 5-minute autoclave message and bigger instruction card; respond to the NCX flag.'),
  'Dental Photo Mirror': ('No ratings; 20 sessions and 1 sale in the report period. Left as is (owner decision).',
                          'No change for now. Note: model number placeholder "IDMXXX" and price $165 vs $155 on illuco.com.'),
 }
@@ -348,7 +349,7 @@ for col in 'EFGHI':
 pp[f'G{tr}'].number_format = '$#,##0'; pp[f'I{tr}'].number_format = '$#,##0'
 pp[f'J{tr}'] = f'=IFERROR(G{tr}/I{tr},"")'; pp[f'J{tr}'].number_format = '0.0%'
 pp[f'K{tr}'] = f'=IFERROR(H{tr}/F{tr},"")'; pp[f'K{tr}'].number_format = '0.0%'
-pp.cell(tr + 1, 1, 'Source: CHECK-_ILLUCO_3.csv (SP campaign report). Full search-term audit: analysis/ppc_audit.md.').font = Font(name=F, size=8, italic=True)
+pp.cell(tr + 1, 1, 'Source: CHECK-_ILLUCO_3.csv (SP campaign report). Pauses, negatives and harvests: PPC Apply tab.').font = Font(name=F, size=8, italic=True)
 
 # ---------------- Creative plan ----------------
 cr = wb.create_sheet('Images A+ Video')
@@ -359,7 +360,7 @@ crs = [
  ['All mouth mirrors', 'Image 4', 'Magnification guide: 1X / 2X / 3X field of view + working distance; who each is for', 'Current "Choose your magnification" uses cartoon gums and no field-of-view guidance'],
  ['All mouth mirrors', 'Image 5', 'Size and fit: Size 4 = 22 mm head, cone socket thread, handle length', 'Missing'],
  ['All mouth mirrors', 'Image 6', 'Water-repellent demo: droplets beading off; honest "resists fog" wording', 'Missing'],
- ['All mouth mirrors', 'Image 7', 'Care and autoclave: 134°C/5 min or 121°C/20 min, rated 100 cycles, avoid abrasives', 'Text-only infographic today; text too small at mobile size'],
+ ['All mouth mirrors', 'Image 7', 'Care card led by the 5-minute autoclave at 273°F (134°C) as a time saver; warning that longer / 20-minute cycles strip the coating; 100+ cycles on the 5-minute setting', 'Today the instructions are tiny; over-autoclaving causes the bad reviews (sales team)'],
  ['All mouth mirrors', 'Image 8 (lifestyle)', 'Clinician with loupes + headlight (ILLUCO cross-sell) in a real operatory', 'Only the orphan 1X listing has a gloved-hand photo'],
  ['Heads', 'Image 2', 'Compatibility chart: cone socket YES / simple stem NO / EU thread NO', 'Missing - likely 1-star driver'],
  ['Photo mirror', 'Image 2', 'Dimension drawing WITH units (mm) for every shape', 'Current drawing has numbers without units'],
@@ -393,10 +394,10 @@ table(ex, ['Channel', 'Owner', 'What to run', 'Tracking', 'KPI'], exr, [30, 16, 
 ap = wb.create_sheet('Action Plan')
 apr = [
  ['Nov 20', 'Confirm 3 inferred SKUs, brand spelling, two heads price increases, claim wording', 'Cenk / sales team', 'What I Need tab', 'Not started'],
- ['Nov 20', 'Upload ILLUCO_Dental_Mirrors_MERGE_UPLOAD.xlsx (2 families, new copy, illuco.com prices)', 'Cenk', 'listings/', 'Not started'],
+ ['Nov 20', 'Upload ILLUCO_Amazon_UPLOAD.xlsx (2 families, new copy, illuco.com prices, new products)', 'Cenk', 'Upload Check tab', 'Not started'],
  ['Nov 20', 'Seller Support: merge B0GGDQ15DD into B0G2DYRY7T; re-classify dermatoscopes', 'Cenk', 'What I Need tab', 'Not started'],
- ['Nov 21', 'Upload the image kit to every child', 'Cenk / Design', 'image_kit/', 'Not started'],
- ['Nov 21', 'Apply negatives and harvests from the PPC audit (no budget change)', 'Cenk', 'analysis/ppc_audit.md', 'Not started'],
+ ['Nov 21', 'Upload the image kit to every child', 'Cenk / Design', 'Image Kit tab + zip', 'Not started'],
+ ['Nov 21', 'Apply negatives and harvests from the PPC audit (no budget change)', 'Cenk', 'PPC Apply tab', 'Not started'],
  ['Nov 21', 'Supplier: top-coat durability and test reports', 'Cenk', '', 'Not started'],
  ['Nov 21', 'Answer NCX flag; Vine for both family parents; Request a Review on all orders', 'Cenk', '', 'Not started'],
  ['Nov 24', 'Check processing report; confirm both families render on amazon.com', 'Cenk', '', 'Not started'],
@@ -423,6 +424,178 @@ for k, (what, src) in enumerate(RECEIVED, 1):
     dn.cell(rb + k, 2, 'Done').font = Font(name=F, size=9, color='008000', bold=True)
     dn.cell(rb + k, 3, what).font = BODY
     dn.cell(rb + k, 4, src).font = BODY
+
+# ================= consolidated tabs (one report instead of many files) =================
+import csv as _c2
+from existing_listing_content import ROWS as _ROWS, ATTRIBUTE_FIXES as _FIX
+from openpyxl.utils import get_column_letter as _gcl
+
+def _csv(path):
+    return list(_c2.DictReader(open(path, encoding='utf-8')))
+
+def _style_block(ws, first_row, last_row, ncols, wrap=True):
+    for r_ in range(first_row, last_row + 1):
+        for c_ in range(1, ncols + 1):
+            cell = ws.cell(r_, c_)
+            if cell.font is None or not cell.font.bold:
+                cell.font = BODY
+            cell.alignment = Alignment(wrap_text=wrap, vertical='top')
+
+# ---- Upload Check ----
+uc = wb.create_sheet('Upload Check', 3)
+uc.cell(1, 1, 'ILLUCO_Amazon_UPLOAD.xlsx - what it contains and the pre-upload check').font = Font(name=F, bold=True, size=12)
+rows_up = _csv('data/build/upload_rows.csv')
+sections = [('1 new parent', 'New parent listings (created)'), ('2 new child', 'New products (created)'),
+            ('3 existing child', 'Existing listings (moved into the families + new copy + illuco.com price)'),
+            ('4 not re-parented', 'Not in the upload')]
+r0 = 3
+for key, label in sections:
+    items = [x for x in rows_up if x['section'] == key]
+    uc.cell(r0, 1, f'{label}: {len(items)} rows').font = Font(name=F, bold=True, size=10)
+    r0 += 1
+    for j, h in enumerate(['SKU', 'ASIN', 'Family', 'Size value', 'Color', 'Items', 'Action', 'Old price', 'New price', 'Note'], 1):
+        c = uc.cell(r0, j, h); c.font = HFONT; c.fill = HFILL
+    for x in items:
+        r0 += 1
+        vals = [x['sku'], x['asin'], x['family'], x['size'], x['color'], x['items'], x['action'], x['price_old'], x['price_new'], x['note']]
+        for j, v in enumerate(vals, 1):
+            c = uc.cell(r0, j, v); c.font = BODY; c.alignment = Alignment(wrap_text=True, vertical='top'); c.border = BOX
+        if x['asin'].startswith('B0'):
+            link(uc.cell(r0, 2), dp(x['asin']))
+        if '(INFERRED)' in x['sku']:
+            uc.cell(r0, 1).fill = INFILL
+    r0 += 2
+chk = _csv('data/build/upload_check.csv')
+uc.cell(r0, 1, f"Automated check against the template's own rules: {sum(1 for x in chk if x['level']=='ERROR')} errors, "
+               f"{sum(1 for x in chk if x['level']=='WARN')} warnings (301 dropdown values, required fields, parent/child themes, "
+               "unique variations, text limits, UPC check digits, prices, image URLs)").font = Font(name=F, bold=True, size=10)
+r0 += 1
+for j, h in enumerate(['Level', 'Row', 'SKU', 'Column', 'Issue'], 1):
+    c = uc.cell(r0, j, h); c.font = HFONT; c.fill = HFILL
+for x in chk:
+    r0 += 1
+    for j, k in enumerate(['level', 'row', 'sku', 'column', 'issue'], 1):
+        c = uc.cell(r0, j, x[k]); c.font = BODY; c.border = BOX; c.alignment = Alignment(wrap_text=True, vertical='top')
+r0 += 2
+uc.cell(r0, 1, 'Only Amazon can check these (yellow cells in the upload):').font = Font(name=F, bold=True, size=10)
+for k, txt in enumerate(['3 inferred SKUs exist in your account (IDM2C43LB, IDM3C42NA, IDM3C43NA)',
+                         'The live listings use product type PROFESSIONAL_HEALTHCARE (if a row says "product type mismatch", change column B for that row to the type shown on the Edit listing page)',
+                         'Brand name "ILLUCO" matches your Brand Registry spelling',
+                         'The 7 new UPCs are registered to ILLUCO in GS1',
+                         'Heads 1X $60 -> $69 and 2X $90 -> $95 price increases are what you want (illuco.com prices)'], 1):
+    uc.cell(r0 + k, 1, f'{k}. {txt}').font = BODY
+for col, wdt in zip('ABCDEFGHIJ', (22, 13, 7, 28, 11, 6, 30, 9, 9, 60)):
+    uc.column_dimensions[col].width = wdt
+
+# ---- Listing Copy ----
+lc = wb.create_sheet('Listing Copy', 4)
+lhdr = ['ASIN', 'Family', 'Mag', 'Color', 'Current title (live)', 'NEW title', 'Chars', 'NEW Item Highlight', 'Bullet 1', 'Bullet 2',
+        'Bullet 3', 'Bullet 4', 'Bullet 5', 'Description', 'Backend keywords', 'Model no.', 'SKU(s)', 'New price', 'New family / size value', 'Note']
+lrows = []
+for rr in _ROWS:
+    live = cat.get(rr['asin'], {})
+    lrows.append([rr['asin'], rr['family'], f"{rr['mag']}X", rr['color'], live.get('title'), rr['title'], len(rr['title']), rr['highlight'],
+                  *rr['bullets'], rr['description'], rr['keywords'], rr['model_suggested'],
+                  ', '.join(k + (' (inferred)' if v == 'inferred' else '') for k, v in rr['skus']), rr['price_new'],
+                  ('Merge into B0G2DYRY7T (Seller Support)' if rr['asin'] == 'B0GGDQ15DD' else
+                   f"{'A - with handle' if rr['new_family'] == 'A' else 'B - heads'} / {rr['var_size']}"), rr['note']])
+table(lc, lhdr, lrows, [12, 18, 5, 10, 40, 40, 6, 40, 50, 50, 50, 50, 50, 60, 40, 15, 22, 8, 26, 40])
+for i in range(2, len(lrows) + 2):
+    link(lc[f'A{i}'], dp(lc[f'A{i}'].value)); lc[f'R{i}'].number_format = '$#,##0.00'
+n_ = len(lrows) + 3
+lc.cell(n_, 1, 'Attribute fixes (not in the upload; Seller Support or Edit listing)').font = Font(name=F, bold=True)
+for k, x in enumerate(_FIX, 1):
+    for j, v in enumerate(x, 1):
+        c = lc.cell(n_ + k, j, v); c.font = BODY; c.alignment = Alignment(wrap_text=True, vertical='top')
+lc.cell(n_ + len(_FIX) + 2, 1, 'New Grand / Double-Sided / heads copy is in the upload file itself (rows 10-16).').font = Font(name=F, size=8, italic=True)
+
+# ---- Sales Direction ----
+sd = wb.create_sheet('Sales Direction', 5)
+sd.cell(1, 1, 'Sales direction (Claudia, Nov 20) and where it is applied - use as the brief for Ashley').font = Font(name=F, bold=True, size=12)
+sdr = [
+ ['Lead with HIGH DEFINITION; fog resistance is secondary', 'Every Item Highlight starts "Ultra High Definition"; bullet 1 = "Ultra High Definition View"; fog / anti-fog removed from titles and highlights', 'Upload: all rows; image kit slot 3'],
+ ['2X and 3X are the premium, new feature; 1X is basic', '2X/3X titles start "ILLUCO UHD 2X Magnifying ..."; bullet 2 = "2X Magnification, a Premium Upgrade: most mouth mirrors are 1X"; parent titles say "1X, 2X and 3X Magnifying"', 'Upload: titles + bullet 2; image kit slot 4'],
+ ['5-minute autoclave at 273°F is a time saver and must be prominent', 'Bullet "5-Minute Autoclave Saves Time" on every product; description care paragraph; image kit care card leads with 5 minutes', 'Upload: bullet 3; image kit slot 7'],
+ ['Standard 20-minute cycles cook off the coating (cause of the bad reviews)', 'Copy says longer cycles or more than 277°F (136°C) strip the coating; keep 20 min at 250°F (121°C) as the alternative', 'Upload: bullet 3 + description'],
+ ['"100+ autoclave cycles", not "100"; the mirror still works after the coating life', '"On the 5-minute setting the coating is rated for 100+ cycles, and the mirror stays usable after that"; highlight "100+ Cycles"', 'Upload: bullet 3, highlight, description'],
+ ['Instructions are almost hidden', 'Recommended: bigger in-box instruction card; upload the care card PDF as "Instructions for Use" (column IK of the template) so it shows under Product guides and documents; A+ module on the 5-minute autoclave', 'Next step (needs a hosted PDF)'],
+ ['Interact with customers', 'Amazon removed contacting customers about critical reviews (Customer Reviews page notice); respond when customers message first, answer on social media, and fix the cause through the instruction card and copy', 'Process'],
+]
+table(sd, ['What sales said', 'How it is applied', 'Where'], sdr, [48, 90, 34], start=3)
+
+# ---- PPC Apply (pauses, negatives, harvest) ----
+pa = wb.create_sheet('PPC Apply')
+pa.cell(1, 1, 'Apply in Campaign manager - no budget changes. Tick Done as you go.').font = Font(name=F, bold=True, size=12)
+PAUSES = [('BRAND-KW', 'dental', 'Phrase', '$191 spend, 2 orders; 92% went to handpieces, loupes, drills, materials'),
+          ('BRAND-KW', 'dental tools home use', 'Broad', '$168 spend, 2 orders; consumer intent'),
+          ('BRAND-KW', 'dental hygienist must haves', 'Exact', '$16 spend, 0 orders'),
+          ('HEADS-KW', 'dental mirror', 'Broad', '$8.55, 0 orders (the converting PHRASE keyword stays on)'),
+          ('DERM', 'dermatoscope otoscopes & ophthalmoscopes', 'Broad', 'Off-target, 0 orders'),
+          ('DERM', 'dermatoscope iphone', 'any', 'Phone-attachment search'),
+          ('DERM', 'smartphone dermatoscope', 'any', 'Phone-attachment search'),
+          ('DERM', 'dermatoscope for smart phone', 'any', 'Phone-attachment search'),
+          ('DERM', 'dermatoscope attachment for iphone', 'any', 'Phone-attachment search')]
+pa.cell(3, 1, '1. PAUSE these keywords (ad group > Targeting tab > switch off)').font = Font(name=F, bold=True)
+for j, h in enumerate(['Done', 'Campaign', 'Keyword', 'Match', 'Why'], 1):
+    c = pa.cell(4, j, h); c.font = HFONT; c.fill = HFILL
+for i, (cmp, kw_, mt, why) in enumerate(PAUSES, 5):
+    for j, v in enumerate(['', cmp, kw_, mt, why], 1):
+        c = pa.cell(i, j, v); c.font = BODY; c.border = BOX
+    pa.cell(i, 1).fill = INFILL
+r_ = 5 + len(PAUSES) + 1
+pa.cell(r_, 1, '2. ADD NEGATIVES (ad group > Negative targeting > Add negative keywords / products). Copy a block from column C and paste it.').font = Font(name=F, bold=True)
+negs = _csv('analysis/negative_keywords.csv')
+SHORT = {'VIC-M-SP-Dental Mirror Branded and Product KW': 'BRAND-KW',
+         'VIC-BOF | SP | Dental Mirror HEAD 1x 2x 3x | SP Exact Target + Prod Exp + Brand Exp': 'HEADS-KW',
+         'VIC-M- SP | Dental Mirror Category | Dental Mirror | All Single Multipack': 'CATEGORY',
+         'VIC-SP-AUTO-DTMR-1PK-ALL': 'AUTO-1PK', 'VIC-SP-AUTO-MRHD-5PK-ALL': 'AUTO-HEADS', 'SP-Dermatoscope-KWs-All': 'DERM'}
+from collections import OrderedDict as _OD
+grp = _OD()
+for x in negs:
+    grp.setdefault((SHORT[x['campaign']], x['campaign'], x['ad_group'], x['match_type']), []).append(x)
+r_ += 1
+for (short, cmp, ag, mt), items in grp.items():
+    r_ += 1
+    spent = sum(float(x['spend_to_date'] or 0) for x in items)
+    c = pa.cell(r_, 1, 'Done?'); c.fill = INFILL; c.font = BODY
+    pa.cell(r_, 2, f'{short} | {mt} | {len(items)} terms | ${spent:,.2f} spent, 0 orders').font = Font(name=F, bold=True, size=9)
+    pa.cell(r_ + 1, 2, f'Campaign: {cmp}').font = Font(name=F, size=8, color='595959')
+    pa.cell(r_ + 2, 2, f'Ad group: {ag}').font = Font(name=F, size=8, color='595959')
+    for k, x in enumerate(items):
+        pa.cell(r_ + 1 + k, 3, x['keyword']).font = Font(name=F, size=10)
+    r_ += max(len(items), 2) + 1
+r_ += 1
+pa.cell(r_, 1, '3. MOVE PROVEN SEARCHES TO EXACT (harvest)').font = Font(name=F, bold=True)
+hv = _csv('analysis/harvest_keywords.csv')
+hcols = [k for k in hv[0].keys()] if hv else []
+for j, h in enumerate(hcols, 1):
+    c = pa.cell(r_ + 1, j, h); c.font = HFONT; c.fill = HFILL
+for i, x in enumerate(hv, r_ + 2):
+    for j, h in enumerate(hcols, 1):
+        c = pa.cell(i, j, x[h]); c.font = BODY; c.alignment = Alignment(wrap_text=True, vertical='top')
+for col, wdt in zip('ABCDEFGHI', (8, 60, 34, 10, 50, 12, 12, 26, 40)):
+    pa.column_dimensions[col].width = wdt
+
+# ---- Search Query Performance appended to Keywords ----
+sq = _csv('analysis/sqp_top_queries.csv')
+base_ = kw.max_row + 3
+kw.cell(base_, 1, 'Search Query Performance (Brand Analytics) - top queries').font = Font(name=F, bold=True)
+qcols = list(sq[0].keys()) if sq else []
+for j, h in enumerate(qcols, 1):
+    c = kw.cell(base_ + 1, j, h); c.font = HFONT; c.fill = HFILL; c.alignment = Alignment(wrap_text=True)
+for i, x in enumerate(sq[:60], base_ + 2):
+    for j, h in enumerate(qcols, 1):
+        c = kw.cell(i, j, x[h]); c.font = BODY
+
+# ---- Image Kit ----
+ik = wb.create_sheet('Image Kit')
+man = _csv('image_kit/manifest.csv')
+mcols = list(man[0].keys())
+table(ik, mcols, [[x[k] for k in mcols] for x in man], [10, 26, 40, 18, 46, 40, 16, 70])
+
+order = ['Summary', 'What I Need', 'ASIN Report', 'Upload Check', 'Listing Copy', 'Sales Direction', 'Review Analysis',
+         'Competitors', 'Keywords', 'PPC Plan', 'PPC Apply', 'Images A+ Video', 'Image Kit', 'External Traffic', 'Action Plan']
+wb._sheets = [wb[n] for n in order]
 
 wb.save(OUT)
 print('saved')

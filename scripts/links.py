@@ -33,15 +33,17 @@ def link(cell, url, text=None, size=9):
 # What is still needed (updated 2026-11-20 after ILLUCO shared the research folder).
 # (type, what, where in the tool, link, why, needed by)
 NEEDS = [
- ('Upload', 'Upload ILLUCO_Dental_Mirrors_MERGE_UPLOAD.xlsx (merges all mirrors into 2 families, new copy, illuco.com prices)', 'Catalog > Add Products via Upload', SC + '/product-search/bulk', 'The merge only happens through this upload', 'Today'),
+ ('Upload', 'Upload ILLUCO_Amazon_UPLOAD.xlsx - the only upload (merges all mirrors into 2 families, new copy, illuco.com prices, new Grand / Double-Sided / heads)', 'Catalog > Add Products via Upload', SC + '/product-search/bulk', 'The merge only happens through this upload', 'Today'),
  ('Confirm', 'Check 3 SKUs I inferred (IDM2C43LB, IDM3C42NA, IDM3C43NA) exist for B0F857HKBG, B0FCHH2SQB, B0FCJY3H9H - yellow cells in column A', 'Catalog > Manage All Inventory', SC + '/myinventory/inventory', 'A wrong SKU makes that row fail', 'Before upload'),
  ('Confirm', 'Brand name spelling for the 2 new parents: file uses "ILLUCO" (live listings show "Illuco")', 'Brand Registry', 'https://brandregistry.amazon.com', 'Parent and children must carry the same brand', 'Before upload'),
  ('Approve', 'Two price INCREASES to match illuco.com: heads 1X $60 -> $69 and heads 2X $90 -> $95 (yellow DI cells). Heads 1X is your top seller at 17.4% conversion', 'You', '', 'Keep, or revert those two cells', 'Before upload'),
- ('Approve', 'Claim wording (sales team): removed "Fog-Resistant", "anti fog" and "100 autoclave cycles"; added an honest care line', 'Sales team', '', 'Reviews and returns contradict the old claims', 'Before upload'),
+ ('Approve', 'Claudia OK on the new copy: Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles (see Sales Direction tab)', 'Sales team', '', 'Copy follows her direction from Nov 20', 'Before upload'),
+ ('Design', 'Bigger in-box instruction card that leads with the 5-minute autoclave at 273°F (134°C)', 'Design team (Ashley)', '', 'Over-autoclaving strips the coating - the cause of the bad reviews', 'This week'),
+ ('Optional', 'Host the care card as a PDF and paste its URL in column IK (Instructions for Use) of the upload so it shows under Product guides and documents', 'Shopify > Content > Files', '', 'Makes the care instructions visible on the listing', 'This week'),
  ('Case', 'Seller Support case: merge duplicate ASIN B0GGDQ15DD into B0G2DYRY7T (both are the 1X Light Blue single mirror)', 'Help > Get support > Products, listings or inventory', SC + '/help/hub/support', 'Combines the two review histories; no single listings left', 'After upload'),
  ('Confirm', 'B0G2DYRY7T ships the current mirror (its photos show a black shank) - if not, tell me and I will swap the 1X Light Blue child', 'You / warehouse', 'https://www.amazon.com/dp/B0G2DYRY7T', 'It becomes the 1X Light Blue child of the new family', 'Before upload'),
- ('Images', 'Upload the image kit to each child (or host on Shopify Files and send URLs)', 'Catalog > Manage All Inventory > Edit > Images', SC + '/myinventory/inventory', 'Replaces the 5-mirror image on 1-packs and adds missing images', 'After upload'),
- ('Supplier', 'Ask the supplier about the water-repellent top coat: a reviewer says it lasts 1-2 sterilization cycles; request test reports for 99% reflectance and autoclave durability', 'Product / supplier', '', 'Root cause of the 1-star reviews and fog returns', 'This week'),
+ ('Images', 'Upload the image kit to each child, starting with the Double-Sided Dark Blue main image (the only warning in the upload check)', 'Catalog > Manage All Inventory > Edit > Images', SC + '/myinventory/inventory', 'Replaces the 5-mirror image on 1-packs and adds missing images', 'After upload'),
+ ('Supplier', 'Keep on file the supplier test basis for 99% reflectance and 100+ cycles at 5 min / 273°F', 'Product / supplier', '', 'Backs the claims now in the copy', 'This week'),
  ('Respond', 'Answer the NCX flag on IDM-2C41DB-3X-FBA (B0GGDGRHRR, 20% "performance or quality not adequate")', 'Performance > Voice of the Customer', SC + '/voice-of-the-customer', 'CX Health shows "Very poor" for that SKU', 'This week'),
  ('Optional', 'Sponsored Products "Advertised product" report (60 days)', 'Advertising console > Measurement & Reporting', 'https://advertising.amazon.com/cm/campaigns', 'Splits ad spend and sales by ASIN for the report', 'This week'),
  ('Optional', 'Any other 1-3 star review text (I have the 3X Dark Blue ones)', 'Brand Analytics > Customer Reviews', SC + '/brand-analytics/dashboard', 'Confirms there is no second complaint theme', 'This week'),
@@ -57,6 +59,7 @@ RECEIVED = [
  ('Account Health (healthy, rating 204)', 'Screenshot'),
  ('Two 1-star review texts', 'Screenshots'),
  ('Model numbers and prices for every variant', 'illuco.com public product feed'),
+ ('Sales direction for the copy (Claudia)', 'management-meeting, Nov 20'),
  ('Double-Sided head: 5-pack, cone socket, $139, main image', 'illuco.com'),
  ('Decisions: you are the approver; merge all singles; photo mirror as is; align prices unless promotion; coupon and PPC budget on hold', 'Your message 11/20'),
 ]

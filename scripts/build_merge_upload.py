@@ -8,7 +8,7 @@ import sys, copy, csv, openpyxl
 from openpyxl.styles import PatternFill
 from openpyxl.comments import Comment
 sys.path.insert(0, 'scripts')
-from existing_listing_content import ROWS, B_LOOK, B_FOG, HANDLE, INTRO, STERIL, COAT
+from existing_listing_content import ROWS, B_HD, B_AUTO, HANDLE, INTRO, CARE, KW_CORE, lead_case
 
 TPL, READY, OUT, PLAN = sys.argv[1:5]
 PT, BRAND = 'PROFESSIONAL_HEALTHCARE', 'ILLUCO'
@@ -28,21 +28,56 @@ rd = openpyxl.load_workbook(READY)['Template']
 style_row = 14
 plan = []
 
-def fix_copy(v):
-    """Remove the fog / 100-cycle claims that reviews and returns contradict."""
-    if not isinstance(v, str):
-        return v
-    v = v.replace(', Fog-Resistant, Autoclave-Rated 100 Cycles', ', Autoclavable')
-    v = v.replace('99% Reflectance, Fog-Resistant, Autoclave-Rated 100 Cycles, No Ghost Image', '99% Reflectance, No Ghost Image, Autoclavable')
-    for a in ['The fog-resistant, water-repellent surface withstands 100 autoclave cycles. ',
-              'A water-repellent coating keeps the view clear mid-procedure, and the mirror withstands 100 autoclave cycles. ',
-              'A water-repellent coating keeps the view clear, and the mirror withstands 100 autoclave cycles. ',
-              'A water-repellent coating keeps the view clear, and the heads are rated for 100 autoclave cycles. ']:
-        v = v.replace(a, COAT)
-    if v.startswith('FOG-RESISTANT, AUTOCLAVE-RATED FOR 100 CYCLES') or v.startswith('AUTOCLAVE-RATED FOR 100 CYCLES'):
-        v = B_FOG
-    v = v.replace(' anti fog', '')
-    return v
+GRAND_MID = ("The ILLUCO Grand Dental Mirror puts that clarity on a Size 10 (34mm) head, giving a 2.4x wider field "
+             "of view than a standard Size 4 (22mm) mirror. View an entire quadrant, multi-unit restorations or "
+             "full-arch alignment in a single glance and spend less time repositioning. The wide 34mm surface also "
+             "distributes pressure evenly for comfortable cheek and tongue retraction and bounces more overhead light "
+             "into deep posterior regions. ")
+DS_MID = ("The ILLUCO Double-Sided Dental Mirror carries that clarity on both faces, so you can retract tissue with one "
+          "side and view with the other without flipping the mirror mid-procedure. At Size 4 (22mm) with a true 1X "
+          "view, it suits routine exams, restorative checks, indirect vision and intraoral photography. ")
+HEAD_MID = ("These replacement heads carry that coating on both faces, so you can retract tissue with one side and view "
+            "with the other without flipping the mirror mid-procedure. Size 4 (22mm), true 1X view; the cone socket "
+            "thread fits standard cone socket mirror handles, including ILLUCO ergonomic handles (sold separately). ")
+
+
+def new_row_copy(sku, color):
+    """Title / highlight / bullet 1 / autoclave bullet / description / keywords for the 7 new SKUs."""
+    if sku.startswith('IDM-2C10'):
+        mag = 2 if sku.startswith('IDM-2C102') else 1
+        title = (f"ILLUCO Grand UHD Dental Mirror, Size 10 (34mm), 1X, 2 Pack, {color}" if mag == 1 else
+                 f"ILLUCO Grand UHD 2X Magnifying Dental Mirror, Size 10, 2 Pack, {color}")
+        hl = ("Ultra High Definition, With Handles, 2.4X Wider View, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles"
+              if mag == 1 else
+              "Ultra High Definition, 34mm Head, With Handles, 2.4X Wider View, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles")
+        magline = ("This is the 1X version for a life-size view and clean quadrant photos. " if mag == 1 else
+                   "This is the 2X magnifying version for fine detail; most mouth mirrors stop at 1X. ")
+        desc = (INTRO + GRAND_MID + magline + CARE + "Each kit includes 2 Grand Size 10 mirror heads, 2 ergonomic "
+                f"anti-rotation handles ({color}) and an autoclave sterilization and care guide.")
+        kw = ("large mouth mirror oversize jumbo wide view dentist orthodontist oral surgery retractor intraoral "
+              "photography quadrant tooth teeth oral exam hygienist uhd " + KW_CORE.replace(' 2x 3x', ' 2x'))
+        return title, hl, B_HD, desc, kw
+    if sku.startswith('IDM-2CD41'):
+        title = f"ILLUCO Double-Sided UHD Dental Mirror, Size 4 (22mm), 5 Pack, {color}"
+        hl = "Ultra High Definition on Both Sides, With Handles, 1X, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles"
+        b1 = ("ULTRA HIGH DEFINITION ON BOTH FACES: ILLUCO's front-surface dielectric coating on German optical glass "
+              "reflects 99% of light on both sides, versus 60-70% for standard dental mirrors. The image is over 40% "
+              "brighter, sharp and true to color, with no ghost image.")
+        desc = (INTRO + DS_MID + CARE + "Each pack includes 5 double-sided Size 4 mirror heads, 5 ergonomic "
+                f"anti-rotation handles ({color}) and an autoclave sterilization and care guide.")
+        kw = ("two sided mouth mirror dual dentist tools dental instruments tooth teeth oral exam intraoral photography "
+              "hygienist cone socket number 4 professional dentist mirror hd high definition uhd quick autoclave")
+        return title, hl, b1, desc, kw
+    # IDM-3CD41H double-sided heads
+    title = "ILLUCO Double-Sided UHD Dental Mirror Heads, Size 4 (22mm), 5 Pack"
+    hl = "Ultra High Definition on Both Sides, Replacement Heads, Handles Not Included, Cone Socket, 1X, 5-Minute Autoclave, 100+ Cycles"
+    b1 = ("ULTRA HIGH DEFINITION ON BOTH FACES: ILLUCO's front-surface dielectric coating on German optical glass "
+          "reflects 99% of light on both sides, versus 60-70% for standard dental mirrors. The image is over 40% "
+          "brighter, sharp and true to color, with no ghost image.")
+    desc = INTRO + HEAD_MID + CARE + "Each pack includes 5 double-sided Size 4 mirror heads. Handles are not included."
+    kw = ("mouth mirror heads replacement refill tops screw on two sided dual dentist dental instruments tooth teeth oral "
+          "exam hygienist number 4 professional hd high definition uhd quick autoclave")
+    return title, hl, b1, desc, kw
 
 row = 8
 def put(vals, flags=None, note=None):
@@ -59,29 +94,30 @@ def put(vals, flags=None, note=None):
 
 # ---- parents ----
 put({'A': PA, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TA, 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable',
-     'G': 'ILLUCO UHD Dental Mirrors with Handles, Size 4 and Grand Size 10',
-     'H': '99% Reflectance, Front Surface, No Ghost Image, Single, 5 Pack, Double-Sided and Grand, Autoclavable',
-     'AD': INTRO + ('Choose the format that fits your operatory: single Size 4 (22mm) mirrors, 5-pack kits in 1X, 2X and 3X, '
-                    'the Double-Sided Size 4 with 99% reflectance on both faces, or the Grand Size 10 (34mm) for a 2.4x wider view. '
-                    'Every mirror comes on an ergonomic anti-rotation handle in Light Blue or Dark Blue. ' + COAT + STERIL),
-     'AE': B_LOOK,
-     'AF': ('CHOOSE YOUR MIRROR: Single or 5-pack Size 4 (22mm) in 1X, 2X or 3X; Double-Sided Size 4 with 99% on both faces; '
-            'or Grand Size 10 (34mm) for 2.4x the viewing area. Light Blue or Dark Blue handles.'),
-     'AG': HANDLE, 'AH': B_FOG,
+     'G': 'ILLUCO UHD Dental Mirrors with Handles, 1X, 2X and 3X Magnifying, Size 4 and Grand Size 10',
+     'H': 'Ultra High Definition, 99% Reflectance, No Ghost Image, 5-Minute Autoclave, 100+ Cycles, Single, 5 Pack, Double-Sided and Grand',
+     'AD': INTRO + ('Choose the format that fits your operatory: single Size 4 (22mm) mirrors or 5-pack kits in 1X, or 2X and 3X '
+                    'magnifying for fine detail (most mouth mirrors stop at 1X); the Double-Sided Size 4 with 99% reflectance on both '
+                    'faces; or the Grand Size 10 (34mm) for a 2.4x wider view. Every mirror comes on an ergonomic anti-rotation '
+                    'handle in Light Blue or Dark Blue. ' + CARE),
+     'AE': B_HD,
+     'AF': ('2X AND 3X MAGNIFICATION, OR TRUE 1X: Most mouth mirrors are 1X. Choose ILLUCO 2X or 3X to see margins, caries and '
+            'calculus larger, or 1X for a life-size view. Also Double-Sided Size 4 and Grand Size 10 (34mm). Light Blue or Dark Blue handles.'),
+     'AG': B_AUTO, 'AH': HANDLE,
      'AI': 'BUILT FOR CLINICIANS: Made for general dentists, hygienists, orthodontists, oral surgeons and dental students who want a brighter, ghost-free view.',
-     'AJ': 'mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist orthodontist front surface number 4 size 10 large double sided professional hd'})
+     'AJ': 'mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist orthodontist front surface number 4 size 10 large double sided professional ' + KW_CORE})
 put({'A': PB, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TB, 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable',
-     'G': 'ILLUCO UHD Dental Mirror Heads, Size 4 (22mm), Cone Socket, 5 Pack',
-     'H': 'Replacement Heads, Handles Not Included, Single-Sided or Double-Sided, 1X/2X/3X, 99% Reflectance, Autoclavable',
+     'G': 'ILLUCO UHD Dental Mirror Heads, 1X, 2X and 3X Magnifying, Size 4 (22mm), Cone Socket, 5 Pack',
+     'H': 'Ultra High Definition, Replacement Heads, Handles Not Included, Single-Sided or Double-Sided, 5-Minute Autoclave, 100+ Cycles',
      'AD': INTRO + ('These Size 4 (22mm) replacement heads thread onto standard cone socket mirror handles, including ILLUCO ergonomic handles '
-                    '(sold separately). Choose single-sided heads in 1X, 2X or 3X, or Double-Sided heads with 99% reflectance on both faces. '
-                    + COAT + STERIL + ' Each pack includes 5 heads.'),
-     'AE': B_LOOK,
+                    '(sold separately). Choose single-sided heads in 1X, or 2X and 3X magnifying for fine detail, or Double-Sided heads with '
+                    '99% reflectance on both faces. ' + CARE + 'Each pack includes 5 heads.'),
+     'AE': B_HD,
      'AF': 'CONE SOCKET FIT, HANDLES NOT INCLUDED: Threads onto standard cone socket mirror handles, including ILLUCO ergonomic anti-rotation handles. Not for simple stem or European-thread handles.',
-     'AG': 'SINGLE-SIDED OR DOUBLE-SIDED: Single-sided heads in 1X, 2X or 3X magnification, or Double-Sided 1X heads with the same 99% coating on both faces.',
-     'AH': B_FOG,
+     'AG': 'SINGLE-SIDED IN 1X, 2X OR 3X, OR DOUBLE-SIDED: Most mouth mirrors are 1X; ILLUCO 2X and 3X show fine detail larger. Double-Sided 1X heads carry the same 99% coating on both faces.',
+     'AH': B_AUTO,
      'AI': '5 REPLACEMENT HEADS PER PACK: Restock every operatory with the same bright, ghost-free view.',
-     'AJ': 'mouth mirror heads replacement refill tops screw on cone socket dentist dental instruments tooth teeth oral exam intraoral hygienist front surface number 4 professional double sided'})
+     'AJ': 'mouth mirror heads replacement refill tops screw on cone socket dentist dental instruments tooth teeth oral exam hygienist number 4 professional double sided ' + KW_CORE})
 plan += [dict(section='1 new parent', sku=PA, asin='(new)', family='A', size='', color='', items='', action=CREATE, price_old='', price_new='', note='Family A parent'),
          dict(section='1 new parent', sku=PB, asin='(new)', family='B', size='', color='', items='', action=CREATE, price_old='', price_new='', note='Family B parent')]
 
@@ -97,13 +133,15 @@ for r in range(9, 16):
         tc = t.cell(row, c.column)
         if c.has_style:
             tc._style = copy.copy(c._style)
-        tc.value = fix_copy(c.value)
+        tc.value = c.value
         if c.comment:
             tc.comment = Comment(c.comment.text, 'ILLUCO audit')
     t[f'C{row}'] = CREATE; t[f'D{row}'] = 'Child'
     t[f'E{row}'] = PA if fam == 'A' else PB
     t[f'F{row}'] = TA if fam == 'A' else TB
     t[f'BB{row}'] = size
+    title, hl, b1, desc, kw = new_row_copy(sku, t[f'BA{row}'].value)
+    t[f'G{row}'] = title; t[f'H{row}'] = hl; t[f'AE{row}'] = b1; t[f'AH{row}'] = B_AUTO; t[f'AD{row}'] = desc; t[f'AJ{row}'] = kw
     if sku == 'IDM-3CD41H':
         t[f'T{row}'] = SHOP + 'double-head_7873821b-dd72-4a9a-8cea-7147a90c92c9.jpg'
         t[f'T{row}'].fill = PatternFill(fill_type=None); t[f'T{row}'].comment = None
@@ -159,6 +197,10 @@ for k, v in dups.items():
     # several SKUs of ONE ASIN share a combo legitimately (FBA + FBM offers)
     print('shared combo', k, v)
 assert all(len(str(t[f'G{r}'].value or '')) < 200 for r in range(8, row))
+for r in range(8, row):
+    for col in ('AE', 'AF', 'AG', 'AH', 'AI'):
+        if t[f'{col}{r}'].value:
+            t[f'{col}{r}'] = lead_case(t[f'{col}{r}'].value)
 wb.save(OUT)
 with open(PLAN, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(plan[0].keys())); w.writeheader(); w.writerows(plan)

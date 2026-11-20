@@ -8,109 +8,148 @@ Facts used here come from the live Amazon listings and illuco.com (scraped 2026-
 Anything not verified is marked in CONFIRM and must be checked before upload.
 """
 
-INTRO = ("The first thing dental professionals notice about an ILLUCO mirror is the view. "
-         "Most dental mirrors reflect only 60-70% of available light. ILLUCO's UHD front surface "
-         "dielectric coating on German optical glass reflects 99%, so the image is over 40% brighter, "
-         "sharp, true to color and free of the ghost images that cause visual fatigue. ")
-STERIL = ("Sterilize at 273°F (134°C) for 5 minutes or 250°F (121°C) for 20 minutes; "
-          "do not exceed 277°F (136°C).")
-B_LOOK = ("SEE THE DIFFERENCE AT FIRST LOOK: Most dental mirrors reflect only 60-70% of light. "
-          "ILLUCO's UHD front surface dielectric coating on German optical glass reflects 99%, for an "
-          "image over 40% brighter, crisp, true to color and free of ghosting. Look into it once and "
-          "you will notice it.")
-B_FOG = ("AUTOCLAVABLE, CARE MATTERS: " + STERIL + " A hydrophobic top coat helps water bead off; "
-         "like any coating it wears with repeated sterilization, so avoid abrasive wiping and chemical "
-         "residue to keep the surface at its best.")
-COAT = ("The mirror is autoclavable, and a hydrophobic top coat helps water bead off; like any coating "
-        "it wears with repeated sterilization. ")
+# Copy direction from ILLUCO sales (Claudia, 2026-11-20): lead with HIGH DEFINITION; 2X / 3X magnification is the
+# premium feature (1X is basic); the 5-minute autoclave at 273F is a time saver and the key care message (standard
+# 20-minute cycles cook off the coating); the coating is rated for 100+ cycles, after which the mirror still works;
+# fog / water-repellency is secondary.
+INTRO = ("ILLUCO UHD mirrors are built for one thing: an ultra high definition view. Most dental mirrors reflect "
+         "only 60-70% of available light; ILLUCO's front-surface dielectric coating on German optical glass reflects "
+         "99%, so the image is over 40% brighter, sharp, true to color and free of the ghost images that cause "
+         "visual fatigue. ")
+CARE = ("Care is fast: autoclave for just 5 minutes at 273°F (134°C), or 20 minutes at 250°F (121°C). Do not run "
+        "longer cycles or exceed 277°F (136°C), because extra heat strips the coating. On the 5-minute setting the "
+        "coating is rated for 100+ autoclave cycles, and the mirror stays usable after that. ")
+B_HD = ("ULTRA HIGH DEFINITION VIEW: ILLUCO's front-surface dielectric coating on German optical glass reflects 99% "
+        "of light, versus 60-70% for standard dental mirrors. The image is over 40% brighter, sharp and true to "
+        "color, with no ghost image, so fine detail is easy to see.")
+B_AUTO = ("5-MINUTE AUTOCLAVE, 100+ CYCLES: Sterilize in just 5 minutes at 273°F (134°C), faster than a standard "
+          "20-minute instrument cycle (or 20 minutes at 250°F / 121°C). Do not run longer cycles or exceed 277°F "
+          "(136°C); extra heat strips the coating. On the 5-minute setting the coating is rated for 100+ cycles, "
+          "and the mirror stays usable after that.")
+HANDLE = ("ERGONOMIC ANTI-ROTATION HANDLE: The textured, finger-indented handle stays steady in a light or firm "
+          "grip, even with wet gloves. The Size 4 head uses a standard cone socket, so ILLUCO replacement heads "
+          "thread straight on.")
+SMALL = {'and', 'or', 'of', 'for', 'with', 'the', 'a', 'an', 'to', 'on', 'in'}
+KEEP = {'UHD', 'ILLUCO', 'HD'}
+
+
+def lead_case(bullet):
+    """Amazon: no all-caps in bullets. Turn a CAPS lead-in ("ULTRA HIGH DEFINITION VIEW:") into Title Case."""
+    if ':' not in bullet:
+        return bullet
+    head, rest = bullet.split(':', 1)
+    if head != head.upper():
+        return bullet
+    words = []
+    for i, w in enumerate(head.split(' ')):
+        core = w.strip('(),')
+        if core in KEEP:
+            words.append(w)
+        elif i > 0 and core.lower() in SMALL:
+            words.append(w.lower())
+        else:
+            parts = []
+            for p_ in w.split('-'):
+                if any(ch.isdigit() for ch in p_):
+                    parts.append(p_.replace('MM', 'mm'))      # 1X, 2.4X, (22mm), 99%
+                else:
+                    parts.append(p_[:1].upper() + p_[1:].lower())
+            words.append('-'.join(parts))
+    return ' '.join(words) + ':' + rest
+
+
+B_AUTO = ("5-MINUTE AUTOCLAVE SAVES TIME: Ready again after just 5 minutes at 273°F (134°C), a faster turnaround than a "
+          "standard 20-minute instrument cycle (or 20 minutes at 250°F / 121°C). Longer cycles or more than 277°F "
+          "(136°C) strip the coating. On the 5-minute setting the coating is rated for 100+ cycles, and the mirror "
+          "stays usable after that.")
+# names kept for older imports
+B_LOOK, B_FOG, COAT, STERIL = B_HD, B_AUTO, CARE, ''
 
 
 def mag_bullet(mag):
     if mag == 1:
-        return ("TRUE 1X VIEW: Life-size, distortion-free reflection for routine exams, restorative "
-                "checks and indirect vision. Need more detail? Also available in 2X and 3X magnification.")
-    return (f"{mag}X MAGNIFICATION FOR FINE DETAIL: Enlarges margins, caries and calculus for close "
-            "inspection. Magnifying mirrors show a smaller area and focus best close to the tooth; "
-            "choose 1X for general exams and wide views.")
+        return ("TRUE 1X VIEW, 2X AND 3X AVAILABLE: Life-size, distortion-free reflection for routine exams and "
+                "indirect vision. Most mouth mirrors stop at 1X; ILLUCO also makes 2X and 3X magnifying versions "
+                "for fine detail.")
+    return (f"{mag}X MAGNIFICATION, A PREMIUM UPGRADE: Most mouth mirrors are 1X. ILLUCO {mag}X enlarges margins, "
+            "caries and calculus for precise inspection with the same high-definition clarity. Magnified mirrors "
+            "show a smaller area and focus best close to the tooth.")
 
 
-HANDLE = ("ERGONOMIC ANTI-ROTATION HANDLE: The textured, finger-indented handle keeps the head steady "
-          "in a light or firm grip and is easy to turn with wet gloves. The Size 4 head uses a standard "
-          "cone socket, so ILLUCO replacement heads thread straight on.")
+def mag_sentence(mag):
+    if mag == 1:
+        return "This is the 1X version for a life-size view; 2X and 3X magnifying versions are also available. "
+    return f"This is the {mag}X magnifying version: most mouth mirrors stop at 1X. "
+
+
+KW_CORE = "high definition hd magnifying magnification 2x 3x quick autoclave"
 
 
 def kit(mag, color, sku_model, asin, rating, note=''):
-    magtxt = '1X' if mag == 1 else f'{mag}X Magnifying'
-    title = f"ILLUCO UHD Dental Mirror Kit, Size 4 (22mm), {mag}X, 5 Pack, {color}"
+    magtxt = '1X' if mag == 1 else f'{mag}X magnifying'
+    title = (f"ILLUCO UHD Dental Mirrors, Size 4 (22mm), 1X, 5 Pack, {color}" if mag == 1 else
+             f"ILLUCO UHD {mag}X Magnifying Dental Mirrors, Size 4 (22mm), 5 Pack, {color}")
     return dict(
         family='5-Pack with Handles', parent='B0FDCGG69J', asin=asin, mag=mag, color=color,
-        model_suggested=sku_model, rating=rating,
-        title=title,
-        highlight=("With Handles, Front Surface, Cone Socket, 99% Reflectance, No Ghost Image, "
-                   "Autoclavable"),
-        bullets=[B_LOOK, mag_bullet(mag), HANDLE, B_FOG,
-                 f"5 PACK WITH HANDLES: 5 Size 4 (22mm) front surface mirror heads ({magtxt}), 5 ergonomic "
-                 f"anti-rotation handles ({color}) and an autoclave sterilization and care guide. Built "
-                 "for general dentists, hygienists, orthodontists and dental students."],
-        description=(INTRO + "Each kit puts that view on a standard Size 4 (22mm) cone socket head "
-                     f"in {magtxt.lower()} and pairs it with an ergonomic anti-rotation handle that "
-                     "stays steady in a light or firm grip. " + COAT + STERIL + " Each kit includes 5 Size 4 mirror heads, 5 ergonomic handles and an "
-                     "autoclave sterilization and care guide. Available in 1X, 2X and 3X magnification "
-                     "with Light Blue or Dark Blue handles."),
+        model_suggested=sku_model, rating=rating, title=title,
+        highlight="Ultra High Definition, 99% Reflectance, No Ghost Image, With 5 Handles, 5-Minute Autoclave, 100+ Cycles",
+        bullets=[B_HD, mag_bullet(mag), B_AUTO, HANDLE,
+                 f"5 PACK WITH HANDLES: 5 Size 4 (22mm) mirror heads ({magtxt}), 5 ergonomic handles ({color}) and "
+                 "an autoclave care guide with the 5-minute setting. Built for general dentists, hygienists, "
+                 "orthodontists and dental students."],
+        description=(INTRO + mag_sentence(mag) + "Each kit pairs standard Size 4 (22mm) cone socket heads with "
+                     "ergonomic anti-rotation handles that stay steady in a light or firm grip. " + CARE +
+                     f"Each kit includes 5 mirror heads, 5 handles ({color}) and an autoclave sterilization and care guide."),
         keywords=("mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist "
-                  "orthodontist front surface number 4 professional dentist mirror for inside mouth "
-                  "hd high definition magnifying concave set kit"),
+                  "orthodontist front surface number 4 professional set kit " + KW_CORE),
         size='Size 4 (22mm)', items=5,
-        included=f"5 Size 4 Mirror Heads, 5 Ergonomic Handles, Autoclave Sterilization & Care Guide",
+        included="5 Size 4 Mirror Heads, 5 Ergonomic Handles, Autoclave Sterilization & Care Guide",
         note=note)
 
 
 def heads(mag, asin, model, rating, note=''):
-    magtxt = '1X' if mag == 1 else f'{mag}X Magnifying'
+    magtxt = '1X' if mag == 1 else f'{mag}X magnifying'
+    title = ("ILLUCO UHD Dental Mirror Heads, Size 4 (22mm), 1X, 5 Pack, Cone Socket" if mag == 1 else
+             f"ILLUCO UHD {mag}X Magnifying Dental Mirror Heads, Size 4 (22mm), 5 Pack")
+    title = title.replace(", 5 Pack, Cone Socket", ", 5 Pack")
     return dict(
         family='Replacement Heads 5-Pack', parent='B0FCNL53JN', asin=asin, mag=mag, color='',
-        model_suggested=model, rating=rating,
-        title=f"ILLUCO UHD Dental Mirror Heads, Size 4 (22mm), {mag}X, 5 Pack, Cone Socket",
-        highlight=("Replacement Heads, Handles Not Included, Front Surface, 99% Reflectance, "
-                   "No Ghost Image, Autoclavable"),
-        bullets=[B_LOOK,
-                 "CONE SOCKET FIT, HANDLES NOT INCLUDED: Threads onto standard cone socket mirror handles, "
-                 "including ILLUCO ergonomic anti-rotation handles. Not for simple stem or European-thread "
-                 "handles. Check your handle before ordering.",
-                 mag_bullet(mag), B_FOG,
-                 f"5 REPLACEMENT HEADS: 5 single-sided Size 4 (22mm) front surface mirror heads ({magtxt}). "
-                 "Restock every operatory with the same bright, ghost-free view. Need handles too? Choose "
-                 "the ILLUCO 5 Pack with Handles."],
-        description=(INTRO + f"These replacement heads bring that view to the handles you already use: "
-                     f"standard Size 4 (22mm), {magtxt.lower()}, with a cone socket thread that fits cone "
-                     "socket mirror handles including ILLUCO ergonomic handles (sold separately). They do "
-                     "not fit simple stem or European-thread handles. " + COAT + STERIL +
-                     " Each pack includes 5 mirror heads. Handles are not included."),
-        keywords=("mouth mirror heads replacement refill tops screw on dentist dental instruments tooth teeth "
-                  "oral exam intraoral hygienist front surface number 4 professional dentist mirror "
-                  "hd high definition magnifying concave"),
+        model_suggested=model, rating=rating, title=title,
+        highlight="Ultra High Definition, 99% Reflectance, Cone Socket, Handles Not Included, 5-Minute Autoclave, 100+ Cycles",
+        bullets=[B_HD, mag_bullet(mag),
+                 "CONE SOCKET FIT, HANDLES NOT INCLUDED: Threads onto standard cone socket mirror handles, including "
+                 "ILLUCO ergonomic anti-rotation handles. Not for simple stem or European-thread handles. Check your "
+                 "handle before ordering.",
+                 B_AUTO,
+                 f"5 REPLACEMENT HEADS: 5 single-sided Size 4 (22mm) mirror heads ({magtxt}) with the same "
+                 "high-definition view. Need handles too? Choose the ILLUCO 5 Pack with Handles."],
+        description=(INTRO + mag_sentence(mag) + "These Size 4 (22mm) replacement heads thread onto standard cone "
+                     "socket mirror handles, including ILLUCO ergonomic handles (sold separately); they do not fit "
+                     "simple stem or European-thread handles. " + CARE + "Each pack includes 5 mirror heads. "
+                     "Handles are not included."),
+        keywords=("mouth mirror heads replacement refill tops screw on cone socket dentist dental instruments tooth "
+                  "teeth oral exam hygienist front surface number 4 professional " + KW_CORE),
         size='Size 4 (22mm)', items=5, included='5 Size 4 Mirror Heads',
         note=note)
 
 
 def single(mag, color, asin, model, rating, note=''):
-    magtxt = '1X' if mag == 1 else f'{mag}X Magnifying'
+    magtxt = '1X' if mag == 1 else f'{mag}X magnifying'
+    title = (f"ILLUCO UHD Dental Mirror, Size 4 (22mm), 1X, 1 Pack, {color}" if mag == 1 else
+             f"ILLUCO UHD {mag}X Magnifying Dental Mirror, Size 4 (22mm), 1 Pack, {color}")
     return dict(
         family='Single Mirror with Handle', parent='B0GGD9DVP9', asin=asin, mag=mag, color=color,
-        model_suggested=model, rating=rating,
-        title=f"ILLUCO UHD Dental Mirror, Size 4 (22mm), {mag}X, 1 Pack, {color}",
-        highlight=("With Handle, Single Mirror, Front Surface, Cone Socket, 99% Reflectance, "
-                   "No Ghost Image, Autoclavable"),
-        bullets=[B_LOOK, mag_bullet(mag), HANDLE, B_FOG,
-                 f"1 MIRROR WITH HANDLE: Includes 1 Size 4 (22mm) front surface mirror head ({magtxt}) on 1 "
-                 f"ergonomic anti-rotation handle ({color}). Ideal for dental students, a spare for the "
-                 "operatory or a first try of ILLUCO. Equipping a practice? Choose the 5 Pack."],
-        description=(INTRO + "This single mirror puts that view on a standard Size 4 (22mm) cone socket "
-                     f"head in {magtxt.lower()}, mounted on an ergonomic anti-rotation handle. " + COAT + STERIL + " Includes 1 mirror and 1 handle. "
-                     "Also available in 5 packs and as replacement heads."),
-        keywords=("mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist "
-                  "student front surface number 4 professional dentist mirror for inside mouth hd "
-                  "high definition magnifying concave single"),
+        model_suggested=model, rating=rating, title=title,
+        highlight="Ultra High Definition, 99% Reflectance, No Ghost Image, With Handle, 5-Minute Autoclave, 100+ Cycles",
+        bullets=[B_HD, mag_bullet(mag), B_AUTO, HANDLE,
+                 f"1 MIRROR WITH HANDLE: 1 Size 4 (22mm) mirror head ({magtxt}) on 1 ergonomic handle ({color}). "
+                 "Ideal for dental students, a spare for the operatory or a first try of ILLUCO. Equipping a "
+                 "practice? Choose the 5 Pack."],
+        description=(INTRO + mag_sentence(mag) + "This single mirror puts that view on a standard Size 4 (22mm) "
+                     "cone socket head mounted on an ergonomic anti-rotation handle. " + CARE +
+                     f"Includes 1 mirror and 1 handle ({color}). Also available in 5 packs and as replacement heads."),
+        keywords=("mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist student "
+                  "front surface number 4 professional single " + KW_CORE),
         size='Size 4 (22mm)', items=1, included='1 Size 4 Mirror Head, 1 Ergonomic Handle',
         note=note)
 
@@ -259,3 +298,8 @@ CONFIRM = [
     'Photo-mirror dimensions for Occlusal Small, Lingual and Buccal; whether the Amazon box includes the travel pouch',
     'Double-Sided head (IDM-3CD41H) pack size = 5, cone socket, price, images and package dimensions',
 ]
+
+
+for _r in ROWS:
+    _r['bullets'] = [lead_case(b) for b in _r['bullets']]
+B_HD, B_AUTO, HANDLE = lead_case(B_HD), lead_case(B_AUTO), lead_case(HANDLE)
