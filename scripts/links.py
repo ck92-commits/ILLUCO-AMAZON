@@ -33,10 +33,9 @@ def link(cell, url, text=None, size=9):
 # What is still needed (updated 2026-11-20 after ILLUCO shared the research folder).
 # (type, what, where in the tool, link, why, needed by)
 NEEDS = [
- ('Upload', 'Upload ILLUCO_Amazon_UPLOAD.xlsx - the only upload (merges all mirrors into 2 families, new copy, illuco.com prices, new Grand / Double-Sided / heads)', 'Catalog > Add Products via Upload', SC + '/product-search/bulk', 'The merge only happens through this upload', 'Today'),
+ ('Upload', 'Upload ILLUCO_Amazon_UPLOAD.xlsx - the only upload (merges all mirrors into 2 families, new copy, new Grand / Double-Sided / heads; Amazon prices unchanged)', 'Catalog > Add Products via Upload', SC + '/product-search/bulk', 'The merge only happens through this upload', 'Today'),
  ('Confirm', 'Check 3 SKUs I inferred (IDM2C43LB, IDM3C42NA, IDM3C43NA) exist for B0F857HKBG, B0FCHH2SQB, B0FCJY3H9H - yellow cells in column A', 'Catalog > Manage All Inventory', SC + '/myinventory/inventory', 'A wrong SKU makes that row fail', 'Before upload'),
- ('Confirm', 'Brand name spelling for the 2 new parents: file uses "ILLUCO" (live listings show "Illuco")', 'Brand Registry', 'https://brandregistry.amazon.com', 'Parent and children must carry the same brand', 'Before upload'),
- ('Approve', 'Two price INCREASES to match illuco.com: heads 1X $60 -> $69 and heads 2X $90 -> $95 (yellow DI cells). Heads 1X is your top seller at 17.4% conversion', 'You', '', 'Keep, or revert those two cells', 'Before upload'),
+ ('Set', 'Amazon price for the new Double-Sided heads (IDM-3CD41H): the file has $139, the illuco.com price, as a yellow placeholder in CF and DI', 'You', '', 'New on Amazon, so there is no current price to keep', 'Before upload'),
  ('Approve', 'Claudia OK on the new copy: Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles (see Sales Direction tab)', 'Sales team', '', 'Copy follows her direction from Nov 20', 'Before upload'),
  ('Design', 'Bigger in-box instruction card that leads with the 5-minute autoclave at 273°F (134°C)', 'Design team (Ashley)', '', 'Over-autoclaving strips the coating - the cause of the bad reviews', 'This week'),
  ('Optional', 'Host the care card as a PDF and paste its URL in column IK (Instructions for Use) of the upload so it shows under Product guides and documents', 'Shopify > Content > Files', '', 'Makes the care instructions visible on the listing', 'This week'),
@@ -61,5 +60,5 @@ RECEIVED = [
  ('Model numbers and prices for every variant', 'illuco.com public product feed'),
  ('Sales direction for the copy (Claudia)', 'management-meeting, Nov 20'),
  ('Double-Sided head: 5-pack, cone socket, $139, main image', 'illuco.com'),
- ('Decisions: you are the approver; merge all singles; photo mirror as is; align prices unless promotion; coupon and PPC budget on hold', 'Your message 11/20'),
+ ('Decisions: you are the approver; merge all singles; photo mirror as is; keep current Amazon prices; brand ILLUCO; 100+ cycles on the care card; no fog line; coupon and PPC budget on hold', 'Your messages 11/20'),
 ]

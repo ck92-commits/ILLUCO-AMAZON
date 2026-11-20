@@ -187,8 +187,8 @@ REG = {
              'Hero: "5-MINUTE AUTOCLAVE - 273°F (134°C) for just 5 minutes", faster than a standard 20-minute '
              'instrument cycle; "or 20 minutes at 250°F (121°C)"; "No 20-minute cycle at 273°F / Never above '
              '277°F (136°C) - extra heat strips the high-definition coating"; avoid abrasive wiping; follow the '
-             'autoclave maker\'s instructions. No fog or water-repellent line. "100+ autoclave cycles" is not '
-             'shown pending the owner\'s direct confirmation (see README).'),
+             'autoclave maker\'s instructions; "100+ autoclave cycles on the 5-minute setting" (owner confirmed '
+             '11/20). No fog or water-repellent line.'),
     # 08 APPLICATIONS / SPEC ----------------------------------------------------------------
     'life_lb': (lambda: D.lifestyle_lb(), 'new (photos: ' + E + U['life_typodont'] + ' ; ' + E + U['life_glove'] +
                 ' ; ' + E + U['life_tray'] + ')', 'ready',

@@ -57,13 +57,11 @@ python3 -I scripts/image_kit/build_kit.py            # writes all images, manife
   a standard 20-minute instrument cycle; secondary option 20 minutes at 250°F (121°C); no standard 20-minute
   cycle at 273°F and never above 277°F (136°C), because extra heat strips the high-definition coating; avoid abrasive wiping; follow
   the autoclave manufacturer's instructions.
-- **"100+ autoclave cycles (on the 5-minute setting)" is NOT in any image yet.** The revision request reported
-  the sales lead approved it, and `kitlib.check_copy` now accepts that exact form (plain "100 autoclave cycles"
-  and "100X" stay rejected; "100+" must sit next to the 5-minute qualifier). But the original brief listed cycle
-  counts as contradicted by reviews and returns, and this session's permission check blocked the edit that added
-  it. Once the owner confirms directly, add it to `ITEM_AUTO` in `designs.py` and to the care card, then rebuild.
-- **Fog is secondary**: never "anti-fog", "fog-proof", "fog-resistant" or "stays dry". A short "water-repellent
-  top coat" line is allowed but was left out; it did not fit naturally.
+- **"100+ autoclave cycles on the 5-minute setting" is on the care card (image 7).** The owner confirmed it on
+  Nov 20. `kitlib.check_copy` accepts only that form: plain "100 autoclave cycles" and "100X" stay rejected, and
+  "100+" must sit next to the 5-minute qualifier.
+- **No fog claims** (owner, Nov 20): never "anti-fog", "fog-proof", "fog-resistant" or "stays dry", and no
+  water-repellent line.
 - Never: "40% clearer", any rhodium percentage, or unverified specs (handle length/weight, "1/4 lambda").
 - Typos fixed: grand-01(_db) "quandrant" -> "quadrant"; grand-01(_db) and dsdm-01(_db) "minimizing light" ->
   "minimizing light loss". The original moisture / "spot-free" lines are gone, and the heads card's "compatible

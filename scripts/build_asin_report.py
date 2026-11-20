@@ -47,7 +47,7 @@ lines = [
  ('5. Heads 1X is the top earner ($3,420, 17.4% conversion; half the units to business buyers) despite a 2.0 rating.', False),
  ('6. Sponsored Products Aug 1-Nov 20: $3,059 spend, $8,400 sales, 36.4% ACoS; the dermatoscope campaign spent $740 for 2 orders.', False),
  ('7. Sales team (Claudia): the coating is cooked off by standard 20-minute autoclave cycles because the 5-minute instructions are almost hidden; lead with High Definition, sell 2X / 3X as premium, make the 5-minute autoclave a time saver, say 100+ cycles.', False),
- ('Fix: ILLUCO_Amazon_UPLOAD.xlsx (the only upload) merges all mirrors except photo mirrors into two families, rewrites the copy to the sales direction and aligns prices with illuco.com. Upload Check tab: 0 errors.', False),
+ ('Fix: ILLUCO_Amazon_UPLOAD.xlsx (the only upload) merges all mirrors except photo mirrors into two families, rewrites the copy to the sales direction and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. Upload Check tab: 0 errors.', False),
  ('', False),
  ('How to read', True),
  ('Yellow cells with blue text are inputs. Paste Seller Central numbers there; CVR, ACoS and TACoS calculate automatically.', False),
@@ -76,7 +76,7 @@ COMPLAINTS = {
                          'front-surface mirrors" (3X Dark Blue); FBA returns "not really anti-fog", "does not stay dry when water gets sprayed - '
                          'the description said it does", "foggy lense". Main cause: fog / water-repellent claim. Conversion is weak (2-3% on the '
                          'highest-traffic children).',
-                         'Lead with Ultra High Definition, sell 2X / 3X as premium, make the 5-minute autoclave and 100+ cycles prominent, fog secondary (upload file); align price to illuco.com ($85/$115/$130); merge into one family; '
+                         'Lead with Ultra High Definition, sell 2X / 3X as premium, make the 5-minute autoclave and 100+ cycles prominent, fog secondary (upload file); merge into one family; '
                          'new images; ask supplier about coating durability.'),
  'Replacement Heads 5-Pack': ('2.0 stars, but the 1X sells best ($3,420, 17.4% conversion, half to business buyers). No complaint text available.',
                               'Title and bullets now state "Cone Socket, Handles Not Included"; compatibility image; new heads family with the '
@@ -274,7 +274,7 @@ kw.cell(len(K) + 3, 1, 'Search volume is not available from public data. Add Bra
 pp = wb.create_sheet('PPC Plan')
 pp.cell(1, 1, 'Break-even and bid calculator (inputs in yellow - replace placeholder assumptions with your margin and Ads data)').font = Font(name=F, bold=True, size=11)
 calc_hdr = ['Family', 'Avg price ($)', 'Margin before ads (%)', 'Expected CVR (%)', 'Target ACoS (% of margin)', 'Break-even ACoS', 'Target ACoS', 'Max CPC ($)', 'Daily clicks wanted', 'Daily budget ($)', 'Expected market CPC ($)']
-calc = [['5-Pack with Handles', 110, 0.55, 0.031, 0.6], ['Replacement Heads', 90, 0.6, 0.109, 0.6], ['Single Mirror', 23, 0.5, 0.124, 0.6],
+calc = [['5-Pack with Handles', 120, 0.55, 0.031, 0.6], ['Replacement Heads', 85, 0.6, 0.109, 0.6], ['Single Mirror', 27, 0.5, 0.124, 0.6],
         ['Photo Mirror', 165, 0.6, 0.05, 0.6], ['Grand + Double-Sided (launch)', 150, 0.55, 0.06, 0.9]]
 for j, h in enumerate(calc_hdr, 1):
     c = pp.cell(3, j, h); c.font = HFONT; c.fill = HFILL; c.alignment = Alignment(wrap_text=True)
@@ -293,7 +293,7 @@ for i, row in enumerate(calc, 4):
     for col in 'FGHJ': pp[f'{col}{i}'].font = BODY
 pp['A9'] = 'Total daily budget (ON HOLD by owner 11/20 - reference only)'; pp['A9'].font = Font(name=F, bold=True)
 pp['J9'] = '=SUM(J4:J8)'; pp['J9'].number_format = '$#,##0.00'; pp['J9'].font = Font(name=F, bold=True)
-pp['A10'] = ('Prices = illuco.com-aligned averages; CVR = Business Report 11/20 unit session % per family (launch row assumed); market CPC = $1.34 average from the SP campaign report (Aug 1-Nov 20). Margin and click targets are PLACEHOLDERS - '
+pp['A10'] = ('Prices = current Amazon averages; CVR = Business Report 11/20 unit session % per family (launch row assumed); market CPC = $1.34 average from the SP campaign report (Aug 1-Nov 20). Margin and click targets are PLACEHOLDERS - '
              'replace margin with landed cost + FBA + referral fees, CVR with Business Report unit session %, and market CPC with the Ads search-term report. Budget = clicks x the lower of market CPC and Max CPC. Launch row uses 90% of margin as target ACoS to build initial reviews/rank.')
 pp['A10'].font = Font(name=F, size=8, italic=True); pp['A10'].alignment = Alignment(wrap_text=True); pp.merge_cells('A10:K10'); pp.row_dimensions[10].height = 40
 camp = [
@@ -393,15 +393,15 @@ table(ex, ['Channel', 'Owner', 'What to run', 'Tracking', 'KPI'], exr, [30, 16, 
 # ---------------- Action plan ----------------
 ap = wb.create_sheet('Action Plan')
 apr = [
- ['Nov 20', 'Confirm 3 inferred SKUs, brand spelling, two heads price increases, claim wording', 'Cenk / sales team', 'What I Need tab', 'Not started'],
- ['Nov 20', 'Upload ILLUCO_Amazon_UPLOAD.xlsx (2 families, new copy, illuco.com prices, new products)', 'Cenk', 'Upload Check tab', 'Not started'],
+ ['Nov 20', 'Confirm 3 inferred SKUs and the Double-Sided heads price; Claudia reads the new copy', 'Cenk / sales team', 'What I Need tab', 'Not started'],
+ ['Nov 20', 'Upload ILLUCO_Amazon_UPLOAD.xlsx (2 families, new copy, new products; Amazon prices unchanged)', 'Cenk', 'Upload Check tab', 'Not started'],
  ['Nov 20', 'Seller Support: merge B0GGDQ15DD into B0G2DYRY7T; re-classify dermatoscopes', 'Cenk', 'What I Need tab', 'Not started'],
  ['Nov 21', 'Upload the image kit to every child', 'Cenk / Design', 'Image Kit tab + zip', 'Not started'],
  ['Nov 21', 'Apply negatives and harvests from the PPC audit (no budget change)', 'Cenk', 'PPC Apply tab', 'Not started'],
  ['Nov 21', 'Supplier: top-coat durability and test reports', 'Cenk', '', 'Not started'],
  ['Nov 21', 'Answer NCX flag; Vine for both family parents; Request a Review on all orders', 'Cenk', '', 'Not started'],
  ['Nov 24', 'Check processing report; confirm both families render on amazon.com', 'Cenk', '', 'Not started'],
- ['Dec 1', 'Compare 5-pack conversion before vs after price change', 'Cenk', 'ASIN Report tab', 'Not started'],
+ ['Dec 1', 'Compare 5-pack conversion before vs after the new copy and images', 'Cenk', 'ASIN Report tab', 'Not started'],
  ['On hold', 'Black Friday coupon and PPC budget increase', 'Manager', 'PPC Plan tab', 'Blocked'],
  ['Later', 'Store rebuild, A+ comparison chart, video, Google / social / creators with Attribution', 'Design, Chiru, Shery, Annabelle', 'External Traffic tab', 'Not started'],
 ]
@@ -446,14 +446,14 @@ uc = wb.create_sheet('Upload Check', 3)
 uc.cell(1, 1, 'ILLUCO_Amazon_UPLOAD.xlsx - what it contains and the pre-upload check').font = Font(name=F, bold=True, size=12)
 rows_up = _csv('data/build/upload_rows.csv')
 sections = [('1 new parent', 'New parent listings (created)'), ('2 new child', 'New products (created)'),
-            ('3 existing child', 'Existing listings (moved into the families + new copy + illuco.com price)'),
+            ('3 existing child', 'Existing listings (moved into the families + new copy; price unchanged)'),
             ('4 not re-parented', 'Not in the upload')]
 r0 = 3
 for key, label in sections:
     items = [x for x in rows_up if x['section'] == key]
     uc.cell(r0, 1, f'{label}: {len(items)} rows').font = Font(name=F, bold=True, size=10)
     r0 += 1
-    for j, h in enumerate(['SKU', 'ASIN', 'Family', 'Size value', 'Color', 'Items', 'Action', 'Old price', 'New price', 'Note'], 1):
+    for j, h in enumerate(['SKU', 'ASIN', 'Family', 'Size value', 'Color', 'Items', 'Action', 'Amazon price now', 'Price in upload', 'Note'], 1):
         c = uc.cell(r0, j, h); c.font = HFONT; c.fill = HFILL
     for x in items:
         r0 += 1
@@ -477,12 +477,11 @@ for x in chk:
     for j, k in enumerate(['level', 'row', 'sku', 'column', 'issue'], 1):
         c = uc.cell(r0, j, x[k]); c.font = BODY; c.border = BOX; c.alignment = Alignment(wrap_text=True, vertical='top')
 r0 += 2
-uc.cell(r0, 1, 'Only Amazon can check these (yellow cells in the upload):').font = Font(name=F, bold=True, size=10)
+uc.cell(r0, 1, 'Still to confirm (yellow cells in the upload):').font = Font(name=F, bold=True, size=10)
 for k, txt in enumerate(['3 inferred SKUs exist in your account (IDM2C43LB, IDM3C42NA, IDM3C43NA)',
                          'The live listings use product type PROFESSIONAL_HEALTHCARE (if a row says "product type mismatch", change column B for that row to the type shown on the Edit listing page)',
-                         'Brand name "ILLUCO" matches your Brand Registry spelling',
                          'The 7 new UPCs are registered to ILLUCO in GS1',
-                         'Heads 1X $60 -> $69 and 2X $90 -> $95 price increases are what you want (illuco.com prices)'], 1):
+                         'The Double-Sided heads price: $139 is a placeholder (the illuco.com price); set the Amazon price in CF and DI'], 1):
     uc.cell(r0 + k, 1, f'{k}. {txt}').font = BODY
 for col, wdt in zip('ABCDEFGHIJ', (22, 13, 7, 28, 11, 6, 30, 9, 9, 60)):
     uc.column_dimensions[col].width = wdt
@@ -490,13 +489,13 @@ for col, wdt in zip('ABCDEFGHIJ', (22, 13, 7, 28, 11, 6, 30, 9, 9, 60)):
 # ---- Listing Copy ----
 lc = wb.create_sheet('Listing Copy', 4)
 lhdr = ['ASIN', 'Family', 'Mag', 'Color', 'Current title (live)', 'NEW title', 'Chars', 'NEW Item Highlight', 'Bullet 1', 'Bullet 2',
-        'Bullet 3', 'Bullet 4', 'Bullet 5', 'Description', 'Backend keywords', 'Model no.', 'SKU(s)', 'New price', 'New family / size value', 'Note']
+        'Bullet 3', 'Bullet 4', 'Bullet 5', 'Description', 'Backend keywords', 'Model no.', 'SKU(s)', 'Price', 'New family / size value', 'Note']
 lrows = []
 for rr in _ROWS:
     live = cat.get(rr['asin'], {})
     lrows.append([rr['asin'], rr['family'], f"{rr['mag']}X", rr['color'], live.get('title'), rr['title'], len(rr['title']), rr['highlight'],
                   *rr['bullets'], rr['description'], rr['keywords'], rr['model_suggested'],
-                  ', '.join(k + (' (inferred)' if v == 'inferred' else '') for k, v in rr['skus']), rr['price_new'],
+                  ', '.join(k + (' (inferred)' if v == 'inferred' else '') for k, v in rr['skus']), 'unchanged',
                   ('Merge into B0G2DYRY7T (Seller Support)' if rr['asin'] == 'B0GGDQ15DD' else
                    f"{'A - with handle' if rr['new_family'] == 'A' else 'B - heads'} / {rr['var_size']}"), rr['note']])
 table(lc, lhdr, lrows, [12, 18, 5, 10, 40, 40, 6, 40, 50, 50, 50, 50, 50, 60, 40, 15, 22, 8, 26, 40])

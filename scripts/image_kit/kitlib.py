@@ -35,7 +35,7 @@ GREEN = (27, 128, 72)
 # Claims customer reviews / returns contradict, typos, and unsupported specs. A revision request relayed on
 # 2026-11-20 reports that ILLUCO's sales lead approved "100+ autoclave cycles" WITH the plus and the 5-minute
 # qualifier, so the guard lets that exact form through ("100 autoclave cycles" without the plus and "100X"
-# stay rejected). No image uses it yet: it waits for the owner's direct confirmation (see README).
+# stay rejected). The owner confirmed it on 2026-11-20; the care card shows it.
 FORBIDDEN = [
     r'\bfog', r'anti-?fog', r'stays? dry', r'40%\s*clearer', r'rhodium', r'quandrant',
     r'minimi[sz]ing light(?!\s+loss)', r'moisture', r'spot-free',

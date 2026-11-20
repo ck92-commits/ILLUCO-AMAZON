@@ -916,7 +916,8 @@ def _no_scrub(img, cx, cy, r, color):
 
 def care_card():
     """Revised 2026-11-20 per ILLUCO's sales lead: the 5-minute cycle is the hero (time saver), and
-    longer cycles / higher heat strip the coating (the cause of the bad reviews)."""
+    longer cycles / higher heat strip the coating (the cause of the bad reviews). "100+ autoclave cycles on the
+    5-minute setting" confirmed by the owner on 2026-11-20."""
     img = white()
     top = header(img, 'CARE & STERILIZATION', 'Protect the high-definition coating')
     footer_band(img)
@@ -924,15 +925,17 @@ def care_card():
     x0, x1 = 90, W - 90
     y = top + 50
     # hero: 5-minute autoclave
-    hero_h = 480
+    hero_h = 560
     hero = K.round_corners(K.gradient((x1 - x0, hero_h), K.NAVY, K.BLUE_HEADER, 'h'), 34)
     img.paste(hero, (x0, y), hero)
     _clock(img, x0 + 175, y + hero_h / 2, 110, K.WHITE)
     tx = x0 + 340
     K.text_line(d, (tx, y + 62), '5-MINUTE AUTOCLAVE', 112, 'extrabold', K.WHITE, display=True)
     K.text_line(d, (tx, y + 215), '273°F (134°C) for just 5 minutes', 78, 'bold', K.WHITE, display=True)
-    K.text_block(d, (tx, y + 335), 'Faster than a standard 20-minute instrument cycle', 58, 'medium',
-                 (190, 215, 245), max_w=x1 - tx - 40, max_lines=2, min_size=56)
+    K.text_block(d, (tx, y + 330), 'Faster than a standard 20-minute instrument cycle', 58, 'medium',
+                 (190, 215, 245), max_w=x1 - tx - 40, max_lines=1, min_size=50)
+    cyc = K.check_copy('100+ autoclave cycles on the 5-minute setting')
+    K.text_block(d, (tx, y + 430), cyc, 62, 'bold', K.WHITE, max_w=x1 - tx - 40, max_lines=1, min_size=50)
     y += hero_h + 50
     # secondary option
     sec_h = 190

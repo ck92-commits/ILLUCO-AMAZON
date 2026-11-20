@@ -146,6 +146,10 @@ for r in range(9, 16):
         t[f'T{row}'] = SHOP + 'double-head_7873821b-dd72-4a9a-8cea-7147a90c92c9.jpg'
         t[f'T{row}'].fill = PatternFill(fill_type=None); t[f'T{row}'].comment = None
         t[f'CF{row}'] = '139.00'; t[f'DI{row}'] = '139.00'
+        for col in ('CF', 'DI'):
+            t[f'{col}{row}'].fill = YEL
+        t[f'DI{row}'].comment = Comment('Placeholder: $139 is the illuco.com price. The heads are new on Amazon, so set the Amazon '
+                                        'price here and in CF (List Price) before upload.', 'ILLUCO audit')
         for col in ('EO', 'EQ', 'ES', 'EU'):
             t[f'{col}{row}'].fill = YEL
         t[f'EO{row}'].comment = Comment('Package dimensions and weight unknown - FBA will measure; fill if you have them.', 'ILLUCO audit')
@@ -154,7 +158,7 @@ for r in range(9, 16):
                      items=t[f'AY{row}'].value, action=CREATE, price_old='', price_new=t[f'DI{row}'].value, note=''))
     row += 1
 
-# ---- existing children: re-parent + new copy + model numbers + illuco.com prices ----
+# ---- existing children: re-parent + new copy + model numbers (Amazon prices left unchanged, owner 11/20) ----
 amz_price = {}
 import json
 for x in json.load(open('data/raw/illuco_catalog.json')):
@@ -170,19 +174,17 @@ for rr in ROWS:
         flags = {}
         if status == 'inferred':
             flags['A'] = f"SKU inferred from the IDM pattern for {rr['asin']} - confirm in Manage All Inventory before upload."
-        old = amz_price.get(rr['asin'])
-        if old and rr['price_new'] > old:
-            flags['DI'] = f'Price goes UP from ${old:.2f} to ${rr["price_new"]:.2f} to match illuco.com. Keep or revert before upload.'
+        old = amz_price.get(rr['asin'])   # live Amazon price; the upload leaves it as is
         vals = {'A': sku, 'B': PT, 'C': EDIT, 'D': 'Child', 'E': PA if fam == 'A' else PB, 'F': TA if fam == 'A' else TB,
                 'G': rr['title'], 'H': rr['highlight'], 'AD': rr['description'],
                 'AE': rr['bullets'][0], 'AF': rr['bullets'][1], 'AG': rr['bullets'][2], 'AH': rr['bullets'][3], 'AI': rr['bullets'][4],
                 'AJ': rr['keywords'], 'P': rr['model_suggested'], 'BC': rr['model_suggested'], 'AY': rr['items'],
-                'BB': rr['var_size'], 'BM': rr['included'], 'CF': f"{rr['price_new']:.2f}", 'DI': f"{rr['price_new']:.2f}"}
+                'BB': rr['var_size'], 'BM': rr['included']}
         if fam == 'A':
             vals['BA'] = rr['color']
         put(vals, flags)
         plan.append(dict(section='3 existing child', sku=sku + (' (INFERRED)' if status == 'inferred' else ''), asin=rr['asin'], family=fam,
-                         size=rr['var_size'], color=rr['color'], items=rr['items'], action=EDIT, price_old=old, price_new=rr['price_new'], note=rr['note']))
+                         size=rr['var_size'], color=rr['color'], items=rr['items'], action=EDIT, price_old=old, price_new='unchanged', note=rr['note']))
 
 # sanity: unique variation combos per family, valid theme values, title length
 combos = {}
