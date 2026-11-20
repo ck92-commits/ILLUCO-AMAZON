@@ -4,6 +4,8 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.comments import Comment
 OUT = sys.argv[1]
+sys.path.insert(0, 'scripts')
+from links import dp, reviews, drive, link, GH, STORE, SELLER_STOREFRONT, SC, DRIVE_IMAGES
 cat = {}
 for x in json.load(open('data/raw/illuco_catalog.json')):
     cat.setdefault(x['asin'], x)
@@ -54,6 +56,14 @@ lines = [
 for i, (t, b) in enumerate(lines, 1):
     c = s.cell(i, 1, t); c.font = Font(name=F, bold=b, size=14 if i == 1 else 10); c.alignment = Alignment(wrap_text=True)
 s.column_dimensions['A'].width = 150
+base_ = len(lines) + 2
+s.cell(base_, 1, 'Links').font = Font(name=F, bold=True, size=10)
+for k, (txt, url) in enumerate([('ILLUCO Brand Store on Amazon', STORE), ('All ILLUCO USA listings (seller storefront)', SELLER_STOREFRONT),
+                                 ('illuco.com dental mirrors', 'https://illuco.com/collections/dental-mirrors'),
+                                 ('Listing update sheet (GitHub)', GH + 'listings/Existing_Listings_Update_Sheet.xlsx'),
+                                 ('Grand / Double-Sided upload file (GitHub)', GH + 'listings/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_READY.xlsx'),
+                                 ('Drive image folder', 'https://drive.google.com/drive/folders/112-y6c3etIb17RGpJH-nvIgKgCBrRnYQ')], 1):
+    link(s.cell(base_ + k, 1), url, txt, size=10)
 
 # ---------------- ASIN Report ----------------
 FAM = {
@@ -109,6 +119,13 @@ for i in range(2, len(rows) + 2):
     r_ws[f'E{i}'].number_format = '$#,##0.00'
     for col in 'OST': r_ws[f'{col}{i}'].font = BODY
 # example row comment
+r_ws.cell(1, 25, 'Critical reviews (opens signed-in)').font = HFONT; r_ws.cell(1, 25).fill = HFILL
+r_ws.cell(1, 25).alignment = Alignment(wrap_text=True); r_ws.column_dimensions['Y'].width = 16
+for i in range(2, len(rows) + 2):
+    a = r_ws[f'A{i}'].value; par = r_ws[f'B{i}'].value
+    link(r_ws[f'A{i}'], dp(a))
+    if par: link(r_ws[f'B{i}'], dp(par))
+    link(r_ws.cell(i, 25), reviews(a), '1-3 star reviews')
 r_ws['L2'].comment = Comment('Input: Business Reports > Detail Page Sales and Traffic by Child Item, last 30 days, Sessions - Total. Example format: 412', 'audit')
 dv = DataValidation(type='list', formula1='"Not started,In progress,Done,Blocked"', allow_blank=True)
 r_ws.add_data_validation(dv); dv.add(f'X2:X{len(rows)+1}')
@@ -191,6 +208,13 @@ for i in range(2, len(crow) + 2):
     if isinstance(c.value, str) and c.value.startswith('$'):
         c.value = float(c.value.replace('$', '').replace(',', '')); c.number_format = '$#,##0.00'
     cp[f'G{i}'] = f'=IFERROR(E{i}/F{i},"")'; cp[f'G{i}'].number_format = '$#,##0.00'; cp[f'G{i}'].font = BODY
+for i in range(2, len(crow) + 2):
+    a = cp[f'A{i}'].value
+    if a and a.startswith('B0'): link(cp[f'A{i}'], dp(a))
+ILL = {'ILLUCO 5-Pack': 'B0FCZBD1KY', 'ILLUCO Heads': 'B0FBPG5CS9', 'ILLUCO Single': 'B0G2DYRY7T', 'ILLUCO Photo': 'B0FCNG7T9P'}
+for i in range(2, len(crow) + 2):
+    a = cp[f'A{i}'].value
+    if a in ILL: link(cp[f'A{i}'], dp(ILL[a]))
 cp.cell(len(crow) + 3, 1, 'Source: amazon.com search results for "dental mirror", "front surface dental mirror", "dental photography mirror", "dental mirror replacement head", captured 2026-11-20. Units per pack read from titles; blank where the title does not say. Bought past month is Amazon\'s on-page badge.').font = Font(name=F, size=8, italic=True)
 
 # ---------------- Keywords ----------------
@@ -327,7 +351,7 @@ apr = [
  ['Thu 11/20', 'Apply rewritten titles, highlights, bullets, backend keywords to all 21 dental-mirror ASINs', 'Cenk', 'Existing_Listings_Update_Sheet.xlsx', 'Not started'],
  ['Thu 11/20', 'Upload Grand + Double-Sided file (6 children + parent); head row after price/images confirmed', 'Cenk', 'ILLUCO_Grand_DoubleSided_..._READY.xlsx', 'Not started'],
  ['Thu 11/20', 'Open Seller Support cases: merge orphans B0GGDGRHRR / B0G2DYRY7T; re-classify dermatoscopes', 'Cenk', 'Attribute Fixes tab', 'Not started'],
- ['Thu 11/20', 'Pull Seller Central exports (business, ads, reviews, returns, Brand Analytics)', 'Cenk', 'Data Needs tab', 'Not started'],
+ ['Thu 11/20', 'Pull Seller Central exports (business, ads, reviews, returns, Brand Analytics)', 'Cenk', 'What I Need tab', 'Not started'],
  ['Thu 11/20', 'Remove the 5-mirror image from the single-mirror galleries', 'Design', 'Images A+ Video tab', 'Not started'],
  ['Fri 11/21', 'PPC audit on 60-day data; negative-keyword sweep; no budget increases', 'Cenk', 'PPC Plan tab', 'Not started'],
  ['Fri 11/21', 'Enroll all parents in Vine; turn on Request a Review', 'Cenk', '', 'Not started'],
@@ -342,21 +366,15 @@ apr = [
 table(ap, ['Date', 'Task', 'Owner', 'Reference', 'Status'], apr, [11, 85, 18, 38, 12])
 dv3 = DataValidation(type='list', formula1='"Not started,In progress,Done,Blocked"', allow_blank=True); ap.add_data_validation(dv3); dv3.add(f'E2:E{len(apr)+1}')
 
-# ---------------- Data needs ----------------
-dn = wb.create_sheet('Data Needs')
-dnr = [
- ['All Listings Report (SKU, ASIN, product type)', 'Seller Central > Reports > Inventory', 'SKU mapping for the bulk partial update', 'Today'],
- ['Detail Page Sales & Traffic by Child Item, 90 days', 'Reports > Business Reports', 'Sessions, conversion, units, sales per ASIN', 'Today'],
- ['Ads: SP/SB/SBV campaign, targeting, search-term reports (60 days) + bulk sheet', 'Advertising console > Reports / Bulk operations', 'Wasted spend, restructure, budgets', 'Today'],
- ['All 1-3 star review text per ASIN', 'Brand Analytics > Customer Reviews (or copy from each listing)', 'Confirm complaint causes', 'Today'],
- ['FBA Customer Returns report + Voice of the Customer', 'Reports > Fulfillment; Performance > VOC', 'Product-quality issues', 'Today'],
- ['Search Query Performance + Top Search Terms', 'Brand Analytics', 'Keyword volume and share', 'This week'],
- ['Account Health / Fix Your Products / pricing alerts', 'Performance > Account Health; Inventory > Fix Your Products', 'Suppressed or at-risk listings', 'Today'],
- ['Brand Registry name, Vine, Attribution, active coupons', 'Brands / Advertising', 'Programs available', 'Today'],
- ['Landed cost per SKU', 'Finance', 'Margin and break-even ACoS', 'This week'],
- ['Test reports for 99% reflectance, 100-cycle autoclave rating, 60-70% standard-mirror figure', 'Product / supplier', 'Substantiate claims in images and A+', 'This week'],
-]
-table(dn, ['Item', 'Where', 'Used for', 'Needed by'], dnr, [60, 50, 40, 12])
+# ---------------- What I need ----------------
+dn = wb.create_sheet('What I Need', 1)
+from links import NEEDS
+dn.cell(1, 1, 'What I need to finish the audit and apply the updates (click the links; Seller Central and Ads links open after you sign in)').font = Font(name=F, bold=True, size=11)
+rows_ = [[i, t, w, where, None, why, by, ''] for i, (t, w, where, url, why, by) in enumerate(NEEDS, 1)]
+table(dn, ['#', 'Type', 'What I need', 'Where to find it', 'Link', 'Why', 'Needed by', 'Done? (Y)'], rows_, [4, 9, 60, 42, 16, 36, 11, 9], start=2, input_cols=(8,))
+for i, (t, w, where, url, why, by) in enumerate(NEEDS, 3):
+    if url: link(dn.cell(i, 5), url, 'Open')
+dn.freeze_panes = 'C3'
 
 wb.save(OUT)
 print('saved')

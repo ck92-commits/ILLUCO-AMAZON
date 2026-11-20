@@ -5,6 +5,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.comments import Comment
 sys.path.insert(0, 'scripts')
 from existing_listing_content import ROWS, ATTRIBUTE_FIXES, CONFIRM
+from links import dp, link
 
 TEMPLATE_SRC, SHEET_OUT, TPL_OUT = sys.argv[1:4]
 cat = {x['asin']: x for x in json.load(open('data/raw/illuco_catalog.json'))}
@@ -42,11 +43,16 @@ for row in ws.iter_rows(min_row=2):
     for c in row:
         c.font = Font(name='Arial', size=9); c.alignment = Alignment(wrap_text=True, vertical='top')
         c.border = Border(top=thin, bottom=thin, left=thin, right=thin)
+for i in range(2, ws.max_row + 1):
+    link(ws[f'A{i}'], dp(ws[f'A{i}'].value)); link(ws[f'B{i}'], dp(ws[f'B{i}'].value))
 ws.freeze_panes = 'C2'; ws.auto_filter.ref = ws.dimensions
 
 ws2 = wb.create_sheet('Attribute Fixes')
 ws2.append(['ASIN / Family', 'Product', 'Problem found on the live listing', 'Fix'])
-for x in ATTRIBUTE_FIXES: ws2.append(list(x))
+for x in ATTRIBUTE_FIXES:
+    ws2.append(list(x))
+    a = x[0].split()[0]
+    if a.startswith('B0'): link(ws2.cell(ws2.max_row, 1), dp(a), x[0], size=10)
 ws3 = wb.create_sheet('Confirm Before Upload')
 ws3.append(['#', 'Item to confirm', 'Owner', 'Confirmed? (Y/N)'])
 for i, x in enumerate(CONFIRM, 1): ws3.append([i, x, '', ''])
