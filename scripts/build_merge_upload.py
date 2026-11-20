@@ -3,11 +3,7 @@
   B  IDM-HEADS-FAMILY-PARENT   theme SIZE                        (replacement heads incl. Double-Sided heads)
 Existing ASINs are re-parented with "Edit (Partial Update)" (their ASINs, sales history and reviews stay);
 new Grand / Double-Sided / head SKUs are created with "Create or Replace (Full Update)".
-usage: build_merge_upload.py <ILLUCO template .xlsx> <Grand/DS READY .xlsx> <out .xlsx> <plan .csv>
-
-Writes two files (owner, 11/20: the 7 new UPCs are not accepted by Amazon until they are active in GS1):
-  <out .xlsx>               upload now: the 2 parents + the 20 rows of existing listings (the merge)
-  <out>_NEW_PRODUCTS.xlsx   upload later: the 7 new products (Grand, Double-Sided, Double-Sided heads)"""
+usage: build_merge_upload.py <ILLUCO template .xlsx> <Grand/DS READY .xlsx> <out .xlsx> <plan .csv>"""
 import sys, copy, csv, openpyxl
 from openpyxl.styles import PatternFill
 from openpyxl.comments import Comment
@@ -343,38 +339,7 @@ for r in range(8, row):
 from xlsx_thin import thin_rows
 thin_rows(wb)   # owner: every row at the default thin height
 
-# ---- split: merge now, new products after their UPCs are active in GS1 ----
-import os
-OUT_NEW = OUT[:-5] + '_NEW_PRODUCTS.xlsx'
-FULL = OUT[:-5] + '.full.tmp.xlsx'
-wb.save(FULL)
-def keep_rows(path_in, path_out, keep):
-    w2 = openpyxl.load_workbook(path_in)
-    s2 = w2['Template']
-    last = max(r for r in range(8, s2.max_row + 1) if s2[f'A{r}'].value) if s2.max_row >= 8 else 7
-    mc = s2.max_column
-    rows_keep = [r for r in range(8, last + 1) if s2[f'A{r}'].value and keep(s2, r)]
-    snap = [[(s2.cell(r, c_).value, copy.copy(s2.cell(r, c_)._style), copy.copy(s2.cell(r, c_).comment) if s2.cell(r, c_).comment else None)
-             for c_ in range(1, mc + 1)] for r in rows_keep]
-    blank = copy.copy(s2.cell(last + 5, 1)._style)
-    for r in range(8, last + 1):
-        for c_ in range(1, mc + 1):
-            cell = s2.cell(r, c_); cell.comment = None; cell.value = None; cell._style = copy.copy(blank)
-    for i, cells in enumerate(snap):
-        for c_, (v, st, cm) in enumerate(cells, 1):
-            cell = s2.cell(8 + i, c_); cell.value = v; cell._style = st; cell.comment = cm
-    w2.save(path_out)
-    return [s2[f'A{8 + i}'].value for i in range(len(snap))]
-is_new = lambda s, r: str(s[f'C{r}'].value).startswith('Create') and s[f'D{r}'].value == 'Child'
-now_skus = keep_rows(FULL, OUT, lambda s, r: not is_new(s, r))
-new_skus = keep_rows(FULL, OUT_NEW, is_new)
-os.remove(FULL)
-print('upload now:', len(now_skus), 'rows |', os.path.basename(OUT_NEW) + ':', len(new_skus), 'rows')
-new_set = set(new_skus)
-for p in plan:
-    sku = p['sku'].replace(' (INFERRED)', '')
-    p['file'] = ('-' if p['section'] == '4 not re-parented' else
-                 os.path.basename(OUT_NEW) + ' (after GS1)' if sku in new_set else os.path.basename(OUT) + ' (now)')
+wb.save(OUT)   # one file (owner, 11/20): parents, existing listings and the 7 new products together
 with open(PLAN, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(plan[0].keys())); w.writeheader(); w.writerows(plan)
 print('rows', row - 8, 'plan', len(plan))

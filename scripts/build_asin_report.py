@@ -500,13 +500,13 @@ def _style_block(ws, first_row, last_row, ncols, wrap=True):
 
 # ---- Upload Check ----
 uc = wb.create_sheet('Upload Check', 3)
-uc.cell(1, 1, 'Upload files: ILLUCO_Amazon_UPLOAD.xlsx (now: parents + existing listings) and ILLUCO_Amazon_UPLOAD_NEW_PRODUCTS.xlsx (after the UPCs are active in GS1)').font = Font(name=F, bold=True, size=12)
+uc.cell(1, 1, 'ILLUCO_Amazon_UPLOAD.xlsx - what it contains and the pre-upload check').font = Font(name=F, bold=True, size=12)
 rows_up = _csv('data/build/upload_rows.csv')
 # same order as the upload: Parent A and its children, Parent B and its children
 sections = [('A', 'Parent A: ILLUCO UHD Dental Mirrors with Handles (IDM-HANDLE-FAMILY-PARENT) and its children'),
             ('B', 'Parent B: ILLUCO UHD Dental Mirror Heads (IDM-HEADS-FAMILY-PARENT) and its children'),
             ('-', 'Not in the upload')]
-TYPE = {'1 new parent': 'PARENT (new)', '2 new child': 'Child (new product) - in _NEW_PRODUCTS file', '3 existing child': 'Child (existing listing)',
+TYPE = {'1 new parent': 'PARENT (new)', '2 new child': 'Child (new product): its UPC needs brand ILLUCO in GS1', '3 existing child': 'Child (existing listing)',
         '4 not re-parented': 'Seller Support case'}
 r0 = 3
 for key, label in sections:
@@ -533,11 +533,10 @@ import os as _os
 chk_new = _csv('data/build/upload_check_new_products.csv') if _os.path.exists('data/build/upload_check_new_products.csv') else []
 for _x in chk_new:
     _x['sku'] = _x['sku'] + ' (new products file)'
-uc.cell(r0, 1, f"Automated check against the template's own rules: ILLUCO_Amazon_UPLOAD.xlsx {sum(1 for x in chk if x['level']=='ERROR')} errors, "
-               f"{sum(1 for x in chk if x['level']=='WARN')} warnings; ILLUCO_Amazon_UPLOAD_NEW_PRODUCTS.xlsx "
-               f"{sum(1 for x in chk_new if x['level']=='ERROR')} errors, {sum(1 for x in chk_new if x['level']=='WARN')} warnings "
-               "(dropdown values, required fields, parent/child themes, unique variations, text limits, UPC check digits, prices, "
-               "image URLs). Amazon's own review rejected the 7 new UPCs on 11/20: they must be active in GS1 under ILLUCO first.").font = Font(name=F, bold=True, size=10)
+uc.cell(r0, 1, f"Automated check against the template's own rules: {sum(1 for x in chk if x['level']=='ERROR')} errors, "
+               f"{sum(1 for x in chk if x['level']=='WARN')} warnings (dropdown values, required fields, parent/child themes, unique "
+               "variations, text limits, UPC check digits, prices, image URLs). Amazon's own review rejected the 7 new UPCs on 11/20: "
+               "GS1 lists their brand as IDM SERIES, so they pass once Korea changes it to ILLUCO.").font = Font(name=F, bold=True, size=10)
 chk = chk + chk_new
 r0 += 1
 for j, h in enumerate(['Level', 'Row', 'SKU', 'Column', 'Issue'], 1):
