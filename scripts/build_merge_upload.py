@@ -3,7 +3,11 @@
   B  IDM-HEADS-FAMILY-PARENT   theme SIZE                        (replacement heads incl. Double-Sided heads)
 Existing ASINs are re-parented with "Edit (Partial Update)" (their ASINs, sales history and reviews stay);
 new Grand / Double-Sided / head SKUs are created with "Create or Replace (Full Update)".
-usage: build_merge_upload.py <ILLUCO template .xlsx> <Grand/DS READY .xlsx> <out .xlsx> <plan .csv>"""
+usage: build_merge_upload.py <ILLUCO template .xlsx> <Grand/DS READY .xlsx> <out .xlsx> <plan .csv>
+
+Writes two files (owner, 11/20: the 7 new UPCs are not accepted by Amazon until they are active in GS1):
+  <out .xlsx>               upload now: the 2 parents + the 20 rows of existing listings (the merge)
+  <out>_NEW_PRODUCTS.xlsx   upload later: the 7 new products (Grand, Double-Sided, Double-Sided heads)"""
 import sys, copy, csv, openpyxl
 from openpyxl.styles import PatternFill
 from openpyxl.comments import Comment
@@ -95,7 +99,6 @@ def put(vals, flags=None, note=None):
 # ---- parents ----
 put({'A': PA, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TA, 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable',
      'G': 'ILLUCO UHD Dental Mirrors with Handles, 1X, 2X and 3X Magnifying, Size 4 and Grand Size 10',
-     'H': 'Ultra High Definition, 99% Reflectance, No Ghost Image, 5-Minute Autoclave, 100+ Cycles, Single, 5 Pack and Double-Sided',
      'AD': INTRO + ('Choose the format that fits your operatory: single Size 4 (22mm) mirrors or 5-pack kits in 1X, or 2X and 3X '
                     'magnifying for fine detail (most mouth mirrors stop at 1X); the Double-Sided Size 4 with 99% reflectance on both '
                     'faces; or the Grand Size 10 (34mm) for a 2.4x wider view. Every mirror comes on an ergonomic anti-rotation '
@@ -108,7 +111,6 @@ put({'A': PA, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TA, 'I': BRAND, 'L': ITK
      'AJ': 'mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist orthodontist front surface number 4 size 10 large double sided professional ' + KW_CORE})
 put({'A': PB, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TB, 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable',
      'G': 'ILLUCO UHD Dental Mirror Heads, 1X, 2X and 3X Magnifying, Size 4 (22mm), Cone Socket, 5 Pack',
-     'H': 'Ultra High Definition, Replacement Heads, Handles Not Included, Single-Sided or Double-Sided, 5-Minute Autoclave, 100+ Cycles',
      'AD': INTRO + ('These Size 4 (22mm) replacement heads thread onto standard cone socket mirror handles, including ILLUCO ergonomic handles '
                     '(sold separately). Choose single-sided heads in 1X, or 2X and 3X magnifying for fine detail, or Double-Sided heads with '
                     '99% reflectance on both faces. ' + CARE + 'Each pack includes 5 heads.'),
@@ -340,7 +342,39 @@ for r in range(8, row):
 
 from xlsx_thin import thin_rows
 thin_rows(wb)   # owner: every row at the default thin height
-wb.save(OUT)
+
+# ---- split: merge now, new products after their UPCs are active in GS1 ----
+import os
+OUT_NEW = OUT[:-5] + '_NEW_PRODUCTS.xlsx'
+FULL = OUT[:-5] + '.full.tmp.xlsx'
+wb.save(FULL)
+def keep_rows(path_in, path_out, keep):
+    w2 = openpyxl.load_workbook(path_in)
+    s2 = w2['Template']
+    last = max(r for r in range(8, s2.max_row + 1) if s2[f'A{r}'].value) if s2.max_row >= 8 else 7
+    mc = s2.max_column
+    rows_keep = [r for r in range(8, last + 1) if s2[f'A{r}'].value and keep(s2, r)]
+    snap = [[(s2.cell(r, c_).value, copy.copy(s2.cell(r, c_)._style), copy.copy(s2.cell(r, c_).comment) if s2.cell(r, c_).comment else None)
+             for c_ in range(1, mc + 1)] for r in rows_keep]
+    blank = copy.copy(s2.cell(last + 5, 1)._style)
+    for r in range(8, last + 1):
+        for c_ in range(1, mc + 1):
+            cell = s2.cell(r, c_); cell.comment = None; cell.value = None; cell._style = copy.copy(blank)
+    for i, cells in enumerate(snap):
+        for c_, (v, st, cm) in enumerate(cells, 1):
+            cell = s2.cell(8 + i, c_); cell.value = v; cell._style = st; cell.comment = cm
+    w2.save(path_out)
+    return [s2[f'A{8 + i}'].value for i in range(len(snap))]
+is_new = lambda s, r: str(s[f'C{r}'].value).startswith('Create') and s[f'D{r}'].value == 'Child'
+now_skus = keep_rows(FULL, OUT, lambda s, r: not is_new(s, r))
+new_skus = keep_rows(FULL, OUT_NEW, is_new)
+os.remove(FULL)
+print('upload now:', len(now_skus), 'rows |', os.path.basename(OUT_NEW) + ':', len(new_skus), 'rows')
+new_set = set(new_skus)
+for p in plan:
+    sku = p['sku'].replace(' (INFERRED)', '')
+    p['file'] = ('-' if p['section'] == '4 not re-parented' else
+                 os.path.basename(OUT_NEW) + ' (after GS1)' if sku in new_set else os.path.basename(OUT) + ' (now)')
 with open(PLAN, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(plan[0].keys())); w.writeheader(); w.writerows(plan)
 print('rows', row - 8, 'plan', len(plan))

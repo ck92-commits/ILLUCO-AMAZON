@@ -1,5 +1,5 @@
 """Check ILLUCO_Amazon_UPLOAD.xlsx against the template's own rules before it goes to Amazon.
-Writes data/build/upload_check.csv (level, row, sku, column, issue)."""
+Writes data/build/upload_check.csv (level, row, sku, column, issue), or the CSV path given as the 2nd argument."""
 import sys, re, csv, json, urllib.request, openpyxl
 from openpyxl.utils import range_boundaries, get_column_letter
 sys.path.insert(0, 'scripts')
@@ -80,7 +80,11 @@ for r in rows:
                 add('ERROR', r, col, 'required for Create rows')
     if lvl == 'Child':
         p = t[f'E{r}'].value
-        if p not in parents:
+        known = {'IDM-HANDLE-FAMILY-PARENT': 'SIZE/COLOR/NUMBER_OF_ITEMS', 'IDM-HEADS-FAMILY-PARENT': 'SIZE'}
+        if p not in parents and p in known:
+            if t[f'F{r}'].value != known[p]:   # parent comes from ILLUCO_Amazon_UPLOAD.xlsx, uploaded first
+                add('ERROR', r, 'F', 'variation theme differs from the parent')
+        elif p not in parents:
             add('ERROR', r, 'E', f'parent SKU {p} is not created in this file')
         elif t[f'F{r}'].value != parents[p]:
             add('ERROR', r, 'F', 'variation theme differs from the parent')
@@ -115,6 +119,8 @@ for r in rows:
         if bad:
             add('WARN', r, col, f'all-caps words: {bad[:4]}')
     h = t[f'H{r}'].value or ''
+    if h and t[f'D{r}'].value == 'Parent':
+        add('ERROR', r, 'H', 'leave Item Highlight empty on parent rows (Amazon flags it there)')
     if len(h) > 125:
         add('ERROR', r, 'H', f'Item Highlight {len(h)} > 125 characters (Amazon rejects it)')
     bm = t[f'BM{r}'].value or ''
@@ -176,7 +182,7 @@ for u, places in urls.items():
 for r in rows:
     if t[f'D{r}'].value == 'Child' and t[f'C{r}'].value.startswith('Create') and not t[f'T{r}'].value:
         add('WARN', r, 'T', 'new product has no main image URL yet (upload works; listing is not buyable until an image is added)')
-with open('data/build/upload_check.csv', 'w', newline='') as f:
+with open(sys.argv[2] if len(sys.argv) > 2 else 'data/build/upload_check.csv', 'w', newline='') as f:
     w = csv.writer(f); w.writerow(['level', 'row', 'sku', 'column', 'issue']); w.writerows(issues)
 print(f'rows {len(rows)}, dropdown cells checked {checked}, not resolvable {unchecked}, image URLs {len(urls)}')
 print('ERRORS', sum(1 for i in issues if i[0] == 'ERROR'), 'WARNINGS', sum(1 for i in issues if i[0] == 'WARN'))
