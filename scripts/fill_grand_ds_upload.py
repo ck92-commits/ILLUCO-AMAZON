@@ -82,6 +82,30 @@ for col, v in head.items():
 assert len(head['G']) < 75 and len(head['AJ'].encode()) <= 249
 changes.append(('row 15', 'IDM-3CD41H', 'NEW standalone listing: Double-Sided head (UPC 810194860898). Price, images and package dims left blank - must be supplied', '', head['G']))
 
+# 7) Images (Drive folder "DENTAL MIRRO IMAGES" checked against cdn.shopify.com on 2026-11-20)
+SHOP = 'https://cdn.shopify.com/s/files/1/0795/1348/5611/files/'
+from openpyxl.styles import PatternFill
+from openpyxl.comments import Comment
+YEL = PatternFill('solid', fgColor='FFFF00')
+def flag(cell, note):
+    ws[cell].fill = YEL
+    ws[cell].comment = Comment(note, 'ILLUCO audit')
+# dsdm-04 (Professional Applications) is hosted but unused -> add as image 5 on both Double-Sided rows
+for sku in ('IDM-2CD41LB', 'IDM-2CD41DB'):
+    setv(f'X{rows[sku]}', SHOP + 'dsdm-04.jpg', 'Added hosted dsdm-04.jpg (was unused)')
+# Double-Sided Dark Blue used the Light Blue main image; the DS dark-blue main exists only on Drive
+r = rows['IDM-2CD41DB']
+setv(f'T{r}', None, 'Removed Light Blue main image from the Dark Blue child')
+flag(f'T{r}', 'REQUIRED: upload Drive "Double-Sided Dental Mirrors/main_db.jpg" to Shopify Files (it will get a new name because main_db.jpg is the Grand image) and paste its URL here.')
+for col, f in (('U', 'dsdm-01_db.jpg'), ('V', 'dsdm-02_db.jpg'), ('W', 'dsdm-03_db.jpg')):
+    flag(f'{col}{r}', f'Light Blue version for now. Replace with Drive "{f}" once it is uploaded to Shopify Files.')
+for sku in ('IDM-2C101DB', 'IDM-2C102DB'):
+    flag(f'U{rows[sku]}', 'Light Blue infographic for now. Replace with Drive "Grand Dental Mirror/grand-01_db.jpg" once uploaded to Shopify Files.')
+for sku in ('IDM-2C101LB', 'IDM-2C101DB', 'IDM-2C102LB', 'IDM-2C102DB'):
+    flag(f'X{rows[sku]}', 'Optional: Drive "grand-04.jpg" (Professional Applications) is not on Shopify yet; upload it and paste the URL here.')
+flag('T15', 'REQUIRED before this SKU can sell: no head-only images exist in the Drive folder. Also fill price (CF/DI) and package dimensions.')
+changes.append(('images', '', 'Image cells needing Drive-only files are highlighted yellow with a comment naming the file', '', ''))
+
 for r in list(range(8, 16)):
     kw = ws[f'AJ{r}'].value
     if kw: assert len(kw.encode()) <= 249, (r, len(kw.encode()))
