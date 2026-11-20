@@ -60,5 +60,5 @@ RECEIVED = [
  ('B0G2DYRY7T ships the black-shank version: keep its 4 photos, add 5 related kit images; use every related image (few images, team busy)', 'Your message 11/20'),
  ('3 SKUs confirmed: IDM2C43LB and IDM2C43LB-FBM (B0F857HKBG), IDM3C42NA (B0FCHH2SQB), IDM3C43NA (B0FCJY3H9H)', 'Manage All Inventory screenshots, 11/20'),
  ('Double-Sided head: 5-pack, cone socket, $139, main image', 'illuco.com'),
- ('Decisions: you are the approver; merge all singles; photo mirror as is; keep current Amazon prices; Double-Sided heads at the illuco.com price ($139) for now; brand ILLUCO; 100+ cycles on the care card; no fog line; coupon and PPC budget on hold', 'Your messages 11/20'),
+ ('Decisions: you are the approver; merge all singles; photo mirror as is; keep current Amazon prices; Double-Sided heads at the illuco.com price ($139) for now; brand ILLUCO; variation themes SIZE/COLOR/NUMBER_OF_ITEMS (handles) and SIZE (heads); 100+ cycles on the care card; no fog line; coupon and PPC budget on hold', 'Your messages 11/20'),
 ]
