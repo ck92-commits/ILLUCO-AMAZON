@@ -1,0 +1,4 @@
+data/raw/images/
+data/raw/pdp_*.html
+data/raw/pdp_*.md
+__pycache__/
