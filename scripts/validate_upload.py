@@ -123,7 +123,11 @@ for r in rows:
     if str(t[f'C{r}'].value).startswith('Create'):
         if not t[f'BV{r}'].value or not t[f'BX{r}'].value:
             add('ERROR', r, 'BV', 'item thickness and its unit are required on new listings')
+        if not t[f'FA{r}'].value:
+            add('ERROR', r, 'FA', 'Are batteries required? is required on new listings')
         if t[f'D{r}'].value == 'Child':
+            if not t[f'EW{r}'].value:
+                add('ERROR', r, 'EW', 'Number of Boxes is required on new products')
             for col in ('EO', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV'):
                 if not t[f'{col}{r}'].value:
                     add('ERROR', r, col, 'package size and weight (with units) are required on new listings')

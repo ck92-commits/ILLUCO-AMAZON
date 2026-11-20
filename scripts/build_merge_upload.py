@@ -326,6 +326,10 @@ for r in range(8, row):
         val, note = THICK[fam]
         t[f'BV{r}'] = val; t[f'BW{r}'] = val; t[f'BX{r}'] = 'Inches'
         t[f'BV{r}'].fill = YEL; t[f'BV{r}'].comment = Comment(note, YEL_NOTE)
+        if is_parent:
+            t[f'FA{r}'] = 'No'          # Are batteries required? (Amazon review flagged it on both parents)
+        else:
+            t[f'EW{r}'] = 1             # Number of Boxes: each product ships in one box (flagged on the 7 new children)
     if t[f'A{r}'].value == 'IDM-3CD41H':
         for col, v in (('EO', '8.27'), ('EP', 'Inches'), ('EQ', '3.94'), ('ER', 'Inches'), ('ES', '1.38'), ('ET', 'Inches'),
                        ('EU', '0.3'), ('EV', 'Pounds')):
