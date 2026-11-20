@@ -155,6 +155,8 @@ def in_the_box(photo, count_lines, items, warning=None, layout='side', photo_is_
     d = ImageDraw.Draw(img)
     if layout == 'side':
         tx0, tx1 = 1060, W - 90
+    elif layout == 'diag':
+        tx0, tx1 = 1040, W - 100
     else:
         tx0, tx1 = 150, W - 150
     tw = tx1 - tx0
@@ -173,6 +175,10 @@ def in_the_box(photo, count_lines, items, warning=None, layout='side', photo_is_
     if layout == 'side':
         px0, py0, px1, py1 = 70, top + 60, 1010, H - 110
         y = top + (H - 46 - top - total) / 2
+    elif layout == 'diag':
+        # large diagonal product from top-left to bottom-right; text sits in the free top-right corner
+        px0, py0, px1, py1 = 40, top + 40, 1640, H - 70
+        y = top + 110
     else:  # stack: photo on top, text below
         y = H - 46 - 70 - total
         px0, py0, px1, py1 = 120, top + 50, W - 120, y - 60
@@ -188,15 +194,15 @@ def in_the_box(photo, count_lines, items, warning=None, layout='side', photo_is_
         multiply_paste(img, ph, (px0 + (px1 - px0 - ph.width) / 2, py0 + (py1 - py0 - ph.height) / 2))
     for ln in count_lines:
         h, _, _ = K.text_block(d, (tx0, y), ln, 104, 'extrabold', K.NAVY_TEXT, max_w=tw, display=True,
-                               max_lines=2, min_size=90, align='left' if layout == 'side' else 'center')
+                               max_lines=2, min_size=90, align='center' if layout == 'stack' else 'left')
         y += h + 26
     # accent rule
-    if layout == 'side':
+    if layout in ('side', 'diag'):
         d.rectangle((tx0, y + 14, tx0 + 150, y + 24), fill=K.BLUE)
     else:
         d.rectangle((W / 2 - 75, y + 14, W / 2 + 75, y + 24), fill=K.BLUE)
     y += 60
-    if layout == 'side':
+    if layout in ('side', 'diag'):
         for it, h in zip(items, item_h):
             K.check_icon(img, (tx0 + 38, y + 30), 70)
             K.text_block(d, (tx0 + 100, y), it, 58, 'medium', K.NAVY_TEXT, max_w=tw - 110, max_lines=3,
@@ -218,8 +224,8 @@ def in_the_box(photo, count_lines, items, warning=None, layout='side', photo_is_
         K.check_copy(warning)
         wtxt = K.text_w(warning, f)
         bw = wtxt + 200
-        bx = tx0 if layout == 'side' else (W - bw) / 2
-        if layout == 'side':
+        bx = tx0 if layout in ('side', 'diag') else (W - bw) / 2
+        if layout in ('side', 'diag'):
             bw = min(bw, tw)
         box = (bx, y, bx + bw, y + 116)
         K.aa_draw(img, lambda g, s: g.rounded_rectangle([v * s for v in box], radius=58 * s,
@@ -353,13 +359,13 @@ def key_benefit_ds_heads():
     K.text_block(d, (110, 280), 'on both faces of every head', 64, 'medium', (190, 215, 245), max_w=W - 220,
                  max_lines=1, min_size=56, align='center')
     hd = A.double_head()
-    ph = K.fit(hd, 1640, 520)
-    K.paste(img, ph, ((W - ph.width) / 2, 470), shadow=(0, 24, 30, 0.35))
+    ph = K.fit(hd, 1760, 600)
+    K.paste(img, ph, ((W - ph.width) / 2, 420), shadow=(0, 24, 30, 0.35))
     # three benefit cards
     items = [('Front-surface dielectric coating', 'on German optical glass'),
              ('No ghost image', 'one sharp reflection, no double image'),
              ('Over 40% brighter', 'than standard 60–70% dental mirrors')]
-    cw, ch, gap = 560, 640, 50
+    cw, ch, gap = 570, 700, 45
     x = (W - (3 * cw + 2 * gap)) / 2
     y = 1150
     for t, b in items:
@@ -377,48 +383,50 @@ def key_benefit_ds_heads():
 # ================================================================ 04 MAGNIFICATION / SIZE / BOTH FACES
 def magnification_guide():
     img = white()
-    top = header(img, 'CHOOSE YOUR MAGNIFICATION', 'Same Size 4 (22 mm) head, three views')
+    top = header(img, 'CHOOSE YOUR MAGNIFICATION', 'Size 4 (22 mm) heads in 1X, 2X or 3X')
     footer_band(img)
     d = ImageDraw.Draw(img)
     art = A.img('mag_art')  # ILLUCO's 1x / 2x / 3x view circles
     centers = [(468, 1157), (1021, 1157), (1574, 1157)]
     r_src = 246
     cols = [(W / 6) * (1 + 2 * i) for i in range(3)]
-    diam = 520
+    diam = 580
     labels = [('1X', 'True size', 'Widest area', 'General exams'),
               ('2X', 'Detail 2× larger', 'Smaller area', 'Work closer'),
               ('3X', 'Detail 3× larger', 'Smallest area', 'Work closest')]
-    y_c = top + 70
+    y_c = top + 80
     for (cx_src, cy_src), cx, lab in zip(centers, cols, labels):
         c = K.circle_crop(art, (cx_src, cy_src), r_src, diam, ring=14, ring_color=(200, 222, 248))
         K.paste(img, c, (cx - diam / 2, y_c), shadow=(0, 14, 20, 0.22))
         K.text_line(d, (cx, y_c + diam + 40), lab[0], 150, 'extrabold', K.NAVY_TEXT, anchor='ma', display=True)
         yy = y_c + diam + 230
-        K.text_line(d, (cx, yy), lab[1], 58, 'bold', K.BLUE, anchor='ma')
-        K.text_line(d, (cx, yy + 80), lab[2], 56, 'regular', K.NAVY_TEXT, anchor='ma')
-        K.text_line(d, (cx, yy + 160), lab[3], 56, 'regular', K.NAVY_TEXT, anchor='ma')
+        K.text_line(d, (cx, yy), lab[1], 60, 'bold', K.BLUE, anchor='ma')
+        K.text_line(d, (cx, yy + 84), lab[2], 58, 'regular', K.NAVY_TEXT, anchor='ma')
+        K.text_line(d, (cx, yy + 168), lab[3], 58, 'regular', K.NAVY_TEXT, anchor='ma')
     # arrow bar
-    ya = y_c + diam + 520
+    ya = y_c + diam + 540
     bar = K.gradient((1640, 22), (150, 190, 235), K.NAVY, 'h')
     img.paste(bar, (180, ya))
     K.aa_draw(img, lambda g, s: g.polygon([(1820 * s, (ya - 26) * s), (1880 * s, (ya + 11) * s),
                                            (1820 * s, (ya + 48) * s)], fill=K.NAVY + (255,)))
     K.text_line(d, (180, ya + 50), 'Wider view', 56, 'semibold', K.GREY_TEXT, anchor='la')
     K.text_line(d, (1880, ya + 50), 'More detail', 56, 'semibold', K.NAVY_TEXT, anchor='ra')
-    K.text_block(d, (150, ya + 170), 'Magnified mirrors enlarge detail but show a smaller area, so they work '
+    K.text_block(d, (150, ya + 190), 'Magnified mirrors enlarge detail but show a smaller area, so they work '
                  'best held close to the tooth.', 56, 'regular', K.NAVY_TEXT, max_w=W - 300, max_lines=2,
                  min_size=56, align='center')
     return img
 
 
-def _head_photo_with_fade(photo, crop_box, fade_px):
-    """Crop a white-background photo and fade its bottom edge to white."""
+def _head_photo_with_fade(photo, crop_box, fade_px, fade_right=0):
+    """Crop a white-background photo and fade its bottom (and optionally right) edge to white."""
     c = photo.crop(crop_box).convert('RGB')
     a = np.asarray(c, np.float32)
-    h = a.shape[0]
-    t = np.ones(h, np.float32)
-    t[h - fade_px:] = np.linspace(1, 0, fade_px)
-    a = a * t[:, None, None] + 255 * (1 - t[:, None, None])
+    h, w = a.shape[:2]
+    t = np.ones((h, w), np.float32)
+    t[h - fade_px:, :] *= np.linspace(1, 0, fade_px)[:, None]
+    if fade_right:
+        t[:, w - fade_right:] *= np.linspace(1, 0, fade_right)[None, :]
+    a = a * t[..., None] + 255 * (1 - t[..., None])
     return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), 'RGB')
 
 
@@ -508,4 +516,516 @@ def both_faces():
         K.check_icon(img, (bx + 36, y + 30), 70)
         K.text_block(d, (bx + 100, y), it, 58, 'medium', K.NAVY_TEXT, max_w=W - 300, max_lines=1, min_size=56)
         y += 118
+    return img
+
+
+# ================================================================ 05 COMPARISON CHARTS
+def _fit_in_box(img, item, box, rgba=False, shadow=None):
+    x0, y0, x1, y1 = box
+    if rgba:
+        ph = K.fit(item, x1 - x0, y1 - y0)
+        K.paste(img, ph, (x0 + (x1 - x0 - ph.width) / 2, y0 + (y1 - y0 - ph.height) / 2), shadow=shadow)
+    else:
+        ph = K.fit(tight(item, pad=6), x1 - x0, y1 - y0)
+        multiply_paste(img, ph, (x0 + (x1 - x0 - ph.width) / 2, y0 + (y1 - y0 - ph.height) / 2))
+
+
+def grand_diag_rgba(color='lb'):
+    m = A.grand_full(color)
+    return K.trim(K.rotate_rgba(m, 45))
+
+
+def chart_family_a():
+    img = white()
+    top = header(img, 'COMPARE THE ILLUCO UHD LINE', 'Every handle model comes in Light Blue or Dark Blue', band_h=290)
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    cols = ['Single', '5-Pack Kit', 'Double-Sided', 'Grand']
+    x0, x1 = 50, W - 50
+    cw = (x1 - x0) / 4
+    pb_top, pb_h = top + 24, 300
+    photos = [(A.img('single_lb_main'), False), (A.img('kit_lb_box'), False),
+              (A.ds_box_main('lb')[0], False), (K.trim(K.rotate_rgba(grand_pair_rgba('lb'), 45)), True)]
+    for i, (ph, rgba) in enumerate(photos):
+        cx0 = x0 + i * cw
+        _fit_in_box(img, ph, (cx0 + 40, pb_top, cx0 + cw - 40, pb_top + pb_h), rgba=rgba)
+        K.text_line(d, (cx0 + cw / 2, pb_top + pb_h + 22), cols[i], 66, 'bold', K.NAVY_TEXT, anchor='ma',
+                    display=True)
+    rows = [('HEAD SIZE', ['Size 4\n22 mm', 'Size 4\n22 mm', 'Size 4\n22 mm', 'Size 10\n34 mm']),
+            ('MIRROR FACES', ['1', '1', '2', '1']),
+            ('MAGNIFICATION', ['1X · 2X · 3X', '1X · 2X · 3X', '1X', '1X · 2X']),
+            ('HANDLES INCLUDED', ['1', '5', '5', '2']),
+            ('MIRRORS PER PACK', ['1', '5', '5', '2']),
+            ('BEST FOR', ['Trying ILLUCO\nor a spare', 'Stocking the\noperatory', 'Two mirror\nfaces in one',
+                          'Whole-quadrant\nviews'])]
+    y = pb_top + pb_h + 112
+    band_h, lh, padv = 72, 64, 22
+    f_val = K.font(56, 'medium')
+    for label, vals in rows:
+        K.aa_draw(img, lambda g, s, y=y: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + band_h) * s),
+                                                             radius=16 * s, fill=K.PALE + (255,)))
+        K.text_line(d, (x0 + 34, y + band_h / 2), label, 56, 'bold', K.BLUE, anchor='lm')
+        y += band_h
+        nl = max(v.count('\n') + 1 for v in vals)
+        for i, v in enumerate(vals):
+            cxm = x0 + i * cw + cw / 2
+            for j, ln in enumerate(v.split('\n')):
+                K.check_copy(ln)
+                if K.text_w(ln, f_val) > cw - 20:
+                    raise K.Overflow(ln)
+                d.text((cxm, y + padv + j * lh), ln, font=f_val, fill=K.NAVY_TEXT, anchor='ma')
+        y += padv * 2 + nl * lh - 10
+    if y > H - 60:
+        raise K.Overflow(f'chart A overflow {y}')
+    # column separators through the value rows
+    for i in range(1, 4):
+        xx = x0 + i * cw
+        d.line((xx, pb_top + pb_h + 112, xx, y), fill=K.DIVIDER, width=2)
+    return img
+
+
+def chart_family_b():
+    img = white()
+    top = header(img, 'WHICH HEADS DO YOU NEED?', 'Replacement heads only, handles not included', band_h=290)
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    lab_w = 560
+    x0, x1 = 60, W - 60
+    cw = (x1 - x0 - lab_w) / 2
+    cols = ['Single-Sided', 'Double-Sided']
+    pb_top, pb_h = top + 40, 330
+    _fit_in_box(img, A.single_head(), (x0 + lab_w + 60, pb_top, x0 + lab_w + cw - 60, pb_top + pb_h), rgba=True,
+                shadow=(6, 10, 10, 0.12))
+    _fit_in_box(img, A.double_head(), (x0 + lab_w + cw + 30, pb_top + 40, x1 - 30, pb_top + pb_h - 30),
+                rgba=True, shadow=(6, 10, 10, 0.12))
+    for i, c in enumerate(cols):
+        K.text_line(d, (x0 + lab_w + i * cw + cw / 2, pb_top + pb_h + 26), c, 70, 'bold', K.NAVY_TEXT,
+                    anchor='ma', display=True)
+    rows = [('Head size', ['Size 4 (22 mm)', 'Size 4 (22 mm)']),
+            ('Mirror faces', ['1', '2']),
+            ('Magnification', ['1X · 2X · 3X', '1X']),
+            ('Thread', ['Cone socket', 'Cone socket']),
+            ('Handles included', ['No', 'No']),
+            ('Heads per pack', ['5', '5']),
+            ('Best for', ['Replacing worn heads', 'Two faces per head'])]
+    y = pb_top + pb_h + 140
+    rh = 142
+    f_val = K.font(58, 'medium')
+    for k, (label, vals) in enumerate(rows):
+        if k % 2 == 0:
+            K.aa_draw(img, lambda g, s, y=y: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + rh) * s),
+                                                                 radius=18 * s, fill=K.PALE + (255,)))
+        K.text_line(d, (x0 + 40, y + rh / 2), label, 58, 'bold', K.BLUE, anchor='lm')
+        for i, v in enumerate(vals):
+            K.check_copy(v)
+            if K.text_w(v, f_val) > cw - 30:
+                raise K.Overflow(v)
+            col = K.RED if v == 'No' else K.NAVY_TEXT
+            d.text((x0 + lab_w + i * cw + cw / 2, y + rh / 2), v, font=f_val, fill=col, anchor='mm')
+        y += rh
+    if y > H - 70:
+        raise K.Overflow(f'chart B overflow {y}')
+    return img
+
+
+# ================================================================ 06 HANDLE / COMPATIBILITY
+def _blue_top(photo_rgb, x_range=None):
+    """Topmost row containing handle-blue pixels (the steel/handle junction). Handle blue is
+    strongly blue with a low red channel; the pale blue tint of mirror faces is excluded."""
+    a = np.asarray(photo_rgb.convert('RGB')).astype(np.int32)
+    blue = (a[..., 2] - a[..., 0] > 45) & (a[..., 0] < 110)
+    if x_range:
+        blue[:, :x_range[0]] = False
+        blue[:, x_range[1]:] = False
+    rows = np.nonzero(blue.sum(axis=1) > 6)[0]
+    y = rows.min()
+    xs = np.nonzero(blue[y + 4])[0]
+    return y, (xs.min() + xs.max()) / 2 if len(xs) else None
+
+
+def _callouts(img, d, items, x_text, w_text):
+    """items: [(title, body, target_xy, text_top_y)] -> text at x_text with leader to target."""
+    for title, body, (tx, ty), y in items:
+        th, _, _ = K.text_block(d, (x_text, y), title, 66, 'bold', K.NAVY_TEXT, max_w=w_text, max_lines=2,
+                                min_size=58, display=True)
+        bh, _, _ = K.text_block(d, (x_text, y + th + 18), body, 56, 'regular', K.GREY_TEXT, max_w=w_text,
+                                max_lines=3, min_size=56)
+        K.leader(img, (x_text - 30, y + th / 2 + 6), (tx, ty), color=K.BLUE)
+
+
+def _fits_heads_note(img, d, text, x0=820):
+    by = H - 46 - 230
+    K.aa_draw(img, lambda g, s: g.rounded_rectangle((x0 * s, by * s, (W - 90) * s, (by + 170) * s),
+                                                    radius=28 * s, fill=K.PALE + (255,)))
+    K.text_block(d, (x0 + 50, by + 24), text, 56, 'medium', K.NAVY_TEXT, max_w=W - 90 - x0 - 100, max_lines=2,
+                 min_size=56)
+
+
+def handle_size4(color):
+    img = white()
+    cname = COLOR_NAME[color]
+    top = header(img, 'ERGONOMIC ANTI-ROTATION HANDLE', f'{cname} handle with cone socket thread')
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    photo = A.img('single_lb_main' if color == 'lb' else 'single_db_main')
+    # rotate the diagonal photo so the mirror stands vertical (head on top)
+    geo = A.single_mirror_vertical_angle(color)
+    vert = tight(rotate_white(photo, geo), pad=4)
+    ph = K.fit(vert, 520, H - top - 150)
+    px, py = 300 - ph.width / 2 + 60, top + 70
+    multiply_paste(img, ph, (px, py))
+    # anchors
+    jy, jx = _blue_top(ph)
+    # the head is the widest part of the upright mirror: its centre sits ~half a width below the top
+    head_c = (ph.width - 8, ph.width * 0.5)
+    targets = [(px + head_c[0], py + head_c[1]), (px + jx + 18, py + jy + 4),
+               (px + ph.width * 0.62, py + jy + (ph.height - jy) * 0.32)]
+    x_text, w_text = 820, W - 820 - 90
+    items = [('Size 4 (22 mm) UHD head', '99% reflectance, no ghost image', targets[0], targets[0][1] - 70),
+             ('Cone socket thread', 'Replace the head, keep the handle', targets[1], py + jy - 60),
+             ('Anti-rotation grip', f'Ergonomic shape, {cname}', targets[2], targets[2][1] - 60)]
+    _callouts(img, d, items, x_text, w_text)
+    _fits_heads_note(img, d, 'Takes ILLUCO UHD Size 4 replacement heads (cone socket)')
+    return img
+
+
+def handle_grand(color):
+    img = white()
+    cname = COLOR_NAME[color]
+    top = header(img, 'ERGONOMIC ANTI-ROTATION HANDLE', f'{cname} handle with cone socket thread')
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    m = A.grand_full(color)
+    ph = K.fit(m, 560, H - top - 140)
+    px, py = 330 - ph.width / 2 + 40, top + 60
+    K.paste(img, ph, (px, py), shadow=(14, 18, 20, 0.15))
+    # anchors measured on the Light Blue photo: the Dark Blue file is a pixel-aligned recolour, and
+    # its dark handle / steel reflections are too close in colour to separate reliably
+    ref = K.fit(A.grand_full('lb'), 560, H - top - 140)
+    al = np.asarray(ref.getchannel('A')) > 128
+    rgb = Image.new('RGB', ref.size, (255, 255, 255))
+    rgb.paste(ref, (0, 0), ref)
+    a = np.asarray(rgb).astype(np.int32)
+    handle = (a[..., 2] > 150) & (a[..., 0] < 90) & (a[..., 1] > 60)
+    rows = np.nonzero(handle.sum(axis=1) > 6)[0]
+    jy = int(rows.min())
+    xs = np.nonzero(handle[jy + 4])[0]
+    jx = (xs.min() + xs.max()) / 2
+    widths = al.sum(axis=1)
+    hy = int(np.argmax(widths[: jy]))
+    hx = np.nonzero(al[hy])[0].max()
+    targets = [(px + hx - 4, py + hy), (px + jx + 22, py + jy + 4),
+               (px + ph.width * 0.62, py + jy + (ph.height - jy) * 0.35)]
+    x_text, w_text = 820, W - 820 - 90
+    items = [('Grand Size 10 (34 mm) head', '99% reflectance, no ghost image', targets[0], py + hy - 70),
+             ('Cone socket thread', 'The head threads into the handle', targets[1], py + jy - 60),
+             ('Anti-rotation grip', f'Ergonomic shape, {cname}', targets[2], targets[2][1] - 60)]
+    _callouts(img, d, items, x_text, w_text)
+    return img
+
+
+def handle_ds(color):
+    img = white()
+    cname = COLOR_NAME[color]
+    top = header(img, 'ERGONOMIC ANTI-ROTATION HANDLE', f'{cname} handle with cone socket thread')
+    d = ImageDraw.Draw(img)
+    photo = A.img('ds_main_lb' if color == 'lb' else 'ds_main_db')
+    s = (H - top) / photo.height
+    ph = K.scale(photo, s)
+    ox, oy = W - ph.width, top
+    multiply_paste(img, ph, (ox, oy))
+    footer_band(img)
+    T = lambda x, y: (ox + x * s, oy + y * s)
+    disc_left = T(705, 650)
+    junction = T(598, 1372)
+    grip = T(560, 1690)
+
+    def callout(x, y, title, body, target, w, leader_from='right'):
+        th, _, _ = K.text_block(d, (x, y), title, 66, 'bold', K.NAVY_TEXT, max_w=w, max_lines=1, min_size=58,
+                                display=True)
+        K.text_block(d, (x, y + th + 18), body, 56, 'regular', K.GREY_TEXT, max_w=w, max_lines=2, min_size=56)
+        if leader_from == 'right':
+            tw = K.text_w(title, K.font(66, 'bold', True))
+            K.leader(img, (x + tw + 30, y + th / 2 + 6), target, color=K.BLUE)
+        else:
+            K.leader(img, (x - 30, y + th / 2 + 6), target, color=K.BLUE)
+
+    callout(80, disc_left[1] - 120, 'Double-sided head', 'Size 4 (22 mm), 99% on both faces', disc_left, 720)
+    callout(80, junction[1] - 300, 'Cone socket thread', 'Replace the head, keep the handle', junction, 620)
+    callout(1150, H - 330, 'Anti-rotation grip', f'Ergonomic shape, {cname}', (grip[0] + 70, grip[1]),
+            W - 1150 - 80, leader_from='left')
+    return img
+
+
+def _thread_zoom(photo_rgb, center, radius, out_d):
+    return K.circle_crop(photo_rgb, center, radius, out_d, ring=10, ring_color=K.BLUE)
+
+
+def compatibility(head='single'):
+    img = white()
+    top = header(img, 'FITS CONE SOCKET HANDLES', 'Replacement heads only, handles not included')
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    if head == 'single':
+        photo = A.img('single_head')
+        ph = K.fit(tight(photo, pad=6), 520, 1180)
+        px, py = 150, top + 70
+        multiply_paste(img, ph, (px, py))
+        # thread = bottom 9% of the head
+        bx = photo_bbox(photo, pad=6)
+        thread_c = ((bx[0] + bx[2]) / 2 + 12, bx[3] - 70)
+        zoom = _thread_zoom(photo, thread_c, 95, 360)
+        zx, zy = 560, top + 900
+        sc = ph.width / (bx[2] - bx[0])
+        t_canvas = (px + (thread_c[0] - bx[0]) * sc, py + (thread_c[1] - bx[1]) * sc)
+        K.leader(img, (zx + 60, zy + 120), t_canvas, color=K.BLUE, width=5, dot=14)
+        K.paste(img, zoom, (zx, zy), shadow=(0, 10, 14, 0.2))
+        K.text_line(d, (zx + 180, zy + 380), 'Cone socket thread', 56, 'bold', K.BLUE, anchor='ma')
+        lx = 1020
+        ly = top + 160
+    else:
+        photo = A.img('double_head')
+        ph = K.fit(tight(photo, pad=6), 1500, 420)
+        px, py = (W - ph.width) / 2, top + 70
+        multiply_paste(img, ph, (px, py))
+        bx = photo_bbox(photo, pad=6)
+        # thread at the left end of the head
+        thread_c = (bx[0] + 120, bx[3] - 70)
+        zoom = _thread_zoom(photo, thread_c, 105, 330)
+        sc = ph.width / (bx[2] - bx[0])
+        t_canvas = (px + (thread_c[0] - bx[0]) * sc, py + (thread_c[1] - bx[1]) * sc)
+        zx, zy = 110, py + ph.height + 40
+        K.leader(img, (zx + 165, zy + 10), t_canvas, color=K.BLUE, width=5, dot=14)
+        K.paste(img, zoom, (zx, zy), shadow=(0, 10, 14, 0.2))
+        K.text_line(d, (zx + 165, zy + 350), 'Cone socket thread', 56, 'bold', K.BLUE, anchor='ma')
+        lx = 600
+        ly = py + ph.height + 90
+    rows = [(True, 'Cone socket handles', 'including ILLUCO handles'),
+            (False, 'Simple stem handles', None),
+            (False, 'European-thread handles', None)]
+    y = ly
+    for ok, t, sub in rows:
+        (K.check_icon if ok else K.cross_icon)(img, (lx + 50, y + 44), 100, bg=K.GREEN if ok else K.RED)
+        K.text_line(d, (lx + 140, y + 4), t, 66, 'bold', K.NAVY_TEXT, display=True)
+        if sub:
+            K.text_line(d, (lx + 140, y + 92), sub, 56, 'regular', K.GREY_TEXT)
+            y += 250
+        else:
+            y += 190
+    # bottom note
+    note = "Check your handle's thread before ordering."
+    by = H - 46 - 250
+    K.aa_draw(img, lambda g, s: g.rounded_rectangle((90 * s, by * s, (W - 90) * s, (by + 150) * s),
+                                                    radius=28 * s, fill=K.PALE + (255,)))
+    K.text_block(d, (150, by + 44), note, 60, 'semibold', K.NAVY_TEXT, max_w=W - 300, max_lines=1, min_size=56,
+                 align='center')
+    return img
+
+
+# ================================================================ 07 CARE & STERILIZATION
+def _thermo(img, cx, cy, h, color):
+    def fn(g, s):
+        w = h * 0.30
+        g.rounded_rectangle(((cx - w / 2) * s, (cy - h / 2) * s, (cx + w / 2) * s, (cy + h * 0.25) * s),
+                            radius=w / 2 * s, outline=color + (255,), width=int(h * 0.07 * s))
+        r = h * 0.21
+        g.ellipse(((cx - r) * s, (cy + h * 0.18) * s, (cx + r) * s, (cy + h * 0.18 + 2 * r) * s), fill=color + (255,))
+        g.rectangle(((cx - w * 0.17) * s, (cy - h * 0.12) * s, (cx + w * 0.17) * s, (cy + h * 0.3) * s),
+                    fill=color + (255,))
+    K.aa_draw(img, fn)
+
+
+def _clock(img, cx, cy, r, color):
+    def fn(g, s):
+        g.ellipse(((cx - r) * s, (cy - r) * s, (cx + r) * s, (cy + r) * s), outline=color + (255,),
+                  width=int(r * 0.16 * s))
+        g.line([(cx * s, cy * s), (cx * s, (cy - r * 0.6) * s)], fill=color + (255,), width=int(r * 0.14 * s))
+        g.line([(cx * s, cy * s), ((cx + r * 0.45) * s, (cy + r * 0.2) * s)], fill=color + (255,),
+               width=int(r * 0.14 * s))
+    K.aa_draw(img, fn)
+
+
+def _warn(img, cx, cy, size, color):
+    def fn(g, s):
+        h = size
+        pts = [(cx * s, (cy - h / 2) * s), ((cx + h * 0.58) * s, (cy + h / 2) * s), ((cx - h * 0.58) * s, (cy + h / 2) * s)]
+        g.polygon(pts, fill=color + (255,))
+        g.rounded_rectangle(((cx - h * 0.06) * s, (cy - h * 0.18) * s, (cx + h * 0.06) * s, (cy + h * 0.2) * s),
+                            radius=h * 0.05 * s, fill=(255, 255, 255, 255))
+        g.ellipse(((cx - h * 0.065) * s, (cy + h * 0.27) * s, (cx + h * 0.065) * s, (cy + h * 0.4) * s),
+                  fill=(255, 255, 255, 255))
+    K.aa_draw(img, fn)
+
+
+def _no_scrub(img, cx, cy, r, color):
+    def fn(g, s):
+        # sponge
+        g.rounded_rectangle(((cx - r * 0.62) * s, (cy - r * 0.32) * s, (cx + r * 0.62) * s, (cy + r * 0.32) * s),
+                            radius=r * 0.12 * s, fill=(150, 170, 200, 255))
+        for i in range(-2, 3):
+            for j in (-1, 1):
+                rr = r * 0.06
+                x, y = cx + i * r * 0.22, cy + j * r * 0.13
+                g.ellipse(((x - rr) * s, (y - rr) * s, (x + rr) * s, (y + rr) * s), fill=(110, 130, 165, 255))
+        g.ellipse(((cx - r) * s, (cy - r) * s, (cx + r) * s, (cy + r) * s), outline=color + (255,),
+                  width=int(r * 0.15 * s))
+        g.line([((cx - r * 0.7) * s, (cy + r * 0.7) * s), ((cx + r * 0.7) * s, (cy - r * 0.7) * s)],
+               fill=color + (255,), width=int(r * 0.15 * s))
+    K.aa_draw(img, fn)
+
+
+def care_card():
+    img = white()
+    top = header(img, 'CARE & STERILIZATION', 'Autoclave settings for mirror heads and handles')
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    x0, x1 = 90, W - 90
+    y = top + 70
+    K.text_line(d, (x0 + 10, y), 'AUTOCLAVE AT', 60, 'bold', K.BLUE)
+    y += 110
+    ph_h = 270
+    for i, (temp, mins) in enumerate([('273°F (134°C)', '5 min'), ('250°F (121°C)', '20 min')]):
+        K.aa_draw(img, lambda g, s, y=y: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + ph_h) * s),
+                                                             radius=30 * s, fill=K.PALE + (255,)))
+        _thermo(img, x0 + 115, y + ph_h / 2 - 10, 160, K.NAVY_TEXT)
+        K.text_line(d, (x0 + 220, y + ph_h / 2), temp, 116, 'extrabold', K.NAVY_TEXT, anchor='lm', display=True)
+        mw = K.text_w(mins, K.font(104, 'bold', True))
+        K.text_line(d, (x1 - 50, y + ph_h / 2), mins, 104, 'bold', K.BLUE, anchor='rm', display=True)
+        _clock(img, x1 - 50 - mw - 80, y + ph_h / 2, 54, K.BLUE)
+        y += ph_h
+        if i == 0:
+            K.text_line(d, (W / 2, y + 45), 'or', 60, 'semibold', K.GREY_TEXT, anchor='mm')
+            y += 90
+    y += 70
+    # limit
+    K.aa_draw(img, lambda g, s: g.rounded_rectangle((x0 * s, y * s, x1 * s, (y + 230) * s), radius=30 * s,
+                                                    fill=(253, 236, 236, 255)))
+    _warn(img, x0 + 115, y + 115, 130, K.RED)
+    K.text_line(d, (x0 + 220, y + 115), 'Do not exceed 277°F (136°C)', 88, 'bold', K.RED, anchor='lm',
+                display=True)
+    y += 300
+    # abrasive wiping
+    _no_scrub(img, x0 + 115, y + 110, 90, K.RED)
+    K.text_line(d, (x0 + 240, y + 30), 'Avoid abrasive wiping', 88, 'bold', K.NAVY_TEXT, display=True)
+    K.text_line(d, (x0 + 240, y + 145), 'Protects the front-surface coating', 60, 'regular', K.GREY_TEXT)
+    y += 300
+    K.text_block(d, (x0, y), "Follow your autoclave manufacturer's instructions.", 58, 'medium',
+                 K.GREY_TEXT, max_w=x1 - x0, max_lines=1, min_size=56, align='center')
+    if y + 80 > H - 46:
+        raise K.Overflow(f'care overflow {y}')
+    return img
+
+
+# ================================================================ 08 APPLICATIONS / SIZE SPEC
+def applications_reuse(key):
+    im = A.img(key)
+    return im.resize((W, H), Image.LANCZOS) if im.size != (W, H) else im
+
+
+def lifestyle_lb():
+    """New lifestyle collage from ILLUCO's own light-blue product photos."""
+    img = white()
+    top = header(img, 'MADE FOR DAILY CLINICAL USE')
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    gap = 40
+    x0, y0 = 70, top + 50
+    big_w, big_h = 1050, H - 46 - 60 - y0 - 150
+    typ = A.img('life_typodont')
+    big = K.rounded_photo(typ.crop((150, 0, 2048, 2048)), (big_w, big_h), 30)
+    K.paste(img, big, (x0, y0))
+    K.text_block(d, (x0, y0 + big_h + 40), 'Bright, single-image view', 62, 'bold', K.NAVY_TEXT, max_w=big_w,
+                 max_lines=1, min_size=56, align='center')
+    rx = x0 + big_w + gap
+    rw = W - 70 - rx
+    rh = (big_h + 150 - gap) // 2 - 150
+    glove = A.img('life_glove')
+    tray = A.img('life_tray')
+    p1 = K.rounded_photo(glove.crop((100, 150, 1900, 1800)), (rw, rh), 30)
+    p2 = K.rounded_photo(tray.crop((250, 250, 1950, 1700)), (rw, rh), 30)
+    K.paste(img, p1, (rx, y0))
+    K.text_block(d, (rx, y0 + rh + 22), 'Ergonomic anti-rotation grip', 58, 'bold', K.NAVY_TEXT, max_w=rw,
+                 max_lines=2, min_size=56, align='center')
+    y2 = y0 + rh + 150 + gap
+    K.paste(img, p2, (rx, y2))
+    K.text_block(d, (rx, y2 + rh + 22), 'Autoclavable at 273°F (134°C)', 58, 'bold', K.NAVY_TEXT, max_w=rw,
+                 max_lines=2, min_size=56, align='center')
+    return img
+
+
+def _chips(img, d, labels, cx, y, h=120, gap=30, size=64):
+    f = K.font(size, 'bold', True)
+    ws = [K.text_w(t, f) + 90 for t in labels]
+    x = cx - (sum(ws) + gap * (len(ws) - 1)) / 2
+    for t, w in zip(labels, ws):
+        box = (x, y, x + w, y + h)
+        K.aa_draw(img, lambda g, s, box=box: g.rounded_rectangle([v * s for v in box], radius=h / 2 * s,
+                                                                 fill=K.PALE + (255,), outline=K.BLUE + (255,),
+                                                                 width=4 * s))
+        K.check_copy(t)
+        d.text((x + w / 2, y + h / 2), t, font=f, fill=K.NAVY_TEXT, anchor='mm')
+        x += w + gap
+
+
+def size_spec_single_head():
+    img = white()
+    top = header(img, 'SIZE 4 · 22 mm HEAD', 'Single-sided · 1X, 2X or 3X magnification')
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    photo = A.img('single_head')
+    t = tight(photo, pad=6)
+    ph = K.fit(t, 900, H - top - 330)
+    px, py = 420 - ph.width / 2 + 120, top + 230
+    multiply_paste(img, ph, (px, py))
+    geo = A.disc_geometry_photo(ph)
+    dl, dr = px + geo['left'], px + geo['right']
+    K.dim_line(img, dl, dr, py - 50, color=K.BLUE)
+    K.text_line(d, ((dl + dr) / 2, py - 96), '22 mm', 84, 'bold', K.NAVY_TEXT, anchor='md', display=True)
+    x_text, w_text = 1080, W - 1080 - 90
+    bb = photo_bbox(ph)
+    items = [('Front-surface mirror', '99% reflectance, no ghost image', (dr - 10, py + geo['cy']),
+              py + geo['cy'] - 80),
+             ('Cone socket thread', 'Fits cone socket handles', (px + (bb[0] + bb[2]) / 2 + 30, py + bb[3] - 60),
+              py + bb[3] - 170)]
+    _callouts(img, d, items, x_text, w_text)
+    my = py + geo['cy'] + 330
+    K.text_line(d, (x_text + w_text / 2, my), 'Magnification options', 60, 'bold', K.NAVY_TEXT, anchor='ma',
+                display=True)
+    _chips(img, d, ['1X', '2X', '3X'], x_text + w_text / 2, my + 110)
+    return img
+
+
+def size_spec_double_head():
+    img = white()
+    top = header(img, 'SIZE 4 · 22 mm HEAD', 'Double-sided · 1X magnification')
+    footer_band(img)
+    d = ImageDraw.Draw(img)
+    # face view: head and neck of the double-sided mirror from the Double-Sided photo (handle excluded)
+    photo = A.img('ds_main_lb')
+    crop = (600, 395, 1160, 1085)  # stops above the second mirror in the photo
+    face = _head_photo_with_fade(photo, crop, 170, fade_right=90)
+    fp = K.fit(face, 860, 1180)
+    fx, fy = 110, top + 250
+    multiply_paste(img, fp, (fx, fy))
+    sc = fp.width / (crop[2] - crop[0])
+    dl, dr = fx + (694 - crop[0]) * sc, fx + (1096 - crop[0]) * sc
+    K.dim_line(img, dl, dr, fy - 40, color=K.BLUE)
+    K.text_line(d, ((dl + dr) / 2, fy - 86), '22 mm', 84, 'bold', K.NAVY_TEXT, anchor='md', display=True)
+    K.text_line(d, (fx + fp.width / 2, fy + fp.height + 10), 'Face view', 58, 'semibold', K.GREY_TEXT,
+                anchor='ma')
+    # side view
+    hd = A.double_head()
+    ph = K.fit(hd, 960, 300)
+    ex, ey = W - 80 - ph.width, top + 300
+    K.paste(img, ph, (ex, ey), shadow=(8, 12, 14, 0.14))
+    K.text_line(d, (ex + ph.width / 2, ey + ph.height + 30), 'Side view', 58, 'semibold', K.GREY_TEXT,
+                anchor='ma')
+    items = ['Mirror on both faces', '99% reflectance', 'No ghost image', 'Cone socket thread']
+    y = ey + ph.height + 190
+    for t in items:
+        K.check_icon(img, (ex + 60, y + 32), 76)
+        K.text_block(d, (ex + 130, y), t, 64, 'semibold', K.NAVY_TEXT, max_w=W - ex - 210, max_lines=1,
+                     min_size=56)
+        y += 150
+    _chips(img, d, ['1X'], ex + ph.width / 2, y + 40)
     return img

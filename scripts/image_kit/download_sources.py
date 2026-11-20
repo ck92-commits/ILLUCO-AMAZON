@@ -39,6 +39,9 @@ AMAZON = {
                              '71KqSGYiXfL', '61-ZXUS96xL'],
     'single_DB3X_B0GGDGRHRR': ['61FcYqxQdHL'],
     'single_1X_B0G2DYRY7T': ['41DY+Bjl5lL', '51b9bFn2fiL', '61noMl85BeL', '41eq8ArY68L'],
+    # reference only (500 px): current mains of the Light Blue / Dark Blue 5-pack children
+    'kit5_LB_main_500px_reference': ['41Uw02dXsML'],
+    'kit5_DB_main_500px_reference': ['41+EMJIHFJL'],
 }
 
 EXTRA_SHOPIFY = ['dsdm-04.jpg']

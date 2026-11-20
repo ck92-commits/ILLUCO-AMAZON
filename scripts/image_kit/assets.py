@@ -220,29 +220,38 @@ def ds_box_main(color):
     # the last header row, so the separate 'Kit Includes' panel text is never reached)
     hdr = a[:y_top]
     light = (hdr[..., 0] > 150) & (hdr.min(axis=2) > 140)
+    # the last few header rows are an anti-aliased transition: seed the flood a little above them
+    seed_y = y_top - 6
     comp = np.zeros_like(light)
-    comp[-1] = light[-1]
+    comp[seed_y] = light[seed_y]
+    comp[seed_y + 1:] = False
+    lim = light.copy()
+    lim[seed_y + 1:] = False
     n = comp.sum()
     while True:
         for _ in range(8):
-            comp = K._dilate(comp) & light
+            comp = K._dilate(comp) & lim
         m = comp.sum()
         if m == n:
             break
         n = m
     # the lid is convex: fill each row between its leftmost and rightmost lid pixel (keeps print)
     pts_l, pts_r = [], []
-    for y in range(y_top - 1, -1, -1):
+    for y in range(seed_y, -1, -1):
         xs = np.nonzero(comp[y])[0]
         if len(xs) < 2:
             break
         pts_l.append((xs.min(), y))
         pts_r.append((xs.max(), y))
     apex_y = pts_l[-1][1] if pts_l else y_top
-    if pts_l:
-        pts_l.insert(0, (pts_l[0][0], y_top + 2))
-        pts_r.insert(0, (pts_r[0][0], y_top + 2))
-    poly = [p for p in pts_l] + [p for p in reversed(pts_r)]
+    # straight lid edges fitted on the rows above the transition, extended down into the photo band
+    nfit = min(80, len(pts_l))
+    ys_fit = np.array([p[1] for p in pts_l[:nfit]], float)
+    fl = np.polyfit(ys_fit, np.array([p[0] for p in pts_l[:nfit]], float), 1)
+    fr = np.polyfit(ys_fit, np.array([p[0] for p in pts_r[:nfit]], float), 1)
+    yb = y_top + 3
+    poly = ([(float(np.polyval(fl, yb)), yb)] + [p for p in pts_l] + [p for p in reversed(pts_r)]
+            + [(float(np.polyval(fr, yb)), yb)])
     mask_hdr = Image.new('L', (Ww * 4, (y_top + 4) * 4), 0)
     if len(poly) > 3:
         ImageDraw.Draw(mask_hdr).polygon([(x * 4 + 2, y * 4 + 2) for x, y in poly], fill=255)
@@ -254,6 +263,15 @@ def ds_box_main(color):
     mn = band.min(axis=2)
     sat = band.max(axis=2) - mn
     t = np.clip((mn - 238) / (250 - 238), 0, 1) * (sat < 14)
+    # the soft shadow beside the lid starts abruptly where the old header ended: outside the lid,
+    # fade near-white pixels to white over the first rows of the band so no seam remains
+    fade_rows = 260
+    yy = np.arange(fade_rows)[:, None] + y_top
+    xx = np.arange(Ww)[None, :]
+    outside = (xx > np.polyval(fr, yy) + 10) | (xx < np.polyval(fl, yy) - 10)
+    w = (1 - np.arange(fade_rows) / fade_rows)[:, None] * outside
+    near_white = np.clip((mn[:fade_rows] - 215) / (238 - 215), 0, 1) * (sat[:fade_rows] < 16)
+    t[:fade_rows] = np.maximum(t[:fade_rows], w * near_white)
     band = band * (1 - t[..., None]) + 255 * t[..., None]
     out[y_top:y_bot + 1] = band.astype(np.int32)
     # header: keep lid only
@@ -268,3 +286,21 @@ def ds_box_main(color):
     yy, xx = np.nonzero(arr.min(axis=2) < 236)
     box = (xx.min(), yy.min(), xx.max() + 1, yy.max() + 1)
     return res.crop(box), {'apex_y': int(apex_y), 'y_top': int(y_top), 'y_bot': int(y_bot), 'box': box}
+
+
+@lru_cache(maxsize=None)
+def single_mirror_vertical_angle(color):
+    """Rotation (degrees, PIL convention) that stands the diagonal single-mirror photo upright."""
+    im = img('single_lb_main' if color == 'lb' else 'single_db_main')
+    a = np.asarray(im).astype(np.int32)
+    m = (255 - a.min(axis=2)) > 40
+    ys, xs = np.nonzero(m)
+    xm, ym = xs.mean(), ys.mean()
+    cov = np.cov(np.vstack([xs - xm, ys - ym]))
+    evals, evecs = np.linalg.eigh(cov)
+    vx, vy = evecs[:, np.argmax(evals)]
+    ang = np.degrees(np.arctan2(vy, vx))
+    # PIL rotate(+deg) turns counter-clockwise; we want the axis vertical with the head (upper-left) on top
+    rot = ang + 90 if ang < 0 else ang - 90
+    # head is at the upper-left in both photos -> after rotation it must be on top
+    return float(rot)
