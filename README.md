@@ -6,9 +6,11 @@ Amazon audit and listing rebuild for ILLUCO dental mirrors (Nov 20, 2026). **Thr
 |---|---|
 | `ILLUCO_Amazon_UPLOAD.xlsx` | **The only file to upload** (Seller Central > Catalog > Add Products via Upload). Merges every dental mirror except the photo mirrors into two variation families, rewrites all copy to the sales direction (Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles), keeps the current Amazon prices and creates the Grand, Double-Sided and Double-Sided head products. Checked against the template's own rules: 0 errors (see the Upload Check tab of the report). |
 | `ILLUCO_Amazon_Report.xlsx` | Everything else in one workbook (15 tabs): Summary, What I Need, ASIN Report, Upload Check, Listing Copy, Sales Direction (brief for design), Review Analysis, Competitors, Keywords + Search Query Performance, PPC Plan, PPC Apply (pauses, negatives, harvests), Images A+ Video, Image Kit, External Traffic, Action Plan. |
-| `image_kit/` | Amazon images per product and color (2000 x 2000) with `manifest.csv`, contact sheets and `README.md`. |
+| `image_kit/` | Amazon images per product and color (2000 x 2000) with `manifest.csv`, contact sheets and `README.md`. The upload links every child to its 8 images here (raw GitHub links at a fixed commit), so the images go up with the upload. |
 
 Findings doc: https://claude.ai/artifact/Xmwhj6EuFnc7G8b6uaePFV
+
+The repository is public, which lets Amazon read those image links. It also exposes `data/account/` (Seller Central exports): make the repository private once Amazon's processing report is back.
 
 Not in the upload on purpose: photo mirrors (unchanged) and `B0GGDQ15DD` (duplicate of `B0G2DYRY7T`; merged through a Seller Support case).
 

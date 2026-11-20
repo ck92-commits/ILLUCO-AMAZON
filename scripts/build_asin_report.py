@@ -396,7 +396,7 @@ apr = [
  ['Nov 20', 'Claudia reads the new copy', 'Cenk / sales team', 'Listing Copy tab', 'Not started'],
  ['Nov 20', 'Upload ILLUCO_Amazon_UPLOAD.xlsx (2 families, new copy, new products; Amazon prices unchanged)', 'Cenk', 'Upload Check tab', 'Not started'],
  ['Nov 20', 'Seller Support: merge B0GGDQ15DD into B0G2DYRY7T; re-classify dermatoscopes', 'Cenk', 'What I Need tab', 'Not started'],
- ['Nov 21', 'Upload the image kit to every child', 'Cenk / Design', 'Image Kit tab + zip', 'Not started'],
+ ['Nov 21', 'Images go up with the upload (8 per child); then make the GitHub repo private', 'Cenk', 'Image Kit tab', 'Not started'],
  ['Nov 21', 'Apply negatives and harvests from the PPC audit (no budget change)', 'Cenk', 'PPC Apply tab', 'Not started'],
  ['Nov 21', 'Supplier: top-coat durability and test reports', 'Cenk', '', 'Not started'],
  ['Nov 21', 'Answer NCX flag; Vine for both family parents; Request a Review on all orders', 'Cenk', '', 'Not started'],

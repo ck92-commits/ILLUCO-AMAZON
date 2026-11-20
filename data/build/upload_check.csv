@@ -1,2 +1,1 @@
 level,row,sku,column,issue
-WARN,15,IDM-2CD41DB,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)

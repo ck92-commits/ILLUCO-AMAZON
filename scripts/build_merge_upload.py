@@ -201,6 +201,42 @@ for r in range(8, row):
     for col in ('AE', 'AF', 'AG', 'AH', 'AI'):
         if t[f'{col}{r}'].value:
             t[f'{col}{r}'] = lead_case(t[f'{col}{r}'].value)
+# ---- images: every child gets its 8 image-kit images, linked from the GitHub repo at a fixed commit ----
+# (the repo is public, so Amazon can download them while it processes the upload; it keeps its own copies after that)
+import subprocess
+from pathlib import Path
+IMG_DIRS = {  # ASIN (existing) or SKU (new) -> image_kit folder
+    'B0FCZBD1KY': 'A_handle/kit_5pack_dark_blue', 'B0F84TKGLS': 'A_handle/kit_5pack_dark_blue', 'B0F85B5BDC': 'A_handle/kit_5pack_dark_blue',
+    'B0F84VWGG5': 'A_handle/kit_5pack_light_blue', 'B0FCMVZH31': 'A_handle/kit_5pack_light_blue', 'B0F857HKBG': 'A_handle/kit_5pack_light_blue',
+    'B0G2DYRY7T': 'A_handle/single_1pack_light_blue', 'B0GGDV4J6B': 'A_handle/single_1pack_light_blue', 'B0GGDS9MVF': 'A_handle/single_1pack_light_blue',
+    'B0GGF37FSB': 'A_handle/single_1pack_dark_blue', 'B0GGD95T8Z': 'A_handle/single_1pack_dark_blue', 'B0GGDGRHRR': 'A_handle/single_1pack_dark_blue',
+    'B0FBPG5CS9': 'B_heads/single_sided_heads_5pack', 'B0FCHH2SQB': 'B_heads/single_sided_heads_5pack', 'B0FCJY3H9H': 'B_heads/single_sided_heads_5pack',
+    'IDM-2C101LB': 'A_handle/grand_2pack_light_blue', 'IDM-2C102LB': 'A_handle/grand_2pack_light_blue',
+    'IDM-2C101DB': 'A_handle/grand_2pack_dark_blue', 'IDM-2C102DB': 'A_handle/grand_2pack_dark_blue',
+    'IDM-2CD41LB': 'A_handle/double_sided_5pack_light_blue', 'IDM-2CD41DB': 'A_handle/double_sided_5pack_dark_blue',
+    'IDM-3CD41H': 'B_heads/double_sided_heads_5pack',
+}
+if subprocess.run(['git', 'status', '--porcelain', 'image_kit'], capture_output=True, text=True).stdout.strip():
+    sys.exit('image_kit has uncommitted changes: commit and push them first (the upload links to a commit)')
+IMG_SHA = subprocess.run(['git', 'log', '-1', '--format=%H', '--', 'image_kit'], capture_output=True, text=True, check=True).stdout.strip()
+IMG_BASE = f'https://raw.githubusercontent.com/ck92-commits/ILLUCO-AMAZON/{IMG_SHA}/image_kit/'
+IMG_COLS = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']   # main image + other images 1-7
+sku_asin = {p['sku']: p['asin'] for p in plan}
+for r in range(8, row):
+    if t[f'D{r}'].value != 'Child':
+        continue
+    sku = t[f'A{r}'].value
+    folder = IMG_DIRS[sku if sku in IMG_DIRS else sku_asin[sku]]
+    files = sorted(f.name for f in Path('image_kit', folder).glob('0[1-8]_*.jpg'))
+    assert len(files) == 8, (folder, files)
+    for col, name in zip(IMG_COLS, files):
+        c = t[f'{col}{r}']
+        c.value = IMG_BASE + folder + '/' + name
+        c.fill = PatternFill(fill_type=None)
+        c.comment = None
+    c = t[f'AB{r}']; c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
+print('images linked at', IMG_SHA[:7])
+
 wb.save(OUT)
 with open(PLAN, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(plan[0].keys())); w.writeheader(); w.writerows(plan)
