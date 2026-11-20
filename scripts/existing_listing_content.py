@@ -228,17 +228,18 @@ ROWS = [
 ]
 
 # Seller SKUs per ASIN. Verified = from ILLUCO's Listing Summary, FBA returns or reimbursement reports.
-# Inferred = FBA SKU follows the verified pattern but did not appear in any report: check in Manage All Inventory.
+# Inferred = FBA SKU follows the verified pattern but did not appear in any report. The three inferred ones were
+# confirmed by the owner in Manage All Inventory on 2026-11-20 (screenshots), so all are verified now.
 SKUS = {
     'B0FCZBD1KY': [('IDM2C41DB', 'verified')],
     'B0F84VWGG5': [('IDM2C41LB', 'verified')],
     'B0F84TKGLS': [('IDM2C42DB', 'verified')],
     'B0FCMVZH31': [('IDM2C42LB', 'verified')],
     'B0F85B5BDC': [('IDM2C43DB', 'verified')],
-    'B0F857HKBG': [('IDM2C43LB', 'inferred'), ('IDM2C43LB-FBM', 'verified')],
+    'B0F857HKBG': [('IDM2C43LB', 'verified'), ('IDM2C43LB-FBM', 'verified')],
     'B0FBPG5CS9': [('IDM3C41NA', 'verified')],
-    'B0FCHH2SQB': [('IDM3C42NA', 'inferred')],
-    'B0FCJY3H9H': [('IDM3C43NA', 'inferred')],
+    'B0FCHH2SQB': [('IDM3C42NA', 'verified')],
+    'B0FCJY3H9H': [('IDM3C43NA', 'verified')],
     'B0G2DYRY7T': [('A2-3YBP-WRV7', 'verified')],
     'B0GGF37FSB': [('IDM-2C41DB-1X', 'verified')],
     'B0GGDV4J6B': [('IDM2C41LB-2X-FBA', 'verified'), ('IDM-2C41LB-2X', 'verified')],

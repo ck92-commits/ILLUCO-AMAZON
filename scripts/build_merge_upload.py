@@ -146,10 +146,8 @@ for r in range(9, 16):
         t[f'T{row}'] = SHOP + 'double-head_7873821b-dd72-4a9a-8cea-7147a90c92c9.jpg'
         t[f'T{row}'].fill = PatternFill(fill_type=None); t[f'T{row}'].comment = None
         t[f'CF{row}'] = '139.00'; t[f'DI{row}'] = '139.00'
-        for col in ('CF', 'DI'):
-            t[f'{col}{row}'].fill = YEL
-        t[f'DI{row}'].comment = Comment('Placeholder: $139 is the illuco.com price. The heads are new on Amazon, so set the Amazon '
-                                        'price here and in CF (List Price) before upload.', 'ILLUCO audit')
+        t[f'DI{row}'].comment = Comment('$139 = the illuco.com price, used for now (owner, Nov 20). The heads are new on Amazon.',
+                                        'ILLUCO audit')
         for col in ('EO', 'EQ', 'ES', 'EU'):
             t[f'{col}{row}'].fill = YEL
         t[f'EO{row}'].comment = Comment('Package dimensions and weight unknown - FBA will measure; fill if you have them.', 'ILLUCO audit')

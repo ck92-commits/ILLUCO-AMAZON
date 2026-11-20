@@ -13,11 +13,11 @@ section,sku,asin,family,size,color,items,action,price_old,price_new,note
 3 existing child,IDM2C42DB,B0F84TKGLS,A,Size 4 (22mm) 2X,Dark Blue,5,Edit (Partial Update),125.0,unchanged,
 3 existing child,IDM2C42LB,B0FCMVZH31,A,Size 4 (22mm) 2X,Light Blue,5,Edit (Partial Update),125.0,unchanged,
 3 existing child,IDM2C43DB,B0F85B5BDC,A,Size 4 (22mm) 3X,Dark Blue,5,Edit (Partial Update),140.0,unchanged,
-3 existing child,IDM2C43LB (INFERRED),B0F857HKBG,A,Size 4 (22mm) 3X,Light Blue,5,Edit (Partial Update),140.0,unchanged,
+3 existing child,IDM2C43LB,B0F857HKBG,A,Size 4 (22mm) 3X,Light Blue,5,Edit (Partial Update),140.0,unchanged,
 3 existing child,IDM2C43LB-FBM,B0F857HKBG,A,Size 4 (22mm) 3X,Light Blue,5,Edit (Partial Update),140.0,unchanged,
 3 existing child,IDM3C41NA,B0FBPG5CS9,B,Size 4 (22mm) Single-Sided 1X,,5,Edit (Partial Update),60.0,unchanged,
-3 existing child,IDM3C42NA (INFERRED),B0FCHH2SQB,B,Size 4 (22mm) Single-Sided 2X,,5,Edit (Partial Update),90.0,unchanged,
-3 existing child,IDM3C43NA (INFERRED),B0FCJY3H9H,B,Size 4 (22mm) Single-Sided 3X,,5,Edit (Partial Update),105.0,unchanged,
+3 existing child,IDM3C42NA,B0FCHH2SQB,B,Size 4 (22mm) Single-Sided 2X,,5,Edit (Partial Update),90.0,unchanged,
+3 existing child,IDM3C43NA,B0FCJY3H9H,B,Size 4 (22mm) Single-Sided 3X,,5,Edit (Partial Update),105.0,unchanged,
 3 existing child,A2-3YBP-WRV7,B0G2DYRY7T,A,Size 4 (22mm) 1X,Light Blue,1,Edit (Partial Update),19.99,unchanged,Becomes the 1X Light Blue child of the merged family (keeps its sales history). Confirm it ships the current product (its photos show a black shank) and replace its photos and A+ (A+ describes photo mirrors).
 3 existing child,IDM-2C41DB-1X,B0GGF37FSB,A,Size 4 (22mm) 1X,Dark Blue,1,Edit (Partial Update),19.99,unchanged,
 3 existing child,IDM2C41LB-2X-FBA,B0GGDV4J6B,A,Size 4 (22mm) 2X,Light Blue,1,Edit (Partial Update),27.99,unchanged,"Variation value ""Blue"" -> ""Light Blue""."

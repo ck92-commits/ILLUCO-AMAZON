@@ -34,8 +34,6 @@ def link(cell, url, text=None, size=9):
 # (type, what, where in the tool, link, why, needed by)
 NEEDS = [
  ('Upload', 'Upload ILLUCO_Amazon_UPLOAD.xlsx - the only upload (merges all mirrors into 2 families, new copy, new Grand / Double-Sided / heads; Amazon prices unchanged)', 'Catalog > Add Products via Upload', SC + '/product-search/bulk', 'The merge only happens through this upload', 'Today'),
- ('Confirm', 'Check 3 SKUs I inferred (IDM2C43LB, IDM3C42NA, IDM3C43NA) exist for B0F857HKBG, B0FCHH2SQB, B0FCJY3H9H - yellow cells in column A', 'Catalog > Manage All Inventory', SC + '/myinventory/inventory', 'A wrong SKU makes that row fail', 'Before upload'),
- ('Set', 'Amazon price for the new Double-Sided heads (IDM-3CD41H): the file has $139, the illuco.com price, as a yellow placeholder in CF and DI', 'You', '', 'New on Amazon, so there is no current price to keep', 'Before upload'),
  ('Approve', 'Claudia OK on the new copy: Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles (see Sales Direction tab)', 'Sales team', '', 'Copy follows her direction from Nov 20', 'Before upload'),
  ('Design', 'Bigger in-box instruction card that leads with the 5-minute autoclave at 273°F (134°C)', 'Design team (Ashley)', '', 'Over-autoclaving strips the coating - the cause of the bad reviews', 'This week'),
  ('Optional', 'Host the care card as a PDF and paste its URL in column IK (Instructions for Use) of the upload so it shows under Product guides and documents', 'Shopify > Content > Files', '', 'Makes the care instructions visible on the listing', 'This week'),
@@ -59,6 +57,7 @@ RECEIVED = [
  ('Two 1-star review texts', 'Screenshots'),
  ('Model numbers and prices for every variant', 'illuco.com public product feed'),
  ('Sales direction for the copy (Claudia)', 'management-meeting, Nov 20'),
+ ('3 SKUs confirmed: IDM2C43LB and IDM2C43LB-FBM (B0F857HKBG), IDM3C42NA (B0FCHH2SQB), IDM3C43NA (B0FCJY3H9H)', 'Manage All Inventory screenshots, 11/20'),
  ('Double-Sided head: 5-pack, cone socket, $139, main image', 'illuco.com'),
- ('Decisions: you are the approver; merge all singles; photo mirror as is; keep current Amazon prices; brand ILLUCO; 100+ cycles on the care card; no fog line; coupon and PPC budget on hold', 'Your messages 11/20'),
+ ('Decisions: you are the approver; merge all singles; photo mirror as is; keep current Amazon prices; Double-Sided heads at the illuco.com price ($139) for now; brand ILLUCO; 100+ cycles on the care card; no fog line; coupon and PPC budget on hold', 'Your messages 11/20'),
 ]

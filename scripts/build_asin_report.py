@@ -393,7 +393,7 @@ table(ex, ['Channel', 'Owner', 'What to run', 'Tracking', 'KPI'], exr, [30, 16, 
 # ---------------- Action plan ----------------
 ap = wb.create_sheet('Action Plan')
 apr = [
- ['Nov 20', 'Confirm 3 inferred SKUs and the Double-Sided heads price; Claudia reads the new copy', 'Cenk / sales team', 'What I Need tab', 'Not started'],
+ ['Nov 20', 'Claudia reads the new copy', 'Cenk / sales team', 'Listing Copy tab', 'Not started'],
  ['Nov 20', 'Upload ILLUCO_Amazon_UPLOAD.xlsx (2 families, new copy, new products; Amazon prices unchanged)', 'Cenk', 'Upload Check tab', 'Not started'],
  ['Nov 20', 'Seller Support: merge B0GGDQ15DD into B0G2DYRY7T; re-classify dermatoscopes', 'Cenk', 'What I Need tab', 'Not started'],
  ['Nov 21', 'Upload the image kit to every child', 'Cenk / Design', 'Image Kit tab + zip', 'Not started'],
@@ -467,7 +467,7 @@ for key, label in sections:
     r0 += 2
 chk = _csv('data/build/upload_check.csv')
 uc.cell(r0, 1, f"Automated check against the template's own rules: {sum(1 for x in chk if x['level']=='ERROR')} errors, "
-               f"{sum(1 for x in chk if x['level']=='WARN')} warnings (301 dropdown values, required fields, parent/child themes, "
+               f"{sum(1 for x in chk if x['level']=='WARN')} warnings (dropdown values, required fields, parent/child themes, "
                "unique variations, text limits, UPC check digits, prices, image URLs)").font = Font(name=F, bold=True, size=10)
 r0 += 1
 for j, h in enumerate(['Level', 'Row', 'SKU', 'Column', 'Issue'], 1):
@@ -477,11 +477,9 @@ for x in chk:
     for j, k in enumerate(['level', 'row', 'sku', 'column', 'issue'], 1):
         c = uc.cell(r0, j, x[k]); c.font = BODY; c.border = BOX; c.alignment = Alignment(wrap_text=True, vertical='top')
 r0 += 2
-uc.cell(r0, 1, 'Still to confirm (yellow cells in the upload):').font = Font(name=F, bold=True, size=10)
-for k, txt in enumerate(['3 inferred SKUs exist in your account (IDM2C43LB, IDM3C42NA, IDM3C43NA)',
-                         'The live listings use product type PROFESSIONAL_HEALTHCARE (if a row says "product type mismatch", change column B for that row to the type shown on the Edit listing page)',
-                         'The 7 new UPCs are registered to ILLUCO in GS1',
-                         'The Double-Sided heads price: $139 is a placeholder (the illuco.com price); set the Amazon price in CF and DI'], 1):
+uc.cell(r0, 1, 'Only Amazon can check these (the processing report shows them after upload):').font = Font(name=F, bold=True, size=10)
+for k, txt in enumerate(['The live listings use product type PROFESSIONAL_HEALTHCARE (if a row says "product type mismatch", change column B for that row to the type shown on the Edit listing page)',
+                         'The 7 new UPCs are registered to ILLUCO in GS1'], 1):
     uc.cell(r0 + k, 1, f'{k}. {txt}').font = BODY
 for col, wdt in zip('ABCDEFGHIJ', (22, 13, 7, 28, 11, 6, 30, 9, 9, 60)):
     uc.column_dimensions[col].width = wdt
