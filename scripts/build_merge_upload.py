@@ -155,6 +155,17 @@ for r in range(9, 16):
     row += 1
 
 # ---- existing children: re-parent + new copy + model numbers (Amazon prices left unchanged, owner 11/20) ----
+# The OLD 5-pack and heads families use the model number as their only selector ("Model: ..."), so it must read
+# as a product name, never a code (owner, 11/21). The IDM code goes in Part Number.
+def model_label(rr):
+    m = f"{rr['mag']}X"
+    if rr['family'].startswith('5-Pack'):
+        return f"5 Pack with Handles, {m}, {rr['color']}"
+    if rr['family'].startswith('Single'):
+        return f"1 Mirror with Handle, {m}, {rr['color']}"
+    return f"5 Replacement Heads, {m}"
+
+
 amz_price = {}
 import json
 for x in json.load(open('data/raw/illuco_catalog.json')):
@@ -174,7 +185,7 @@ for rr in ROWS:
         vals = {'A': sku, 'B': PT, 'C': EDIT, 'D': 'Child', 'E': PA if fam == 'A' else PB, 'F': TA if fam == 'A' else TB,
                 'G': rr['title'], 'H': rr['highlight'], 'AD': rr['description'],
                 'AE': rr['bullets'][0], 'AF': rr['bullets'][1], 'AG': rr['bullets'][2], 'AH': rr['bullets'][3], 'AI': rr['bullets'][4],
-                'AJ': rr['keywords'], 'P': rr['model_suggested'], 'BC': rr['model_suggested'], 'AY': rr['items'],
+                'AJ': rr['keywords'], 'P': model_label(rr), 'BC': rr['model_suggested'], 'AY': rr['items'],
                 'BB': rr['var_size'], 'BM': rr['included']}
         if fam == 'A':
             vals['BA'] = rr['color']
