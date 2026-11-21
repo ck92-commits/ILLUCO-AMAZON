@@ -245,7 +245,7 @@ SKUS = {
     'B0GGDV4J6B': [('IDM2C41LB-2X-FBA', 'verified'), ('IDM-2C41LB-2X', 'verified')],
     'B0GGD95T8Z': [('IDM2C41DB-2X-FBA', 'verified'), ('IDM-2C41DB-2X', 'verified')],
     'B0GGDS9MVF': [('IDM2C41LB-3X-FBA', 'verified'), ('IDM-2C41LB-3X', 'verified')],
-    'B0GGDGRHRR': [('IDM-2C41DB-3X-FBA', 'verified'), ('IDM-2C41DB-3X', 'verified')],
+    'B0GGDGRHRR': [('IDM-2C41DB-3X-FBA', 'verified')],   # IDM-2C41DB-3X dropped: Amazon error 8560 on 11/21 (no live listing behind it),
     'B0GGDQ15DD': [('IDM2C41LB-1X-FBA', 'verified'), ('IDM-2C41LB-1X', 'verified')],
 }
 

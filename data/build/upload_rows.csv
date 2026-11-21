@@ -15,7 +15,6 @@ section,sku,asin,family,size,color,items,action,price_old,price_new,note
 3 existing child,IDM2C41DB-2X-FBA,B0GGD95T8Z,A,Size 4 (22mm) 2X,Dark Blue,1,Edit (Partial Update),27.99,unchanged,
 3 existing child,IDM-2C41LB-3X,B0GGDS9MVF,A,Size 4 (22mm) 3X,Light Blue,1,Edit (Partial Update),31.9,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
 3 existing child,IDM2C41LB-3X-FBA,B0GGDS9MVF,A,Size 4 (22mm) 3X,Light Blue,1,Edit (Partial Update),31.9,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
-3 existing child,IDM-2C41DB-3X,B0GGDGRHRR,A,Size 4 (22mm) 3X,Dark Blue,1,Edit (Partial Update),31.9,unchanged,Detached from family B0GGD9DVP9; re-attached here as 3X Dark Blue. Answer the NCX flag in Voice of the Customer.
 3 existing child,IDM-2C41DB-3X-FBA,B0GGDGRHRR,A,Size 4 (22mm) 3X,Dark Blue,1,Edit (Partial Update),31.9,unchanged,Detached from family B0GGD9DVP9; re-attached here as 3X Dark Blue. Answer the NCX flag in Voice of the Customer.
 2 new child,IDM-2CD41LB,(new),A,Size 4 (22mm) Double-Sided 1X,Light Blue,5,Create or Replace (Full Update),,179.00,
 2 new child,IDM-2CD41DB,(new),A,Size 4 (22mm) Double-Sided 1X,Dark Blue,5,Create or Replace (Full Update),,179.00,

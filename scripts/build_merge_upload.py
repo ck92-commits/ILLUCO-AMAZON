@@ -222,6 +222,8 @@ IMG_COLS = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']   # main image + other imag
 # B0G2DYRY7T ships the black-shank version (owner, 11/20): its 4 current photos stay (main + other 1-3, left blank so
 # the partial update does not touch them) and 5 related kit images fill its empty slots (other 4-8).
 KEEP_CURRENT = {'B0G2DYRY7T': ['03_key_benefit', '07_care', '04_magnification', '05_comparison', '06_handle']}
+# Amazon rejected the reused 1X Dark Blue main on the 2X and 3X Dark Blue 5-packs (error 100560, 11/21): keep their own main
+KEEP_MAIN = {'B0F84TKGLS', 'B0F85B5BDC'}
 sku_asin = {p['sku']: p['asin'] for p in plan}
 for r in range(8, row):
     if t[f'D{r}'].value != 'Child':
@@ -240,6 +242,9 @@ for r in range(8, row):
         continue
     for col, name in zip(IMG_COLS, files):
         c = t[f'{col}{r}']
+        if col == 'T' and key in KEEP_MAIN:
+            c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
+            continue
         c.value = IMG_BASE + folder + '/' + name
         c.fill = PatternFill(fill_type=None)
         c.comment = None
