@@ -664,7 +664,59 @@ man = _csv('image_kit/manifest.csv')
 mcols = list(man[0].keys())
 table(ik, mcols, [[x[k] for k in mcols] for x in man], [10, 26, 40, 18, 46, 40, 16, 70])
 
-order = ['Summary', 'What I Need', 'ASIN Report', 'Upload Check', 'Listing Copy', 'Sales Direction', 'Review Analysis',
+# ---- Shopper Preview: exactly what every listing shows after the upload (owner, 11/21: approve before uploading) ----
+sp = wb.create_sheet('Shopper Preview')
+sp.cell(1, 1, 'Shopper Preview: what each listing shows after ILLUCO_Amazon_UPLOAD.xlsx is processed. '
+              'Read-only check; nothing here changes Amazon.').font = Font(name=F, bold=True, size=12)
+sp.cell(2, 1, 'Variations sit together only when they are the same product (one family per product line); anything else stays '
+              'separate: photo mirrors, dermatoscopes, headlights and loupes are not touched. On the family page shoppers pick '
+              'Size, Color and Number of Items (heads: Size). Model is the product-details line; the IDM code is the Part Number.'
+        ).font = Font(name=F, size=10, italic=True)
+_up = openpyxl.load_workbook('ILLUCO_Amazon_UPLOAD.xlsx')['Template']
+_plan = {x['sku'].replace(' (INFERRED)', ''): x for x in _csv('data/build/upload_rows.csv')}
+sp_hdr = ['Family / listing', 'ASIN', 'SKU(s)', 'Title', 'Item Highlight', 'Size', 'Color', 'Number of Items', 'Model',
+          'Part number', 'Main image', 'Status']
+for j, h in enumerate(sp_hdr, 1):
+    c = sp.cell(4, j, h); c.font = HFONT; c.fill = HFILL; c.border = BOX
+_rows, _seen = [], {}
+for r in range(8, _up.max_row + 1):
+    sku = _up[f'A{r}'].value
+    if not sku:
+        continue
+    asin = (_plan.get(sku) or {}).get('asin', '')
+    key = asin if asin.startswith('B0') else sku
+    if key in _seen:                       # same ASIN with a second SKU (FBA + merchant): one line, both SKUs
+        _rows[_seen[key]][2] += ', ' + sku
+        continue
+    parent = _up[f'D{r}'].value == 'Parent'
+    main = _up[f'T{r}'].value
+    main_txt = ('-' if parent else (main.split('/image_kit/')[-1] if main else 'keeps its current main image'))
+    if parent:
+        fam_txt = ('PARENT A: mirrors with handles' if sku.startswith('IDM-HANDLE') else 'PARENT B: replacement heads')
+        status = 'Created (theme: ' + str(_up[f'F{r}'].value) + ')'
+    else:
+        fam_txt = '    ' + ('A' if _up[f'E{r}'].value == 'IDM-HANDLE-FAMILY-PARENT' else 'B') + ' child'
+        status = ('New: goes live once GS1 shows brand ILLUCO for its UPC' if str(_up[f'C{r}'].value).startswith('Create')
+                  else 'Live listing: updated')
+    _seen[key] = len(_rows)
+    _rows.append([fam_txt, asin if asin.startswith('B0') else '(new)', sku, _up[f'G{r}'].value, _up[f'H{r}'].value,
+                  _up[f'BB{r}'].value, _up[f'BA{r}'].value, _up[f'AY{r}'].value, _up[f'P{r}'].value, _up[f'BC{r}'].value,
+                  main_txt, status])
+PFILL_SP = PatternFill(fill_type='solid', fgColor='DDEBF7')
+for i, row_ in enumerate(_rows, 5):
+    is_p = str(row_[0]).startswith('PARENT')
+    for j, v in enumerate(row_, 1):
+        c = sp.cell(i, j, v); c.border = BOX
+        c.font = Font(name=F, size=10, bold=is_p)
+        if is_p:
+            c.fill = PFILL_SP
+    if str(row_[1]).startswith('B0'):
+        link(sp.cell(i, 2), dp(row_[1]))
+for col, wdt in zip('ABCDEFGHIJKL', (30, 13, 26, 70, 60, 30, 11, 9, 40, 14, 44, 44)):
+    sp.column_dimensions[col].width = wdt
+sp.freeze_panes = 'D5'
+
+order = ['Summary', 'Shopper Preview', 'What I Need', 'ASIN Report', 'Upload Check', 'Listing Copy', 'Sales Direction', 'Review Analysis',
          'Competitors', 'Keywords', 'PPC Plan', 'PPC Apply', 'Images A+ Video', 'Image Kit', 'External Traffic', 'Action Plan']
 wb._sheets = [wb[n] for n in order]
 

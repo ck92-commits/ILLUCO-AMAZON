@@ -45,11 +45,9 @@ def new_row_copy(sku, color):
     """Title / highlight / bullet 1 / autoclave bullet / description / keywords for the 7 new SKUs."""
     if sku.startswith('IDM-2C10'):
         mag = 2 if sku.startswith('IDM-2C102') else 1
-        title = (f"ILLUCO Grand UHD Dental Mirror, Size 10 (34mm), 1X, 2 Pack, {color}" if mag == 1 else
-                 f"ILLUCO Grand UHD 2X Magnifying Dental Mirror, Size 10, 2 Pack, {color}")
-        hl = ("Ultra High Definition, With Handles, 2.4X Wider View, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles"
-              if mag == 1 else
-              "Ultra High Definition, 34mm Head, With Handles, 2.4X Wider View, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles")
+        title = (f"ILLUCO Grand UHD Dental Mirrors, Size 10, 1X, 2 Pack, {color}" if mag == 1 else
+                 f"ILLUCO Grand UHD 2X Magnifying Dental Mirrors, Size 10, 2 Pack, {color}")
+        hl = "Ultra High Definition, 34mm Head, With 2 Handles, 2.4X Wider View, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles"
         magline = ("This is the 1X version for a life-size view and clean quadrant photos. " if mag == 1 else
                    "This is the 2X magnifying version for fine detail; most mouth mirrors stop at 1X. ")
         desc = (INTRO + GRAND_MID + magline + CARE + "Each kit includes 2 Grand Size 10 mirror heads, 2 ergonomic "
@@ -58,8 +56,8 @@ def new_row_copy(sku, color):
               "photography quadrant tooth teeth oral exam hygienist uhd " + KW_CORE.replace(' 2x 3x', ' 2x'))
         return title, hl, B_HD, desc, kw
     if sku.startswith('IDM-2CD41'):
-        title = f"ILLUCO Double-Sided UHD Dental Mirror, Size 4 (22mm), 5 Pack, {color}"
-        hl = "Ultra High Definition on Both Sides, With Handles, 1X, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles"
+        title = f"ILLUCO Double-Sided UHD Dental Mirrors, Size 4 (22mm), 5 Pack, {color}"
+        hl = "Ultra High Definition on Both Sides, With 5 Handles, 1X, 99% Reflectance, 5-Minute Autoclave, 100+ Cycles"
         b1 = ("ULTRA HIGH DEFINITION ON BOTH FACES: ILLUCO's front-surface dielectric coating on German optical glass "
               "reflects 99% of light on both sides, versus 60-70% for standard dental mirrors. The image is over 40% "
               "brighter, sharp and true to color, with no ghost image.")
@@ -157,13 +155,21 @@ for r in range(9, 16):
 # ---- existing children: re-parent + new copy + model numbers (Amazon prices left unchanged, owner 11/20) ----
 # The OLD 5-pack and heads families use the model number as their only selector ("Model: ..."), so it must read
 # as a product name, never a code (owner, 11/21). The IDM code goes in Part Number.
-def model_label(rr):
-    m = f"{rr['mag']}X"
-    if rr['family'].startswith('5-Pack'):
-        return f"5 Pack with Handles, {m}, {rr['color']}"
-    if rr['family'].startswith('Single'):
-        return f"1 Mirror with Handle, {m}, {rr['color']}"
-    return f"5 Replacement Heads, {m}"
+def harmonized_model(size, n, color, fam):
+    """Model Number = a short product name in the same words as the variation choices and titles (owner, 11/21:
+    names must be in harmony; the old families show Model as their selector). Never a code; max 40 characters."""
+    m = str(size).split()[-1]          # 1X / 2X / 3X
+    n = int(float(n))
+    if 'Grand' in str(size):
+        s = f'Size 10 Grand, {m}, {n} Pack, {color}'
+    elif 'Double-Sided' in str(size):
+        s = f'Size 4 Double-Sided, {n} Pack, {color}' if fam == 'A' else f'Size 4 Double-Sided Heads, {n} Pack'
+    elif fam == 'B':
+        s = f'Size 4 Heads, {m}, {n} Pack'
+    else:
+        s = f'Size 4, {m}, {n} Pack, {color}'
+    assert len(s) <= 40, s
+    return s
 
 
 amz_price = {}
@@ -185,7 +191,7 @@ for rr in ROWS:
         vals = {'A': sku, 'B': PT, 'C': EDIT, 'D': 'Child', 'E': PA if fam == 'A' else PB, 'F': TA if fam == 'A' else TB,
                 'G': rr['title'], 'H': rr['highlight'], 'AD': rr['description'],
                 'AE': rr['bullets'][0], 'AF': rr['bullets'][1], 'AG': rr['bullets'][2], 'AH': rr['bullets'][3], 'AI': rr['bullets'][4],
-                'AJ': rr['keywords'], 'P': model_label(rr), 'BC': rr['model_suggested'], 'AY': rr['items'],
+                'AJ': rr['keywords'], 'P': harmonized_model(rr['var_size'], rr['items'], rr['color'], rr['new_family']), 'BC': rr['model_suggested'], 'AY': rr['items'],
                 'BB': rr['var_size'], 'BM': rr['included']}
         if fam == 'A':
             vals['BA'] = rr['color']
@@ -334,6 +340,7 @@ for r in range(8, row):
     fam = ('A' if t[f'A{r}'].value == PA else 'B') if is_parent else ('A' if t[f'E{r}'].value == PA else 'B')
     if not is_parent:
         t[f'BM{r}'] = components(r)
+        t[f'P{r}'] = harmonized_model(t[f'BB{r}'].value, t[f'AY{r}'].value, t[f'BA{r}'].value or '', fam)
         assert len(t[f'BM{r}'].value) <= 40, t[f'BM{r}'].value
     assert len(t[f'H{r}'].value or '') <= 125, (t[f'A{r}'].value, len(t[f'H{r}'].value))
     if str(t[f'C{r}'].value).startswith('Create'):

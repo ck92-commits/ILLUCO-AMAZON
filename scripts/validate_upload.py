@@ -118,6 +118,17 @@ for r in rows:
         bad = [w for w in caps.findall(b) if w not in ('ILLUCO', 'UHD')]
         if bad:
             add('WARN', r, col, f'all-caps words: {bad[:4]}')
+    if t[f'D{r}'].value == 'Child':            # harmony: names follow one pattern (owner, 11/21)
+        pm = str(t[f'P{r}'].value or '')
+        if not pm or pm.upper().startswith('IDM') or len(pm) > 40:
+            add('ERROR', r, 'P', f'Model Number must read as a product name (max 40), not a code: {pm!r}')
+        n = int(float(t[f'AY{r}'].value or 0)); col = str(t[f'BA{r}'].value or '')
+        if f'{n} Pack' not in g:
+            add('ERROR', r, 'G', f'title does not say "{n} Pack" (Number of Items is {n})')
+        if col and not g.endswith(col):
+            add('ERROR', r, 'G', f'title does not end with the color {col}')
+        if 'Heads' not in g and ((n > 1) != ('Dental Mirrors' in g)):
+            add('ERROR', r, 'G', 'use "Dental Mirrors" for packs and "Dental Mirror" for a single')
     h = t[f'H{r}'].value or ''
     if h and t[f'D{r}'].value == 'Parent':
         add('ERROR', r, 'H', 'leave Item Highlight empty on parent rows (Amazon flags it there)')
