@@ -383,7 +383,41 @@ print('images linked at', IMG_SHA[:7])
 assert {m['asin'] for m in step1_mains} <= MAIN_IN_STEP1
 with open('data/build/missing_images.csv', 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['sku', 'asin', 'column', 'slot', 'photo', 'meanwhile']); w.writeheader(); w.writerows(missing)
-print('image cells left blank for Ashley:', len(missing))
+
+# Owner, 11/23: "leave the images empty on file - I'll work on it with Ashley; if no image, no need to replace it with
+# something". This upload carries NO images: a partial update leaves what the live listings show now (their mains are
+# all on pure white), and the new products start without images. Only the main-image cells that need a new photo are
+# marked yellow; data/build/image_list.csv and the Image List tab of the report say what to shoot.
+need_main = {(m['sku']): m for m in missing if m['column'] == 'T'}
+image_list = []
+for r in range(8, row):
+    if t[f'D{r}'].value != 'Child':
+        continue
+    sku = t[f'A{r}'].value
+    new = str(t[f'C{r}'].value).startswith('Create')
+    for col in IMG_COLS + ['AB']:
+        c = t[f'{col}{r}']
+        c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
+    asin = '(new)' if new else sku_asin.get(sku, '')
+    if sku in need_main:
+        m = need_main[sku]
+        c = t[f'T{r}']
+        c.fill = YEL
+        c.comment = Comment(f'Main image to come from Ashley: {m["photo"]}. Pure white background (RGB 255), product only, '
+                            f'no box, no text. Now: {m["meanwhile"]}.', 'ILLUCO audit')
+        main_now, action, spec = m['meanwhile'], 'New main needed', m['photo']
+    else:
+        main_now = 'real photo on pure white, product only' if not new else 'none'
+        action, spec = 'OK, keep', ''
+    others = ('none yet' if new else
+              'its 4 own photos + 5 slides uploaded 11/21-11/23 stay' if asin == 'B0G2DYRY7T' else
+              '7 images uploaded 11/21-11/23 stay until replaced')
+    image_list.append(dict(sku=sku, asin=asin, family=FAM_OF_PARENT[t[f'E{r}'].value], size=t[f'BB{r}'].value or '',
+                           color=t[f'BA{r}'].value or '', main_now=main_now, main_action=action, main_photo=spec,
+                           other_images_now=others))
+with open('data/build/image_list.csv', 'w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=list(image_list[0].keys())); w.writeheader(); w.writerows(image_list)
+print('images in the upload: none | main cells marked for Ashley:', len(need_main))
 with open('data/build/step1_mains.csv', 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['sku', 'asin', 'main_url']); w.writeheader(); w.writerows(step1_mains)
 print('mains moved to step 1:', len(step1_mains))

@@ -47,7 +47,7 @@ lines = [
  ('5. Heads 1X is the top earner ($3,420, 17.4% conversion; half the units to business buyers) despite a 2.0 rating.', False),
  ('6. Sponsored Products Aug 1-Nov 20: $3,059 spend, $8,400 sales, 36.4% ACoS; the dermatoscope campaign spent $740 for 2 orders.', False),
  ('7. Sales team (Claudia): the coating is cooked off by standard 20-minute autoclave cycles because the 5-minute instructions are almost hidden; lead with High Definition, sell 2X / 3X as premium, make the 5-minute autoclave a time saver, say 100+ cycles.', False),
- ('Fix: ILLUCO_Amazon_UPLOAD.xlsx puts all mirrors except photo mirrors into four families, one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) with Color and Size as the choices, rewrites the copy to the sales direction, and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. It goes second: ILLUCO_Amazon_STEP1_delete_parent.xlsx first deletes only IDM-HANDLE-FAMILY-PARENT (the 11/21 family that mixed pack sizes). No generated images: the photos Ashley still has to supply are blank and marked (Missing Images tab). Upload Check tab: 0 errors in both files.', False),
+ ('Fix: ILLUCO_Amazon_UPLOAD.xlsx puts all mirrors except photo mirrors into four families, one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) with Color and Size as the choices, rewrites the copy to the sales direction, and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. It goes second: ILLUCO_Amazon_STEP1_delete_parent.xlsx first deletes only IDM-HANDLE-FAMILY-PARENT (the 11/21 family that mixed pack sizes). The upload sends no images: live listings keep what they show (every live main is on pure white) and the Image List tab says which mains to shoot. Upload Check tab: 0 errors in both files.', False),
  ('', False),
  ('How to read', True),
  ('Yellow cells with blue text are inputs. Paste Seller Central numbers there; CVR, ACoS and TACoS calculate automatically.', False),
@@ -520,7 +520,7 @@ TYPE = {'1 parent': 'PARENT', '2 new child': 'Child (new product): its UPC needs
         '4 not re-parented': 'Seller Support case'}
 uc.cell(2, 1, 'Step 1: upload ILLUCO_Amazon_STEP1_delete_parent.xlsx (1 row): it deletes IDM-HANDLE-FAMILY-PARENT, the 11/21 '
               'family that mixed pack sizes; its listings keep their ASINs, reviews and stock. Step 2: when its processing report is '
-              'back, upload ILLUCO_Amazon_UPLOAD.xlsx. Yellow image cells are photos Ashley still has to supply (Missing Images tab).'
+              'back, upload ILLUCO_Amazon_UPLOAD.xlsx. It sends no images; yellow main-image cells need a new main (Image List tab).'
               ).font = Font(name=F, size=10, bold=True)
 r0 = 3
 for key, label in sections:
@@ -731,7 +731,7 @@ for r in range(8, _up.max_row + 1):
     main = _up[f'T{r}'].value
     main_txt = ('-' if parent else (main.split('/image_kit/')[-1] if main else
                                     ('Step 1: ' + _s1[sku].split('/image_kit/')[-1] if sku in _s1 else
-                                     ('MISSING (Ashley): ' + _miss[(sku, 'T')] if (sku, 'T') in _miss else 'keeps its current main image'))))
+                                     ('NEW MAIN NEEDED (Image List). Now: ' + _miss[(sku, 'T')] if (sku, 'T') in _miss else 'keeps its current main (real photo on white)'))))
     if parent:
         fam_txt = 'PARENT: ' + SP_FAM[sku]
         status = (('Exists; re-sent unchanged' if sku == 'IDM-HEADS-FAMILY-PARENT' else 'Created') +
@@ -758,32 +758,61 @@ for col, wdt in zip('ABCDEFGHIJKL', (30, 13, 26, 70, 60, 30, 11, 9, 40, 14, 44, 
     sp.column_dimensions[col].width = wdt
 sp.freeze_panes = 'D5'
 
-# ---- Missing Images: real photos to ask Ashley for (owner, 11/23: no generated images; cells left blank and marked) ----
-mi = wb.create_sheet('Missing Images')
-mi.cell(1, 1, 'Missing Images: real photos to ask Ashley for. These cells are blank and yellow in ILLUCO_Amazon_UPLOAD.xlsx; '
-              'nothing generated stands in for them (owner, 11/23).').font = Font(name=F, bold=True, size=12)
-mi.cell(2, 1, 'Shoot on pure white (RGB 255), product only, at least 2000 x 2000 px. Mains: no box, no text. When a photo '
-              'arrives, its URL goes in the yellow cell of every listing named in its row.').font = Font(name=F, size=10, italic=True)
-_ml = _csv('data/build/missing_images.csv')
+# ---- Image List: the upload carries no images (owner, 11/23: "I'll work on it with Ashley") ----
+mi = wb.create_sheet('Image List')
+mi.cell(1, 1, 'Image List: ILLUCO_Amazon_UPLOAD.xlsx sends no images. Live listings keep what they show now; new products '
+              'start without images. Yellow main-image cells in the upload = a new main is needed.').font = Font(name=F, bold=True, size=12)
+mi.cell(2, 1, 'Main image rule (Amazon): pure white background (RGB 255), the product only, no box, no text, no props, '
+              'product fills about 85% of the frame, at least 2000 x 2000 px. Every main live today is on pure white.'
+        ).font = Font(name=F, size=10, italic=True)
+_ml = [x for x in _csv('data/build/missing_images.csv') if x['column'] == 'T']
 _photos = {}
 for x in _ml:
     _photos.setdefault(x['photo'], []).append(x)
-for j, h in enumerate(['#', 'Photo needed', 'Slot', 'Used on (SKU / ASIN)', 'Meanwhile on Amazon'], 1):
-    c = mi.cell(4, j, h); c.font = HFONT; c.fill = HFILL; c.border = BOX
 _order = sorted(_photos.items(), key=lambda kv: (0 if 'suppressed' in kv[1][0]['meanwhile'] else
                                                  1 if 'new product' not in kv[1][0]['meanwhile'] else 2, kv[0]))
+mi.cell(4, 1, f'1. Main images to shoot ({len(_order)} photos)').font = Font(name=F, bold=True, size=11)
+for j, h in enumerate(['#', 'Main photo to shoot', 'Listings (SKU / ASIN)', 'Main on Amazon now'], 1):
+    c = mi.cell(5, j, h); c.font = HFONT; c.fill = HFILL; c.border = BOX
+r_ = 5
 for i, (photo, xs) in enumerate(_order, 1):
-    used = ', '.join(sorted({f"{x['sku']}" + (f" ({x['asin']})" if x['asin'].startswith('B0') else ' (new)') for x in xs}))
-    vals = [i, photo, xs[0]['slot'], used, xs[0]['meanwhile']]
+    r_ += 1
+    used = ', '.join(sorted({x['sku'] + (f" ({x['asin']})" if x['asin'].startswith('B0') else ' (new)') for x in xs}))
+    for j, v in enumerate([i, photo, used, xs[0]['meanwhile']], 1):
+        c = mi.cell(r_, j, v); c.border = BOX
+        c.font = Font(name=F, size=10, bold='suppressed' in xs[0]['meanwhile'])
+r_ += 2
+_il = _csv('data/build/image_list.csv')
+_pos = {x['sku'].replace(' (INFERRED)', ''): k for k, x in enumerate(_csv('data/build/upload_rows.csv'))}
+_il.sort(key=lambda x: _pos.get(x['sku'], 10 ** 6))      # same order as the upload: family by family
+mi.cell(r_, 1, f'2. Every listing in the upload ({len(_il)} SKUs)').font = Font(name=F, bold=True, size=11)
+r_ += 1
+for j, h in enumerate(['Family', 'SKU', 'ASIN', 'Size', 'Color', 'Main now', 'Main', 'Other images now'], 1):
+    c = mi.cell(r_, j, h); c.font = HFONT; c.fill = HFILL; c.border = BOX
+_fam_name = {'5PK': '5 Pack', 'SINGLE': '1 Pack', 'GRAND': 'Grand 2 Pack', 'HEADS': 'Heads 5 Pack'}
+for x in _il:
+    r_ += 1
+    vals = [_fam_name.get(x['family'], x['family']), x['sku'], x['asin'], x['size'], x['color'], x['main_now'], x['main_action'],
+            x['other_images_now']]
     for j, v in enumerate(vals, 1):
-        c = mi.cell(4 + i, j, v); c.font = BODY; c.border = BOX
-        if 'suppressed' in xs[0]['meanwhile']:
-            c.font = Font(name=F, size=10, bold=True)
-for col, wdt in zip('ABCDE', (5, 62, 14, 70, 70)):
+        c = mi.cell(r_, j, v); c.font = BODY; c.border = BOX
+        if j == 7 and v.startswith('New'):
+            c.fill = PatternFill(fill_type='solid', fgColor='FFFF00')
+    if x['asin'].startswith('B0'):
+        link(mi.cell(r_, 3), dp(x['asin']))
+r_ += 2
+mi.cell(r_, 1, '3. Live images to replace when Ashley has new ones (not changed by this upload)').font = Font(name=F, bold=True, size=11)
+for k, txt in enumerate([
+        'Image 2 on the 3 heads listings (B0FBPG5CS9, B0FCHH2SQB, B0FCJY3H9H): a composite of 5 copies of one head, live since '
+        '11/21. Delete it in Manage Images or replace it.',
+        'Image 2 on the 5-pack listings: the box print says "Anti-Fog technology", which the copy no longer claims.',
+        'Image 8 on the Dark Blue 5-pack and Dark Blue single listings: stock photos, the mirrors shown are not ILLUCO\'s.'], 1):
+    mi.cell(r_ + k, 1, f'{k}. {txt}').font = BODY
+for col, wdt in zip('ABCDEFGH', (12, 60, 52, 30, 11, 52, 16, 44)):
     mi.column_dimensions[col].width = wdt
-mi.freeze_panes = 'A5'
+mi.freeze_panes = 'A6'
 
-order = ['Summary', 'Shopper Preview', 'Missing Images', 'What I Need', 'ASIN Report', 'Upload Check', 'Listing Copy', 'Sales Direction', 'Review Analysis',
+order = ['Summary', 'Shopper Preview', 'Image List', 'What I Need', 'ASIN Report', 'Upload Check', 'Listing Copy', 'Sales Direction', 'Review Analysis',
          'Competitors', 'Keywords', 'PPC Plan', 'PPC Apply', 'Images A+ Video', 'Image Kit', 'External Traffic', 'Action Plan']
 wb._sheets = [wb[n] for n in order]
 
