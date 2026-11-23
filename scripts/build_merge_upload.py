@@ -5,8 +5,8 @@ holds one pack size and its children vary by Color and Size only (owner, 11/23: 
   IDM-GRAND-FAMILY-PARENT   COLOR/SIZE  2 mirrors + 2 handles: Grand Size 10 1X / 2X
   IDM-HEADS-FAMILY-PARENT   SIZE        5 replacement heads: single-sided 1X / 2X / 3X and Double-Sided
 The family uploaded on 11/21 (IDM-HANDLE-FAMILY-PARENT, theme SIZE/COLOR/NUMBER_OF_ITEMS) is deleted first by
-ILLUCO_Amazon_DELETE_old_parents.xlsx: a live family's theme cannot be changed in place, and a child can belong to
-only one parent (Amazon 8032).
+ILLUCO_Amazon_STEP1_delete_and_mains.xlsx (build_step1.py), which also sets the changed main images: a live family's
+theme cannot be changed in place, and a child can belong to only one parent (Amazon 8032).
 Existing ASINs are re-parented with "Edit (Partial Update)" (their ASINs, sales history and reviews stay);
 new Grand / Double-Sided / head SKUs are created with "Create or Replace (Full Update)".
 usage: build_merge_upload.py <ILLUCO template .xlsx> <Grand/DS READY .xlsx> <out .xlsx> <plan .csv>"""
@@ -95,7 +95,7 @@ def new_row_copy(sku, color):
               "hygienist cone socket number 4 professional dentist mirror hd high definition uhd quick autoclave")
         return title, hl, b1, desc, kw
     # IDM-3CD41H double-sided heads
-    title = "ILLUCO Double-Sided UHD Dental Mirror Heads, Size 4 (22mm), 5 Pack"
+    title = "ILLUCO Double-Sided UHD Dental Mirror Heads, Size 4 (22mm), 1X, 5 Pack"
     hl = "Ultra High Definition on Both Sides, Cone Socket, Handles Not Included, 1X, 5-Minute Autoclave, 100+ Cycles"
     b1 = ("ULTRA HIGH DEFINITION ON BOTH FACES: ILLUCO's front-surface dielectric coating on German optical glass "
           "reflects 99% of light on both sides, versus 60-70% for standard dental mirrors. The image is over 40% "
@@ -157,7 +157,7 @@ put({**PARENT_BASE, 'A': FAM['GRAND'][0], 'F': FAM['GRAND'][1],
      'AJ': ('large mouth mirror oversize jumbo wide view dentist orthodontist oral surgery retractor intraoral photography quadrant '
             'tooth teeth oral exam hygienist uhd ' + KW_CORE.replace(' 2x 3x', ' 2x'))})
 put({**PARENT_BASE, 'A': FAM['HEADS'][0], 'F': FAM['HEADS'][1],
-     'G': 'ILLUCO UHD Dental Mirror Heads, 1X, 2X and 3X Magnifying, Size 4 (22mm), Cone Socket, 5 Pack',
+     'G': 'ILLUCO UHD Dental Mirror Heads, 5 Pack, Size 4 (22mm), Cone Socket, 1X, 2X, 3X or Double-Sided',
      'AD': INTRO + ('These Size 4 (22mm) replacement heads thread onto standard cone socket mirror handles, including ILLUCO ergonomic handles '
                     '(sold separately). Choose single-sided heads in 1X, or 2X and 3X magnifying for fine detail, or Double-Sided heads with '
                     '99% reflectance on both faces. ' + CARE + 'Each pack includes 5 heads.'),
@@ -307,6 +307,13 @@ KEEP_CURRENT = {'B0G2DYRY7T': ['03_key_benefit', '07_care', '04_magnification', 
 # 5-packs: error 100560 "does not accurately represent the product", then 18320 "main image missing" (both listings
 # suppressed, 11/21 and 11/23). They get their own main: a new image, as the Light Blue 5-packs got (accepted).
 MAIN_OVERRIDE = {'B0F84TKGLS': 'main_alt_2x3x.jpg', 'B0F85B5BDC': 'main_alt_2x3x.jpg'}
+# Live listings whose MAIN changes (new product-only mains, owner 11/23). Their main goes in the step-1 file as an
+# image-only row, not in this file: an image Amazon refuses must not take the family move in the same row with it
+# (independent review, 11/23). Every other live main in this file is pixel-identical to the one accepted on 11/23.
+MAIN_IN_STEP1 = {'B0F84VWGG5', 'B0FCMVZH31', 'B0F857HKBG',        # Light Blue 5-packs: box shot -> product only
+                 'B0F84TKGLS', 'B0F85B5BDC',                      # Dark Blue 2X / 3X 5-packs: suppressed, no main
+                 'B0FBPG5CS9', 'B0FCHH2SQB', 'B0FCJY3H9H'}        # single-sided heads: box + heads -> heads only
+step1_mains = []
 sku_asin = {p['sku']: p['asin'] for p in plan}
 for r in range(8, row):
     if t[f'D{r}'].value != 'Child':
@@ -331,8 +338,15 @@ for r in range(8, row):
         c.value = IMG_BASE + folder + '/' + name
         c.fill = PatternFill(fill_type=None)
         c.comment = None
+        if col == 'T' and key in MAIN_IN_STEP1:
+            step1_mains.append(dict(sku=sku, asin=key, main_url=c.value))
+            c.value = None
     c = t[f'AB{r}']; c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
 print('images linked at', IMG_SHA[:7])
+assert {m['asin'] for m in step1_mains} == MAIN_IN_STEP1, 'a step-1 main has no row'
+with open('data/build/step1_mains.csv', 'w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=['sku', 'asin', 'main_url']); w.writeheader(); w.writerows(step1_mains)
+print('mains moved to step 1:', len(step1_mains))
 
 # ---- order the rows parent -> its children (owner: "Parent, its children, next parent, its children") ----
 # Families: 5-pack, single, Grand, heads. Within a family: single-sided before Double-Sided, then 1X/2X/3X, Light Blue

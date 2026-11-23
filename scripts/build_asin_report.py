@@ -47,7 +47,7 @@ lines = [
  ('5. Heads 1X is the top earner ($3,420, 17.4% conversion; half the units to business buyers) despite a 2.0 rating.', False),
  ('6. Sponsored Products Aug 1-Nov 20: $3,059 spend, $8,400 sales, 36.4% ACoS; the dermatoscope campaign spent $740 for 2 orders.', False),
  ('7. Sales team (Claudia): the coating is cooked off by standard 20-minute autoclave cycles because the 5-minute instructions are almost hidden; lead with High Definition, sell 2X / 3X as premium, make the 5-minute autoclave a time saver, say 100+ cycles.', False),
- ('Fix: ILLUCO_Amazon_UPLOAD.xlsx puts all mirrors except photo mirrors into four families, one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) with Color and Size as the choices, rewrites the copy to the sales direction, gives every listing a product-only main image on white and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. Upload ILLUCO_Amazon_DELETE_old_parents.xlsx first (it deletes only IDM-HANDLE-FAMILY-PARENT, the 11/21 family that mixed pack sizes). Upload Check tab: 0 errors.', False),
+ ('Fix: ILLUCO_Amazon_UPLOAD.xlsx puts all mirrors except photo mirrors into four families, one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) with Color and Size as the choices, rewrites the copy to the sales direction, and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. It goes second: ILLUCO_Amazon_STEP1_delete_and_mains.xlsx first deletes only IDM-HANDLE-FAMILY-PARENT (the 11/21 family that mixed pack sizes) and gives 8 live listings their new product-only main image on white. Upload Check tab: 0 errors in both files.', False),
  ('', False),
  ('How to read', True),
  ('Yellow cells with blue text are inputs. Paste Seller Central numbers there; CVR, ACoS and TACoS calculate automatically.', False),
@@ -518,9 +518,10 @@ sections = [('5PK', 'IDM-5PACK-FAMILY-PARENT: ILLUCO UHD Dental Mirrors with Han
             ('-', 'Not in the upload')]
 TYPE = {'1 parent': 'PARENT', '2 new child': 'Child (new product): its UPC needs brand ILLUCO in GS1', '3 existing child': 'Child (existing listing)',
         '4 not re-parented': 'Seller Support case'}
-uc.cell(2, 1, 'Step 1: upload ILLUCO_Amazon_DELETE_old_parents.xlsx (1 row: deletes IDM-HANDLE-FAMILY-PARENT, the 11/21 family '
-              'that mixed pack sizes; its listings keep their ASINs, reviews and stock). Step 2: when its processing report is back, '
-              'upload ILLUCO_Amazon_UPLOAD.xlsx.').font = Font(name=F, size=10, bold=True)
+uc.cell(2, 1, 'Step 1: upload ILLUCO_Amazon_STEP1_delete_and_mains.xlsx (10 rows): it deletes IDM-HANDLE-FAMILY-PARENT, the 11/21 '
+              'family that mixed pack sizes (its listings keep their ASINs, reviews and stock), and sets the new product-only main '
+              'image on 8 live listings (9 SKUs, listed at the end of this tab). Step 2: when its processing report is back, upload '
+              'ILLUCO_Amazon_UPLOAD.xlsx.').font = Font(name=F, size=10, bold=True)
 r0 = 3
 for key, label in sections:
     items = [x for x in rows_up if x['family'] == key]
@@ -551,6 +552,10 @@ uc.cell(r0, 1, f"Automated check against the template's own rules: {sum(1 for x 
                "variations, text limits, UPC check digits, prices, image URLs). Amazon's own review rejected the 7 new UPCs on 11/20: "
                "GS1 lists their brand as IDM SERIES, so they pass once Korea changes it to ILLUCO.").font = Font(name=F, bold=True, size=10)
 chk = chk + chk_new
+chk_s1 = _csv('data/build/upload_check_step1.csv') if _os.path.exists('data/build/upload_check_step1.csv') else []
+for _x in chk_s1:
+    _x['sku'] = _x['sku'] + ' (step 1 file)'
+chk = chk + chk_s1
 r0 += 1
 for j, h in enumerate(['Level', 'Row', 'SKU', 'Column', 'Issue'], 1):
     c = uc.cell(r0, j, h); c.font = HFONT; c.fill = HFILL
@@ -563,6 +568,20 @@ uc.cell(r0, 1, 'Only Amazon can check these (the processing report shows them af
 for k, txt in enumerate(['The live listings use product type PROFESSIONAL_HEALTHCARE (if a row says "product type mismatch", change column B for that row to the type shown on the Edit listing page)',
                          'The 7 new UPCs are registered to ILLUCO in GS1'], 1):
     uc.cell(r0 + k, 1, f'{k}. {txt}').font = BODY
+s1_rows = _csv('data/build/step1_mains.csv')
+r0 += len(['', '']) + 2
+uc.cell(r0, 1, f'Step 1 file, ILLUCO_Amazon_STEP1_delete_and_mains.xlsx: {1 + len(s1_rows)} rows').font = Font(name=F, bold=True, size=10)
+r0 += 1
+for j, h in enumerate(['Action', 'SKU', 'ASIN', 'New main image'], 1):
+    c = uc.cell(r0, j, h); c.font = HFONT; c.fill = HFILL
+r0 += 1
+for j, v in enumerate(['Delete', 'IDM-HANDLE-FAMILY-PARENT', '(parent)', 'Its listings join the new families in step 2'], 1):
+    c = uc.cell(r0, j, v); c.font = BODY; c.border = BOX
+for x in s1_rows:
+    r0 += 1
+    for j, v in enumerate(['Edit (Partial Update): main image only', x['sku'], x['asin'], x['main_url'].split('/image_kit/')[-1]], 1):
+        c = uc.cell(r0, j, v); c.font = BODY; c.border = BOX
+    link(uc.cell(r0, 3), dp(x['asin']))
 for col, wdt in zip('ABCDEFGHIJ', (22, 30, 13, 28, 11, 6, 30, 12, 12, 60)):
     uc.column_dimensions[col].width = wdt
 
@@ -690,6 +709,7 @@ sp.cell(2, 1, 'Variations sit together only when they are the same product (one 
         ).font = Font(name=F, size=10, italic=True)
 _up = openpyxl.load_workbook('ILLUCO_Amazon_UPLOAD.xlsx')['Template']
 _plan = {x['sku'].replace(' (INFERRED)', ''): x for x in _csv('data/build/upload_rows.csv')}
+_s1 = {x['sku']: x['main_url'] for x in _csv('data/build/step1_mains.csv')}
 sp_hdr = ['Family / listing', 'ASIN', 'SKU(s)', 'Title', 'Item Highlight', 'Size', 'Color', 'Number of Items', 'Model',
           'Part number', 'Main image', 'Status']
 for j, h in enumerate(sp_hdr, 1):
@@ -708,7 +728,8 @@ for r in range(8, _up.max_row + 1):
         continue
     parent = _up[f'D{r}'].value == 'Parent'
     main = _up[f'T{r}'].value
-    main_txt = ('-' if parent else (main.split('/image_kit/')[-1] if main else 'keeps its current main image'))
+    main_txt = ('-' if parent else (main.split('/image_kit/')[-1] if main else
+                                    ('Step 1: ' + _s1[sku].split('/image_kit/')[-1] if sku in _s1 else 'keeps its current main image')))
     if parent:
         fam_txt = 'PARENT: ' + SP_FAM[sku]
         status = (('Exists; re-sent unchanged' if sku == 'IDM-HEADS-FAMILY-PARENT' else 'Created') +

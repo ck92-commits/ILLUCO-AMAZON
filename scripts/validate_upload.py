@@ -5,7 +5,7 @@ from openpyxl.utils import range_boundaries, get_column_letter
 sys.path.insert(0, 'scripts')
 from existing_listing_content import ROWS
 F = sys.argv[1] if len(sys.argv) > 1 else 'ILLUCO_Amazon_UPLOAD.xlsx'
-DELETED_PARENTS = {'IDM-HANDLE-FAMILY-PARENT'}   # ILLUCO_Amazon_DELETE_old_parents.xlsx removes it first (11/23)
+DELETED_PARENTS = {'IDM-HANDLE-FAMILY-PARENT'}   # ILLUCO_Amazon_STEP1_delete_and_mains.xlsx removes it first (11/23)
 wb = openpyxl.load_workbook(F)
 t = wb['Template']
 hdr = {c.column_letter: c.value for c in t[4] if c.value}
@@ -204,6 +204,25 @@ for u, places in urls.items():
     if code != 200:
         for r, col in places:
             add('ERROR', r, col, f'image URL not reachable ({code})')
+import os
+if 'STEP1' not in F and os.path.exists('data/build/step1_mains.csv'):
+    # a live listing whose main changes gets it in step 1, never in the same row as its family move (review 11/23)
+    s1 = {x['sku'] for x in csv.DictReader(open('data/build/step1_mains.csv', encoding='utf-8'))}
+    for r in rows:
+        if t[f'A{r}'].value in s1 and t[f'T{r}'].value:
+            add('ERROR', r, 'T', 'this main goes in the step-1 file (image-only row), not with the family move')
+if 'STEP1' in F:
+    for r in rows:
+        act = str(t[f'C{r}'].value)
+        if act == 'Delete':
+            if t[f'A{r}'].value not in DELETED_PARENTS:
+                add('ERROR', r, 'A', 'step 1 deletes only the old parent')
+        elif act.startswith('Edit'):
+            filled = [c.column_letter for c in t[r] if c.value not in (None, '') and c.column_letter not in ('A', 'B', 'C', 'T')]
+            if filled or not t[f'T{r}'].value:
+                add('ERROR', r, 'T', f'step-1 image rows carry SKU, product type, action and main image only (also: {filled})')
+        else:
+            add('ERROR', r, 'C', f'unexpected action in step 1: {act}')
 for r in rows:
     if t[f'D{r}'].value == 'Child' and t[f'C{r}'].value.startswith('Create') and not t[f'T{r}'].value:
         add('WARN', r, 'T', 'new product has no main image URL yet (upload works; listing is not buyable until an image is added)')
