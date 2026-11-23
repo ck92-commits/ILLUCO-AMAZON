@@ -263,6 +263,16 @@ def ds_head_on_shank(color):
     gf = g.astype(np.float64)
     std = np.sqrt(np.maximum(_box_mean(gf * gf, 3) - _box_mean(gf, 3) ** 2, 0))
     shadowlike = (g >= 205) & (g <= 240) & (std < 3.0) & (arr.max(axis=2) - g < 12)
+    # ...but not off the head: the polished side band of the rim is as light and smooth as the shadow
+    white = g >= 250
+    fseed = np.zeros_like(obj)
+    fseed[654, 880] = True  # the left mirror's face (measured centre 880, 654; radius about 190)
+    face = _grow(white & ~_border_connected(white), fseed)
+    assert face.sum() > 80000, 'mirror face not found'
+    fy, fx = np.nonzero(face)
+    yy, xx = np.mgrid[0:g.shape[0], 0:g.shape[1]]
+    head = (xx - fx.mean()) ** 2 + (yy - fy.mean()) ** 2 <= (1.25 ** 2) * face.sum() / np.pi
+    shadowlike &= ~head
     for _ in range(80):
         peel = comp & ~K._erode(comp) & shadowlike
         if not peel.any():
@@ -270,7 +280,12 @@ def ds_head_on_shank(color):
         comp &= ~peel
     comp = ~_border_connected(~comp)
     comp = _grow(_morph(_morph(comp, 3, K._erode), 3, K._dilate) & comp, seed)
-    alpha = Image.fromarray((comp * 255).astype(np.uint8), 'L').filter(ImageFilter.GaussianBlur(1.0))
+    # on the head, the faint end of the rim band is lighter than the 228 cut: fade it in rather than cut it square
+    # (smooth grey, i.e. shadow, stays out)
+    soft = head & _morph(comp, 10, K._dilate) & ~comp & (g < 252) & ~((std < 3.0) & (g >= 205))
+    a_f = np.where(comp, 255.0, 0.0)
+    a_f = np.where(soft, np.clip((252 - g) / 24.0, 0, 1) * 255, a_f)
+    alpha = Image.fromarray(a_f.astype(np.uint8), 'L').filter(ImageFilter.GaussianBlur(1.0))
     rgba = im.convert('RGBA')
     rgba.putalpha(alpha)
     rgba = K.trim(rgba)
@@ -351,21 +366,73 @@ def main_heads_row(n=5):
     return img
 
 
-def main_ds_heads():
-    """Double-Sided heads 5-pack: five cutouts of the real IDM-3CD41H head photo, stacked."""
-    hd = A.double_head()
-    s = (W * 0.80) / hd.width
-    a = K.scale(hd, s)
+def _row_widths(rgba):
+    a = np.asarray(rgba.getchannel('A')) > 128
+    return np.array([(np.nonzero(r)[0][-1] - np.nonzero(r)[0][0] + 1) if r.any() else 0 for r in a])
+
+
+@lru_cache(maxsize=None)
+def single_head_upright():
+    """The real single-sided head photo stood upright (shank axis vertical, mirror on top)."""
+    sh = A.single_head()
+    a = np.asarray(sh.getchannel('A')) > 128
+    y0 = int(a.shape[0] * 0.55)
+    ys, xs = np.nonzero(a[y0:])                      # shank and thread only
+    ys = ys + y0
+    evals, evecs = np.linalg.eigh(np.cov(np.vstack([xs - xs.mean(), ys - ys.mean()])))
+    vx, vy = evecs[:, np.argmax(evals)]
+    up = K.trim(K.rotate_rgba(sh, np.degrees(np.arctan2(vy, vx)) - 90))
+    w = _row_widths(up)
+    if w[: len(w) // 3].max() < w[-len(w) // 3:].max():
+        up = up.rotate(180, expand=True)
+    return up
+
+
+@lru_cache(maxsize=None)
+def ds_head_full():
+    """One whole Double-Sided replacement head seen face-on: the real Double-Sided head, neck and shank
+    (ds_head_on_shank) with the cone-socket thread below its collar. The thread is the real one from the
+    single-sided head photo: both heads are Size 4 (22 mm) on the same cone socket, so it is scaled by the ratio
+    of the two mirror widths (at that scale it matches the Double-Sided collar, checked below). The only photo
+    of the bare Double-Sided head is edge-on, which hides the mirror face."""
+    top = ds_head_on_shank('lb')
+    sh = single_head_upright()
+    w = _row_widths(sh)
+    n = len(w)
+    # the thread starts where the shank steps down to it: the first sharp narrowing in the lower third
+    # (the tip of the thread, at the very bottom, is the other one)
+    lo = int(n * 0.66)
+    step = w[lo:n - 12].astype(int) - w[lo + 6:n - 6].astype(int)
+    i = int(np.nonzero(step > 15)[0][0]) + lo
+    thread_w = np.median(w[i + 12:n - 15])
+    drop = next(r for r in range(i, n) if w[r] <= thread_w + 6)
+    thread = sh.crop((0, drop, sh.width, sh.height))
+    s = _widest(top, int(top.height * 0.5)) / _widest(sh, int(n * 0.45))
+    thread = K.trim(K.scale(thread, s))
+    tw = np.median(_row_widths(thread)[2:-2])
+    lo_, hi_ = _span(top, top.height - 2)
+    assert 0.45 < tw / (hi_ - lo_ + 1) < 0.85, 'thread does not fit the collar'
+    ct = (lo_ + hi_) / 2
+    cb = sum(_span(thread, 1)) / 2
+    wd = 2 * max(top.width, thread.width)
+    out = Image.new('RGBA', (wd, top.height + thread.height), (255, 255, 255, 0))
+    out.alpha_composite(thread, (int(round(wd / 2 - cb)), top.height))
+    out.alpha_composite(top, (int(round(wd / 2 - ct)), 0))
+    return K.trim(out)
+
+
+def main_ds_heads(n=5):
+    """Double-Sided heads 5-pack, product only and face-on (ds_head_full x5), same layout as the single-sided
+    heads main so the heads family reads as one set."""
+    hd = ds_head_full()
+    a = K.scale(hd, int(H * 0.74) / hd.height)
     img = white()
-    n = 5
-    dy = 250
-    dx = 34
-    total_h = a.height + dy * (n - 1)
-    total_w = a.width + dx * (n - 1)
-    x0 = (W - total_w) // 2
-    y0 = (H - total_h) // 2
+    span = int(W * 0.88)
+    step = (span - a.width) / (n - 1)
+    x0 = (W - span) / 2
+    y = (H - a.height) / 2
     for i in range(n):
-        K.paste(img, a, (x0 + dx * i, y0 + dy * i), shadow=(10, 16, 16, 0.14))
+        K.paste(img, a, (x0 + step * i, y), shadow=(8, 12, 14, 0.12))
     return img
 
 

@@ -72,10 +72,14 @@ REG = {
     'main_heads_ss': (lambda: D.main_heads_row(), 'new (5 cutouts of ' + E + U['single_head'] + ')', 'ready',
                       'Product only on pure white (owner, 11/23): five cutouts of the real single-sided head photo '
                       'side by side. Replaces the box + heads shot.'),
-    'main_heads_ds': (lambda: D.main_ds_heads(), 'new (5 cutouts of ' + E + U['double_head'] + ')', 'needs reshoot',
-                      'IDM-3CD41H has no multi-head photo; composite of 5 copies of ILLUCO\'s single edge-on head '
-                      'photo shows the full count on pure white. Usable stopgap, but the mirror faces are not '
-                      'visible: reshoot 5 heads face-on.'),
+    'main_heads_ds': (lambda: D.main_ds_heads(),
+                      'new (Double-Sided head from ' + E + U['ds_main_lb'] + ' with the thread from ' + E
+                      + U['single_head'] + ', x5)', 'ready',
+                      'Product only on pure white, face-on (owner, 11/23). The only photo of the bare Double-Sided '
+                      'head is edge-on and hides the mirror, so each head is the real Double-Sided head, neck and '
+                      'collar from the Double-Sided mirror photo with the real cone-socket thread of the '
+                      'single-sided head below it (both Size 4, same socket; scaled by the mirror widths). Same '
+                      'layout as the single-sided heads main. A photo of 5 real heads face-on would be stronger.'),
     # 02 WHAT'S IN THE BOX -----------------------------------------------------------------
     'box_single_lb': (lambda: D.in_the_box(A.img('single_lb_main'), ['1 mirror', '+ 1 handle'],
                                            ['1 × Size 4 (22 mm) UHD mirror head', '1 × Light Blue ergonomic handle'],

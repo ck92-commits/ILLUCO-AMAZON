@@ -39,7 +39,7 @@ python3 -I scripts/image_kit/build_kit.py            # writes all images, manife
 
 | Slot | Re-used as-is | New / corrected |
 |---|---|---|
-| 01 main | Single LB `617bfZwQclL`, single DB `61FcYqxQdHL`, kit DB `71549oTdxFL` (1X only) | Every main is the product alone on pure white: no box, no text (owner, 11/23). Kit LB: 5 cutouts of the single LB photo. Kit DB 2X/3X (`main_alt_2x3x`): 5 cutouts of the front mirror of `71549oTdxFL`, because Amazon will not attach the 1X photo to a second ASIN (error 100560). Double-Sided LB/DB: the real Double-Sided head and shank from main.jpg / main_db.jpg seated on the real handle of the same colour, 5 in a row (no photo shows a whole Double-Sided mirror). Grand LB/DB: 2 cutouts of the full Grand mirror from grand-01 / grand-01_db. Single-sided heads: 5 cutouts of the single-head photo. Double-sided heads: 5 cutouts of the IDM-3CD41H head photo (needs reshoot) |
+| 01 main | Single LB `617bfZwQclL`, single DB `61FcYqxQdHL`, kit DB `71549oTdxFL` (1X only) | Every main is the product alone on pure white: no box, no text (owner, 11/23). Kit LB: 5 cutouts of the single LB photo. Kit DB 2X/3X (`main_alt_2x3x`): 5 cutouts of the front mirror of `71549oTdxFL`, because Amazon will not attach the 1X photo to a second ASIN (error 100560). Double-Sided LB/DB: the real Double-Sided head and shank from main.jpg / main_db.jpg seated on the real handle of the same colour, 5 in a row (no photo shows a whole Double-Sided mirror). Grand LB/DB: 2 cutouts of the full Grand mirror from grand-01 / grand-01_db. Single-sided heads: 5 cutouts of the single-head photo. Double-sided heads: 5 face-on heads, each the real Double-Sided head from main.jpg with the real cone-socket thread of the single head (the only bare Double-Sided head photo is edge-on and hides the mirror) |
 | 02 in the box | dsdm-03 / dsdm-03_db (Double-Sided, correct count and colour) | Count callouts for single (1 mirror + 1 handle), 5-pack (5 heads + 5 handles + care guide), Grand (2 + 2 + care guide), heads (5 replacement heads, handles not included) |
 | 03 key benefit | none | Corrected redraws of the copy card in 7121KSv2hrL, 71fDe5PolUL, 71f0mMI002L, dsdm-01(_db), grand-01(_db), each now led by "Ultra High Definition" and with a "5-Minute Autoclave" item; new "Ultra High Definition" card for double-sided heads |
 | 04 | none | "2X & 3X: see fine detail larger" guide (2X/3X marked premium, 1X standard; uses ILLUCO's view circles), Size 4 vs Grand Size 10 at true 22 : 34 scale, both-faces diagram |
@@ -89,7 +89,7 @@ python3 -I scripts/image_kit/build_kit.py            # writes all images, manife
 2. **Double-Sided 5-pack**, both colours: 5 assembled mirrors full length on white (every existing photo crops
    the handles; the current main seats the real Double-Sided head on the real handle), plus a face-on shot of
    the double-sided head.
-3. **Double-sided heads IDM-3CD41H**: 5 heads face-on (only one edge-on head photo exists); status `needs reshoot`.
+3. **Double-sided heads IDM-3CD41H**: 5 heads face-on. The only photo of the bare head is edge-on, so the current main is a composite (the Double-Sided head from main.jpg with the single head's thread).
 4. **Light Blue 5-pack**: a true-colour photo. The only hi-res Light Blue kit image (Shopify `light_blue.jpg`) is
    a recolour of the Dark Blue shot and renders royal blue, darker than the Light Blue handle in the single and
    Grand photos (the Double-Sided box shot is similar); the Amazon Light Blue main exists only at 500 px. One
