@@ -84,22 +84,37 @@ python3 -I scripts/image_kit/build_kit.py            # writes all images, manife
   handle runs off the frame.
 
 ## Still needs a real photo shoot
-1. **Grand 2-pack**, both colours: 2 complete mirrors on white, and the Grand kit box with two same-colour
-   handles (grand-03 must be replaced). Current main is a composite of one photo used twice.
-2. **Double-Sided 5-pack**, both colours: 5 assembled mirrors full length on white (every existing photo crops
-   the handles; the current main seats the real Double-Sided head on the real handle), plus a face-on shot of
-   the double-sided head.
-3. **Double-sided heads IDM-3CD41H**: 5 heads face-on. The only photo of the bare head is edge-on, so the current main is a composite (the Double-Sided head from main.jpg with the single head's thread).
-4. **Light Blue 5-pack**: a true-colour photo. The only hi-res Light Blue kit image (Shopify `light_blue.jpg`) is
-   a recolour of the Dark Blue shot and renders royal blue, darker than the Light Blue handle in the single and
-   Grand photos (the Double-Sided box shot is similar); the Amazon Light Blue main exists only at 500 px. One
-   colour-checked reference shot of each handle colour would settle which rendering is right.
-5. **Dark Blue Grand / Double-Sided**: ILLUCO's Dark Blue files (main_db, grand-01_db, dsdm-0x_db) are
-   pixel-identical recolours of the Light Blue photos; check the colour against real product.
-6. **Clinical / lifestyle photos with real ILLUCO mirrors** (both colours) to replace the stock tiles in
-   dsdm-04 / grand-04 (the instruments shown are not ILLUCO's). The Light Blue lifestyle photos used in slot 8
-   come from orphan listing B0G2DYRY7T; confirm they show the current product (its main shows a black shank).
-7. Optional: a single Dark Blue main without the blown-out highlight on the right of the mirror rim.
+Every listing has its full set of images; these slots use a composite, a recolour, stock photos or a box print that
+should be replaced by a real photo (2000 x 2000 px or larger; mains on pure white, product only, about 85% fill).
+
+Live listings:
+1. **Dark Blue 5-pack** (B0F84TKGLS 2X, B0F85B5BDC 3X; suppressed): 5 mirrors + 5 handles on white, a new photo, not the
+   1X listing's photo. The main is now 5 copies of one mirror cut from that photo; if Amazon refuses it again (100560),
+   this photo is the fix.
+2. **Light Blue 5-pack** (B0F84VWGG5, B0FCMVZH31, B0F857HKBG): 5 mirrors + 5 handles on white, true colour. The main is
+   5 copies of the single Light Blue photo; the only hi-res Light Blue kit image (Shopify `light_blue.jpg`) is a
+   recolour of the Dark Blue shot and renders royal blue.
+3. **Single-sided heads** (B0FBPG5CS9, B0FCHH2SQB, B0FCJY3H9H): 5 heads on white, no box. The main is 5 copies of one
+   head photo.
+4. **In-use / clinical photos with real ILLUCO mirrors**, both colours: slot 8 of the Dark Blue 5-pack, Dark Blue single,
+   Double-Sided and Grand groups uses ILLUCO's "Professional Applications" stock tiles (the mirrors are not ILLUCO's).
+5. **Box photos without legible "Anti-Fog" print** (or new box artwork): slot 2 of the 5-pack and Double-Sided groups
+   (see Packaging claims below).
+6. Optional: a **Dark Blue single** mirror on white without the blown-out highlight on the rim (main of the 3 Dark Blue
+   singles).
+7. Confirm: the Light Blue lifestyle photos in slot 8 come from B0G2DYRY7T (black-shank version); check they show the
+   current product.
+
+New products (not live until GS1 shows brand ILLUCO; shoot in that window):
+8. **Double-Sided 5-pack**, Light Blue and Dark Blue: 5 assembled mirrors full length on white. Every existing photo
+   crops the handles; the main seats the real Double-Sided head on the real handle.
+9. **Double-Sided heads** IDM-3CD41H: 5 heads face-on on white. The only bare-head photo is edge-on; the main is a
+   composite (the Double-Sided head from main.jpg with the single head's thread).
+10. **Grand 2-pack**, both colours: 2 complete mirrors on white (the main uses one photo twice), and the Grand kit box
+    with two same-colour handles (grand-03 shows one Light Blue and one Dark Blue handle, so it is not used).
+11. **Dark Blue Grand and Double-Sided**: real Dark Blue photos. ILLUCO's Dark Blue files (main_db, grand-01_db,
+    dsdm-0x_db) are pixel-identical recolours of the Light Blue photos; the colour has not been checked against the
+    product.
 
 **Packaging claims.** The real box print reads "Anti-Fog technology" (5-pack and heads boxes) and
 "water-repellent coating for fog resistance" (Double-Sided / Grand box). It is legible when the box shots are
