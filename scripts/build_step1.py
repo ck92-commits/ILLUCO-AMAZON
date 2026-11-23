@@ -1,4 +1,4 @@
-"""Step 1 of 2: ILLUCO_Amazon_STEP1_delete_and_mains.xlsx. Upload it first, wait for its processing report, then
+"""Step 1 of 2: ILLUCO_Amazon_STEP1_delete_parent.xlsx. Upload it first, wait for its processing report, then
 upload ILLUCO_Amazon_UPLOAD.xlsx (step 2).
 
 1. Deletes the parent listing IDM-HANDLE-FAMILY-PARENT. That family (11/21) mixed pack sizes under theme
@@ -6,9 +6,9 @@ upload ILLUCO_Amazon_UPLOAD.xlsx (step 2).
    its listings move to new parents in step 2. A live family's theme cannot be changed in place, and a child can
    belong to only one parent (Amazon 8032), so the old parent goes first. Deleting a parent removes only that parent
    listing: the children keep their ASINs, reviews, stock and offers. IDM-HEADS-FAMILY-PARENT stays.
-2. Sets the new product-only main image on the live listings whose main changes (rows written by
-   build_merge_upload.py to data/build/step1_mains.csv): image-only "Edit (Partial Update)" rows with SKU, product
-   type, action and main image only. Kept apart from the family move in step 2, so an image Amazon refuses cannot
+2. Sets a new main image on live listings whose main changes (rows written by build_merge_upload.py to
+   data/build/step1_mains.csv): image-only "Edit (Partial Update)" rows with SKU, product type, action and main image
+   only. None today: the new mains were composites and the owner wants real photos from Ashley instead (11/23). Kept apart from the family move in step 2, so an image Amazon refuses cannot
    take a family move with it, and the report shows the image result on its own.
 (The first delete file, 11/21, removed the three original parents IDM3C4XXX / B0FDCGG69J, 0Z-AYA6-3N2M / B0GGD9DVP9
 and 6B-536I-O2ME / B0FCNL53JN; that is done.)
@@ -22,8 +22,7 @@ OLD_PARENTS = [   # (parent SKU, family)
 ]
 PT = 'PROFESSIONAL_HEALTHCARE'
 TPL, OUT = sys.argv[1:3]
-mains = list(csv.DictReader(open('data/build/step1_mains.csv', encoding='utf-8')))
-assert mains, 'run build_merge_upload.py first'
+mains = list(csv.DictReader(open('data/build/step1_mains.csv', encoding='utf-8')))   # run build_merge_upload.py first
 wb = openpyxl.load_workbook(TPL)
 t = wb['Template']
 blank = copy.copy(t.cell(900, 1)._style)

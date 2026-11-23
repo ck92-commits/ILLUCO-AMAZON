@@ -4,14 +4,14 @@ Amazon audit and listing rebuild for ILLUCO dental mirrors (Nov 20, 2026). **Del
 
 | File | What it is |
 |---|---|
-| `ILLUCO_Amazon_UPLOAD.xlsx` | **Step 2, once step 1 has processed:** 4 parents, the 19 rows of existing listings and the 7 new products (Seller Central > Catalog > Add Products via Upload). Puts every dental mirror except the photo mirrors into four variation families with one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) and Color and Size as the choices (heads: Size), rewrites all copy to the sales direction (Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles), keeps the current Amazon prices and creates the Grand, Double-Sided and Double-Sided head products. Checked against the template's own rules: 0 errors (see the Upload Check tab of the report). |
-| `ILLUCO_Amazon_STEP1_delete_and_mains.xlsx` | **Step 1, upload first:** deletes only `IDM-HANDLE-FAMILY-PARENT`, the 11/21 family that mixed pack sizes, so its listings can join the new families (a live family's theme cannot be changed in place, and a child can have only one parent: Amazon warning 8032), and sets the new product-only main image on 8 live listings (image-only rows, apart from the family move). The listings keep their ASINs, reviews and stock. Replaces the earlier delete file, which removed the three original parents on 11/21. |
+| `ILLUCO_Amazon_UPLOAD.xlsx` | **Step 2, once step 1 has processed:** 4 parents, the 19 rows of existing listings and the 7 new products (Seller Central > Catalog > Add Products via Upload). Puts every dental mirror except the photo mirrors into four variation families with one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) and Color and Size as the choices (heads: Size), rewrites all copy to the sales direction (Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles), keeps the current Amazon prices and creates the Grand, Double-Sided and Double-Sided head products. No generated images (owner, 11/23): the 24 image cells (12 photos) that would need a composite are blank and marked yellow until Ashley sends real photos (Missing Images tab of the report, `data/build/missing_images.csv`). Checked against the template's own rules: 0 errors (see the Upload Check tab of the report). |
+| `ILLUCO_Amazon_STEP1_delete_parent.xlsx` | **Step 1, upload first (1 row):** deletes only `IDM-HANDLE-FAMILY-PARENT`, the 11/21 family that mixed pack sizes, so its listings can join the new families (a live family's theme cannot be changed in place, and a child can have only one parent: Amazon warning 8032). The listings keep their ASINs, reviews and stock. Replaces the earlier delete file, which removed the three original parents on 11/21. |
 | `ILLUCO_Amazon_Report.xlsx` | Everything else in one workbook (16 tabs): Summary, Shopper Preview, What I Need, ASIN Report, Upload Check, Listing Copy, Sales Direction (brief for design), Review Analysis, Competitors, Keywords + Search Query Performance, PPC Plan, PPC Apply (pauses, negatives, harvests), Images A+ Video, Image Kit, External Traffic, Action Plan. |
 | `image_kit/` | Amazon images per product and color (2000 x 2000) with `manifest.csv`, contact sheets and `README.md`. The upload links every child to its 8 images here (raw GitHub links at a fixed commit), so the images go up with the upload. |
 
 Findings doc: https://claude.ai/artifact/Xmwhj6EuFnc7G8b6uaePFV
 
-The repository is public, which lets Amazon read those image links. It also exposes `data/account/` (Seller Central exports): make the repository private once Amazon's processing report is back.
+The repository is public, which lets Amazon read those image links. It also exposes `data/account/` (Seller Central exports). Keep it public until Amazon has processed step 1, step 2 and the later re-upload of the 7 new products after the GS1 fix (each processing downloads the images from these links), then make it private.
 
 Not in the upload on purpose: photo mirrors (unchanged) and `B0GGDQ15DD` (duplicate of `B0G2DYRY7T`; merged through a Seller Support case).
 
@@ -24,8 +24,8 @@ Not in the upload on purpose: photo mirrors (unchanged) and `B0GGDQ15DD` (duplic
 ```bash
 python3 scripts/fill_grand_ds_upload.py uploads_in/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_original.xlsx /tmp/ready.xlsx data/build/grand_ds_changes.csv
 python3 scripts/build_merge_upload.py uploads_in/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_original.xlsx /tmp/ready.xlsx ILLUCO_Amazon_UPLOAD.xlsx data/build/upload_rows.csv
-python3 scripts/build_step1.py uploads_in/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_original.xlsx ILLUCO_Amazon_STEP1_delete_and_mains.xlsx
+python3 scripts/build_step1.py uploads_in/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_original.xlsx ILLUCO_Amazon_STEP1_delete_parent.xlsx
 python3 scripts/validate_upload.py ILLUCO_Amazon_UPLOAD.xlsx
-python3 scripts/validate_upload.py ILLUCO_Amazon_STEP1_delete_and_mains.xlsx data/build/upload_check_step1.csv
+python3 scripts/validate_upload.py ILLUCO_Amazon_STEP1_delete_parent.xlsx data/build/upload_check_step1.csv
 python3 scripts/build_asin_report.py ILLUCO_Amazon_Report.xlsx
 ```

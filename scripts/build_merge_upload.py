@@ -5,8 +5,8 @@ holds one pack size and its children vary by Color and Size only (owner, 11/23: 
   IDM-GRAND-FAMILY-PARENT   COLOR/SIZE  2 mirrors + 2 handles: Grand Size 10 1X / 2X
   IDM-HEADS-FAMILY-PARENT   SIZE        5 replacement heads: single-sided 1X / 2X / 3X and Double-Sided
 The family uploaded on 11/21 (IDM-HANDLE-FAMILY-PARENT, theme SIZE/COLOR/NUMBER_OF_ITEMS) is deleted first by
-ILLUCO_Amazon_STEP1_delete_and_mains.xlsx (build_step1.py), which also sets the changed main images: a live family's
-theme cannot be changed in place, and a child can belong to only one parent (Amazon 8032).
+ILLUCO_Amazon_STEP1_delete_parent.xlsx (build_step1.py): a live family's theme cannot be changed in place, and a
+child can belong to only one parent (Amazon 8032).
 Existing ASINs are re-parented with "Edit (Partial Update)" (their ASINs, sales history and reviews stay);
 new Grand / Double-Sided / head SKUs are created with "Create or Replace (Full Update)".
 usage: build_merge_upload.py <ILLUCO template .xlsx> <Grand/DS READY .xlsx> <out .xlsx> <plan .csv>"""
@@ -220,7 +220,7 @@ def harmonized_model(size, n, color, fam):
     if 'Grand' in str(size):
         s = f'Size 10 Grand, {m}, {n} Pack, {color}'
     elif 'Double-Sided' in str(size):
-        s = f'Size 4 Double-Sided, {n} Pack, {color}' if fam == 'A' else f'Size 4 Double-Sided Heads, {n} Pack'
+        s = f'Size 4 Double-Sided, {n} Pack, {color}' if fam == 'A' else f'Size 4 Double-Sided Heads, {m}, {n} Pack'
     elif fam == 'B':
         s = f'Size 4 Heads, {m}, {n} Pack'
     else:
@@ -314,6 +314,31 @@ MAIN_IN_STEP1 = {'B0F84VWGG5', 'B0FCMVZH31', 'B0F857HKBG',        # Light Blue 5
                  'B0F84TKGLS', 'B0F85B5BDC',                      # Dark Blue 2X / 3X 5-packs: suppressed, no main
                  'B0FBPG5CS9', 'B0FCHH2SQB', 'B0FCJY3H9H'}        # single-sided heads: box + heads -> heads only
 step1_mains = []
+# Owner, 11/23: "do not generate images - leave it blank and mark". These kit images are composites (copies or grafts of
+# one photo), so their cells stay blank and yellow until Ashley sends real photos; everything else is ILLUCO's own photos
+# or slides built on them.
+PHOTO_NEEDED = {
+    ('A_handle/kit_5pack_light_blue', '01_main'): 'Light Blue 5-pack: 5 mirrors + 5 handles on white, true colour, no box',
+    ('A_handle/kit_5pack_dark_blue', 'main_alt_2x3x'): 'Dark Blue 5-pack: 5 mirrors + 5 handles on white, a new photo (not the 1X listing photo)',
+    ('A_handle/double_sided_5pack_light_blue', '01_main'): 'Double-Sided 5-pack, Light Blue: 5 assembled mirrors, full length, on white',
+    ('A_handle/double_sided_5pack_dark_blue', '01_main'): 'Double-Sided 5-pack, Dark Blue: 5 assembled mirrors, full length, on white',
+    ('A_handle/grand_2pack_light_blue', '01_main'): 'Grand 2-pack, Light Blue: 2 complete mirrors on white',
+    ('A_handle/grand_2pack_light_blue', '02_whats_in_the_box'): 'Grand kit, Light Blue: box with 2 mirrors and 2 Light Blue handles',
+    ('A_handle/grand_2pack_dark_blue', '01_main'): 'Grand 2-pack, Dark Blue: 2 complete mirrors on white',
+    ('A_handle/grand_2pack_dark_blue', '02_whats_in_the_box'): 'Grand kit, Dark Blue: box with 2 mirrors and 2 Dark Blue handles',
+    ('B_heads/single_sided_heads_5pack', '01_main'): 'Single-sided heads: 5 heads face-on on white, no box',
+    ('B_heads/single_sided_heads_5pack', '02_whats_in_the_box'): 'Single-sided heads: what is in the box (5 heads, no handles)',
+    ('B_heads/double_sided_heads_5pack', '01_main'): 'Double-Sided heads: 5 heads face-on on white',
+    ('B_heads/double_sided_heads_5pack', '02_whats_in_the_box'): 'Double-Sided heads: what is in the box (5 heads, no handles)',
+}
+NOW_LIVE = {   # what the live listing shows in that slot while the cell stays blank
+    ('A_handle/kit_5pack_light_blue', '01_main'): "keeps its live main, ILLUCO's Light Blue box photo",
+    ('A_handle/kit_5pack_dark_blue', 'main_alt_2x3x'): 'no main: the listing stays suppressed until this photo is uploaded',
+    ('B_heads/single_sided_heads_5pack', '01_main'): "keeps its live main, ILLUCO's box + heads photo",
+    ('B_heads/single_sided_heads_5pack', '02_whats_in_the_box'): ('image 2 live since 11/21 is a composite (5 copies of one head): '
+                                                                  'delete it in Manage Images or replace it with the new photo'),
+}
+missing = []
 sku_asin = {p['sku']: p['asin'] for p in plan}
 for r in range(8, row):
     if t[f'D{r}'].value != 'Child':
@@ -335,15 +360,30 @@ for r in range(8, row):
         if col == 'T' and key in MAIN_OVERRIDE:
             name = MAIN_OVERRIDE[key]
             assert Path('image_kit', folder, name).is_file(), name
-        c.value = IMG_BASE + folder + '/' + name
         c.fill = PatternFill(fill_type=None)
         c.comment = None
+        stem = name.rsplit('.', 1)[0]
+        if (folder, stem) in PHOTO_NEEDED:
+            new = str(t[f'C{r}'].value).startswith('Create')
+            live = 'new product, not live yet' if new else NOW_LIVE.get((folder, stem), 'keeps its live image')
+            c.value = None
+            c.fill = YEL
+            c.comment = Comment(f'MISSING, real photo requested from Ashley: {PHOTO_NEEDED[(folder, stem)]}. '
+                                f'No generated image (owner, 11/23). Meanwhile: {live}.', 'ILLUCO audit')
+            missing.append(dict(sku=sku, asin='(new)' if new else key, column=col,
+                                slot='Main image' if col == 'T' else f'Image {IMG_COLS.index(col) + 1}',
+                                photo=PHOTO_NEEDED[(folder, stem)], meanwhile=live))
+            continue
+        c.value = IMG_BASE + folder + '/' + name
         if col == 'T' and key in MAIN_IN_STEP1:
             step1_mains.append(dict(sku=sku, asin=key, main_url=c.value))
             c.value = None
     c = t[f'AB{r}']; c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
 print('images linked at', IMG_SHA[:7])
-assert {m['asin'] for m in step1_mains} == MAIN_IN_STEP1, 'a step-1 main has no row'
+assert {m['asin'] for m in step1_mains} <= MAIN_IN_STEP1
+with open('data/build/missing_images.csv', 'w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=['sku', 'asin', 'column', 'slot', 'photo', 'meanwhile']); w.writeheader(); w.writerows(missing)
+print('image cells left blank for Ashley:', len(missing))
 with open('data/build/step1_mains.csv', 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['sku', 'asin', 'main_url']); w.writeheader(); w.writerows(step1_mains)
 print('mains moved to step 1:', len(step1_mains))

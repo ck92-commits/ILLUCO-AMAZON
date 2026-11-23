@@ -5,7 +5,7 @@ from openpyxl.utils import range_boundaries, get_column_letter
 sys.path.insert(0, 'scripts')
 from existing_listing_content import ROWS
 F = sys.argv[1] if len(sys.argv) > 1 else 'ILLUCO_Amazon_UPLOAD.xlsx'
-DELETED_PARENTS = {'IDM-HANDLE-FAMILY-PARENT'}   # ILLUCO_Amazon_STEP1_delete_and_mains.xlsx removes it first (11/23)
+DELETED_PARENTS = {'IDM-HANDLE-FAMILY-PARENT'}   # ILLUCO_Amazon_STEP1_delete_parent.xlsx removes it first (11/23)
 wb = openpyxl.load_workbook(F)
 t = wb['Template']
 hdr = {c.column_letter: c.value for c in t[4] if c.value}
