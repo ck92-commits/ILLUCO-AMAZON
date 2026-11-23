@@ -34,23 +34,32 @@ REG = {
     'main_single_db': (lambda: D.main_reuse('single_db_main'), E + U['single_db_main'], 'reused-as-is',
                        'Current Amazon main of B0GGDGRHRR: 1 mirror + 1 handle, pure white, fills ~84% x 91%. '
                        'Re-encoded to spec. Same photo serves 1X/2X/3X.'),
-    'main_kit_lb': (lambda: D.main_reuse('kit_lb_box'), E + U['kit_lb_box'], 'needs design review',
-                    'Shows the full pack (5 mirrors + 5 handles + box) on pure white; resized 2048 -> 2000 px. '
-                    'The Light Blue kit main on Amazon (41Uw02dXsML) only exists at 500 px. The handles here render '
-                    'royal blue, darker than the Light Blue handle in the single, Grand and Double-Sided photos '
-                    '(this file is a recolour of the Dark Blue box shot): confirm colour accuracy or reshoot. '
-                    + BOX_NOTE),
+    'main_kit_lb': (lambda: D.main_kit_composite('lb'), 'new (5 cutouts of ' + E + U['single_lb_main'] + ')', 'ready',
+                    'Product only on pure white (owner, 11/23: no box, no text on mains). Five cutouts of ILLUCO\'s '
+                    'real Light Blue single-mirror photo in a row = the 5 mirrors with handles in the pack. Replaces '
+                    'the box shot, whose handles were a recolour of the Dark Blue photo.'),
+    'main_kit_db_alt': (lambda: D.main_kit_composite('db'), 'new (5 cutouts of one mirror in ' + E + U['kit_db_main'] + ')',
+                        'ready',
+                        'Main for the 2X and 3X Dark Blue 5-packs (B0F84TKGLS, B0F85B5BDC). Amazon rejected the 1X '
+                        'photo on them (error 100560: an image already tied to B0FCZBD1KY), which left both '
+                        'suppressed (18320). Same layout as the Light Blue 5-pack main; the mirror is the front one '
+                        'lifted from the real Dark Blue 5-pack photo (the Dark Blue single photo shows the face '
+                        'edge-on).'),
     'main_kit_db': (lambda: D.main_reuse('kit_db_main'), E + U['kit_db_main'], 'reused-as-is',
                     'Current Amazon main of B0FCZBD1KY: 5 mirrors + 5 handles, pure white; resized 2560 -> 2000 px.'),
-    'main_ds_lb': (lambda: D.main_ds_box('lb'), 'new (cleanup of ' + E + U['dsdm03_lb'] + ')', 'ready',
-                   'Existing Double-Sided main (main.jpg) shows only 2 of 5 mirrors and both handles run off the '
-                   'frame. New main uses ILLUCO\'s real kit photo from dsdm-03 (5 handles + 5 double-sided heads in '
-                   'the box) with the graphic header removed and the background cleaned to pure white (RGB 255); '
-                   'no product pixels altered. A reshoot of 5 assembled mirrors on white would be stronger. '
-                   + BOX_NOTE),
-    'main_ds_db': (lambda: D.main_ds_box('db'), 'new (cleanup of ' + E + U['dsdm03_db'] + ')', 'ready',
-                   'As Light Blue: real kit photo from dsdm-03_db (5 Dark Blue handles + 5 heads) on pure white. '
-                   'Replaces the Drive main_db.jpg, which shows 2 of 5 mirrors with handles cropped. ' + BOX_NOTE),
+    'main_ds_lb': (lambda: D.main_ds_composite('lb'),
+                   'new (Double-Sided head from ' + E + U['ds_main_lb'] + ' on the handle from ' + E
+                   + U['single_lb_main'] + ', x5)', 'ready',
+                   'Product only on pure white (owner, 11/23: no box, no text on mains). No photo shows a whole '
+                   'Double-Sided mirror (main.jpg crops both handles at the frame), so the real Double-Sided head '
+                   'and shank are cut from main.jpg and seated on the real Light Blue handle (same cone-socket '
+                   'handle), scaled so both Size 4 heads match; five in a row. Replaces the box shot. A photo of 5 '
+                   'assembled Double-Sided mirrors on white would be stronger.'),
+    'main_ds_db': (lambda: D.main_ds_composite('db'),
+                   'new (Double-Sided head from ' + E + U['ds_main_db'] + ' on the handle from ' + E
+                   + U['kit_db_main'] + ', x5)', 'ready',
+                   'As Light Blue, with the real Dark Blue handle from the Dark Blue 5-pack photo. Replaces the box '
+                   'shot.'),
     'main_grand_lb': (lambda: D.main_grand_pair('lb'), 'new (2 cutouts of ' + E + U['grand01_lb'] + ')', 'ready',
                       'Existing Grand main shows 1 mirror for a 2-pack and crops the handle at the frame edge. '
                       'Composite of two cutouts of the full Grand mirror photo in grand-01 (head + handle), '
@@ -60,8 +69,9 @@ REG = {
                       'Same composite from grand-01_db. Note: ILLUCO\'s Dark Blue Grand and Double-Sided images are '
                       'digital recolours of the Light Blue photos (pixel-identical apart from the handle); the '
                       'Dark Blue handle colour should be checked against the real product.'),
-    'main_heads_ss': (lambda: D.main_reuse('heads_main'), E + U['heads_main'], 'reused-as-is',
-                      'Current Amazon main of B0FBPG5CS9: box + 5 heads, pure white; no handles shown. ' + BOX_NOTE),
+    'main_heads_ss': (lambda: D.main_heads_row(), 'new (5 cutouts of ' + E + U['single_head'] + ')', 'ready',
+                      'Product only on pure white (owner, 11/23): five cutouts of the real single-sided head photo '
+                      'side by side. Replaces the box + heads shot.'),
     'main_heads_ds': (lambda: D.main_ds_heads(), 'new (5 cutouts of ' + E + U['double_head'] + ')', 'needs reshoot',
                       'IDM-3CD41H has no multi-head photo; composite of 5 copies of ILLUCO\'s single edge-on head '
                       'photo shows the full count on pure white. Usable stopgap, but the mirror faces are not '
@@ -237,7 +247,8 @@ GROUPS = [
                  '(2X), IDM-2C43DB B0F85B5BDC (3X)',
          slots=[('01_main', 'main_kit_db'), ('02_whats_in_the_box', 'box_kit_db'),
                 ('03_key_benefit', 'kb_size4_db'), ('04_magnification', 'mag'), ('05_comparison', 'chart_a'),
-                ('06_handle', 'handle_size4_db'), ('07_care', 'care'), ('08_applications', 'app_dsdm04')]),
+                ('06_handle', 'handle_size4_db'), ('07_care', 'care'), ('08_applications', 'app_dsdm04')],
+         extra=[('main_alt_2x3x', 'main_kit_db_alt')]),
     dict(family='A_handle', group='double_sided_5pack_light_blue',
          applies='Double-Sided Size 4, 5 mirrors + 5 handles, 1X, Light Blue: IDM-2CD41LB (new child)',
          slots=[('01_main', 'main_ds_lb'), ('02_whats_in_the_box', 'box_ds_lb'), ('03_key_benefit', 'kb_ds_lb'),
@@ -324,6 +335,21 @@ def main():
                        design=key)
             rows.append(row)
             manifest.append(row)
+        for fname, key in g.get('extra', []):     # extra files outside the 8 slots (e.g. an alternate main)
+            fn, source, status, notes = REG[key]
+            if key not in cache:
+                print('render', key, flush=True)
+                cache[key] = fn()
+            out = gdir / f'{fname}.jpg'
+            size = K.save_jpg(cache[key], out)
+            im = Image.open(out)
+            assert K.white_border_ok(im), f'{out}: main border is not pure white'
+            fw, fh = K.product_fill(im)
+            rel = out.relative_to(K.OUT)
+            manifest.append(dict(family=g['family'], child_group=g['group'], applies_to=g['applies'], slot=fname,
+                                 file=str(rel), source=source, status=status,
+                                 notes=notes + f' [measured fill {fw:.0%} x {fh:.0%}]', abs=str(out), bytes=size,
+                                 design=key))
         contact_sheet(g, rows, K.OUT / f"contact_sheet_{g['family']}_{g['group']}.jpg")
     with open(K.OUT / 'manifest.csv', 'w', newline='') as f:
         w = csv.writer(f)

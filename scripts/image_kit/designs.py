@@ -3,6 +3,8 @@
 Each function returns a PIL RGB image. Product imagery is always a real ILLUCO photo (cropped,
 masked, rotated, scaled or composited); everything else is layout, vector shapes and text.
 """
+from functools import lru_cache
+
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
@@ -95,16 +97,6 @@ def main_reuse(key):
     return im
 
 
-def main_ds_box(color):
-    """Double-Sided 5-pack: real kit photo (5 mirrors + 5 handles in the box) from dsdm-03 with the
-    graphic header removed, placed on pure white."""
-    photo, _ = A.ds_box_main(color)
-    img = white()
-    ph = K.fit(photo, int(W * 0.90), int(H * 0.90))
-    img.paste(ph, ((W - ph.width) // 2, (H - ph.height) // 2))
-    return img
-
-
 def main_grand_pair(color):
     """Grand 2-pack: two cutouts of the full Grand mirror photo (grand-01 / grand-01_db),
     slightly fanned, on pure white with a soft contact shadow."""
@@ -123,6 +115,239 @@ def main_grand_pair(color):
     sh = (14, 18, 22, 0.16)
     K.paste(img, left, (x0, yl), shadow=sh)
     K.paste(img, right, (x0 + left.width + gap, yr), shadow=sh)
+    return img
+
+
+def _border_connected(mask):
+    """Pixels of a boolean mask that are connected to the image border (4-neighbour flood fill done
+    with numpy dilations on a 1/4-scale copy, then refined at full size)."""
+    def grow(m, seed):
+        reach = seed & m
+        while True:
+            nxt = reach.copy()
+            nxt[1:] |= reach[:-1]; nxt[:-1] |= reach[1:]; nxt[:, 1:] |= reach[:, :-1]; nxt[:, :-1] |= reach[:, 1:]
+            nxt &= m
+            if nxt.sum() == reach.sum():
+                return reach
+            reach = nxt
+    h, w = mask.shape
+    small = mask[::4, ::4]
+    seed = np.zeros_like(small); seed[0, :] = seed[-1, :] = True; seed[:, 0] = seed[:, -1] = True
+    rs = grow(small, seed)
+    coarse = np.repeat(np.repeat(rs, 4, axis=0), 4, axis=1)[:h, :w]
+    return grow(mask, coarse & mask)
+
+
+@lru_cache(maxsize=None)
+def single_mirror_vertical_solid(color):
+    """Single Size 4 mirror cutout where only the white connected to the photo's edge is removed, so the
+    mirror face (often bright white) stays solid; rotated so the head is on top and the blue handle below."""
+    im = A.img('single_lb_main' if color == 'lb' else 'single_db_main').convert('RGB')
+    arr = np.asarray(im).astype(np.int32)
+    bg = _border_connected(arr.min(axis=2) >= 248)
+    alpha = Image.fromarray(np.where(bg, 0, 255).astype(np.uint8), 'L').filter(ImageFilter.GaussianBlur(1.0))
+    rgba = im.convert('RGBA')
+    rgba.putalpha(alpha)
+    rgba = K.trim(rgba)
+    a = np.asarray(rgba.getchannel('A')) > 128
+    ys, xs = np.nonzero(a)
+    evals, evecs = np.linalg.eigh(np.cov(np.vstack([xs - xs.mean(), ys - ys.mean()])))
+    vx, vy = evecs[:, np.argmax(evals)]
+    out = K.trim(K.rotate_rgba(rgba, np.degrees(np.arctan2(vy, vx)) - 90))
+    arr2 = np.asarray(out).astype(np.int32)
+    blue = (arr2[..., 3] > 128) & (arr2[..., 2] - arr2[..., 0] > 40)
+    q = arr2.shape[0] // 4
+    if blue[:q].sum() > blue[-q:].sum():
+        out = out.rotate(180, expand=True)
+    return out
+
+
+@lru_cache(maxsize=None)
+def kit_db_mirror_from_pack():
+    """One whole Dark Blue mirror (the right-hand one) lifted from ILLUCO's real Dark Blue 5-pack photo
+    (71549oTdxFL). The five heads touch, so the head is taken as its fitted circle (its rim is unbroken where it
+    meets the 4th head, i.e. it is the head in front) and joined to its own shank and handle. The Dark Blue
+    single-mirror photo shows the face edge-on, so on white it reads as a hook."""
+    im = A.img('kit_db_main').convert('RGB')
+    arr = np.asarray(im).astype(np.int32)
+    g = arr.min(axis=2)
+    h, w = g.shape
+    # head 5: least-squares circle through its rim pixels
+    ys, xs = np.nonzero(g[110:365, 1590:1850] < 200)
+    xs = xs + 1590; ys = ys + 110
+    cx, cy, c = np.linalg.lstsq(np.c_[2 * xs, 2 * ys, np.ones(len(xs))], xs ** 2 + ys ** 2, rcond=None)[0]
+    r = np.sqrt(c + cx ** 2 + cy ** 2)
+    yy, xx = np.mgrid[0:h, 0:w]
+    disc = (xx - cx) ** 2 + (yy - cy) ** 2 <= (r + 3) ** 2
+    # shank + handle: non-white pixels connected to a seed in its handle, kept right of the 4th head
+    region = (xx >= 1625) & (yy >= cy)
+    m = (g < 235) & region
+    reach = np.zeros_like(m); reach[1800, 1712] = True
+    while True:
+        nxt = reach.copy()
+        nxt[1:] |= reach[:-1]; nxt[:-1] |= reach[1:]; nxt[:, 1:] |= reach[:, :-1]; nxt[:, :-1] |= reach[:, 1:]
+        nxt &= m | disc
+        if nxt.sum() == reach.sum():
+            break
+        reach = nxt
+    solid = ~_border_connected(~(reach | disc))
+    ys2, xs2 = np.nonzero(solid)
+    assert xs2.max() - xs2.min() < 330, 'cutout spans more than one mirror'
+    alpha = Image.fromarray((solid * 255).astype(np.uint8), 'L').filter(ImageFilter.GaussianBlur(1.0))
+    rgba = im.convert('RGBA')
+    rgba.putalpha(alpha)
+    return K.trim(rgba)
+
+
+def _grow(mask, seed):
+    """4-connected part of `mask` reachable from `seed`."""
+    reach = seed & mask
+    while True:
+        nxt = K._dilate(reach) & mask
+        if nxt.sum() == reach.sum():
+            return reach
+        reach = nxt
+
+
+def _morph(m, r, op):
+    for _ in range(r):
+        m = op(m)
+    return m
+
+
+def _box_mean(a, r):
+    c = np.pad(a, ((r + 1, r), (r + 1, r)), mode='edge').cumsum(0).cumsum(1)
+    k = 2 * r + 1
+    return (c[k:, k:] - c[:-k, k:] - c[k:, :-k] + c[:-k, :-k]) / k ** 2
+
+
+def _handle_start(rgba):
+    """First row from the top where the blue handle makes up most of the object."""
+    arr = np.asarray(rgba).astype(np.int32)
+    obj = arr[..., 3] > 128
+    blue = obj & (arr[..., 2] - arr[..., 0] > 40)
+    n = obj.sum(axis=1)
+    frac = blue.sum(axis=1) / np.maximum(n, 1)
+    assert (frac > 0.5).any(), 'no handle found'
+    return int(np.argmax(frac > 0.5))
+
+
+def _span(rgba, y):
+    xs = np.nonzero(np.asarray(rgba.getchannel('A'))[y] > 128)[0]
+    return int(xs.min()), int(xs.max())
+
+
+def _widest(rgba, rows):
+    a = np.asarray(rgba.getchannel('A'))[:rows] > 128
+    best = 0
+    for row in a:
+        xs = np.nonzero(row)[0]
+        if len(xs):
+            best = max(best, int(xs[-1] - xs[0]))
+    return best
+
+
+@lru_cache(maxsize=None)
+def ds_head_on_shank(color):
+    """The Double-Sided head and its shank, from ILLUCO's Double-Sided main photo (the left mirror; its handle runs
+    off the frame), stood upright and cut where the shank enters the handle."""
+    im = A.img('ds_main_lb' if color == 'lb' else 'ds_main_db').convert('RGB')
+    arr = np.asarray(im).astype(np.int32)
+    g = arr.min(axis=2)
+    obj = (g < 228) | (arr[..., 2] - arr[..., 0] > 40)
+    obj = _morph(_morph(obj, 3, K._dilate), 3, K._erode)
+    seed = np.zeros_like(obj)
+    seed[1900, 300] = True  # inside the left mirror's handle
+    comp = _grow(~_border_connected(~obj), seed)
+    # the photo has a soft drop shadow on the right: peel smooth, neutral, light-grey pixels off the outline
+    gf = g.astype(np.float64)
+    std = np.sqrt(np.maximum(_box_mean(gf * gf, 3) - _box_mean(gf, 3) ** 2, 0))
+    shadowlike = (g >= 205) & (g <= 240) & (std < 3.0) & (arr.max(axis=2) - g < 12)
+    for _ in range(80):
+        peel = comp & ~K._erode(comp) & shadowlike
+        if not peel.any():
+            break
+        comp &= ~peel
+    comp = ~_border_connected(~comp)
+    comp = _grow(_morph(_morph(comp, 3, K._erode), 3, K._dilate) & comp, seed)
+    alpha = Image.fromarray((comp * 255).astype(np.uint8), 'L').filter(ImageFilter.GaussianBlur(1.0))
+    rgba = im.convert('RGBA')
+    rgba.putalpha(alpha)
+    rgba = K.trim(rgba)
+    a = np.asarray(rgba).astype(np.int32)
+    by, bx = np.nonzero((a[..., 3] > 128) & (a[..., 2] - a[..., 0] > 40))
+    evals, evecs = np.linalg.eigh(np.cov(np.vstack([bx - bx.mean(), by - by.mean()])))
+    vx, vy = evecs[:, np.argmax(evals)]
+    out = K.trim(K.rotate_rgba(rgba, np.degrees(np.arctan2(vy, vx)) - 90))
+    a2 = np.asarray(out).astype(np.int32)
+    b2 = (a2[..., 3] > 128) & (a2[..., 2] - a2[..., 0] > 40)
+    q = a2.shape[0] // 3
+    if b2[:q].sum() > b2[-q:].sum():
+        out = out.rotate(180, expand=True)
+    return out.crop((0, 0, out.width, _handle_start(out)))
+
+
+@lru_cache(maxsize=None)
+def ds_mirror_full(color):
+    """One whole Double-Sided mirror: the real Double-Sided head and shank (ds_head_on_shank) seated on the real
+    handle of the same colour, taken from the 5-pack mirror photos (the handle is the same cone-socket handle).
+    Both heads are Size 4 (22 mm), so the head is scaled to the single-sided head's width; at that scale the
+    shank matches the handle opening (checked below)."""
+    top = ds_head_on_shank(color)
+    kit = single_mirror_vertical_solid('lb') if color == 'lb' else kit_db_mirror_from_pack()
+    yk = _handle_start(kit)
+    s = _widest(kit, int(kit.height * 0.2)) / _widest(top, int(top.height * 0.5))
+    lo, hi = _span(top, top.height - 12)
+    klo, khi = _span(kit, yk - 12)
+    assert abs((hi - lo) * s / (khi - klo) - 1) < 0.12, 'shank and handle opening do not match'
+    top = K.scale(top, s)
+    bot = kit.crop((0, yk, kit.width, kit.height))
+    ct = sum(_span(top, top.height - 3)) / 2
+    cb = sum(_span(bot, 3)) / 2
+    w = 2 * max(top.width, bot.width)
+    out = Image.new('RGBA', (w, top.height + bot.height), (255, 255, 255, 0))
+    out.alpha_composite(bot, (int(round(w / 2 - cb)), top.height))
+    out.alpha_composite(top, (int(round(w / 2 - ct)), 0))
+    return K.trim(out)
+
+
+def _row_of(m, n=5):
+    """n copies of an upright mirror cutout in a row, heads on top, pure white, soft contact shadow."""
+    a = K.scale(m, int(H * 0.86) / m.height)
+    img = white()
+    span = int(W * 0.86)
+    step = (span - a.width) / (n - 1)
+    x0 = (W - span) / 2
+    y = (H - a.height) / 2
+    for i in range(n):
+        K.paste(img, a, (x0 + step * i, y), shadow=(10, 16, 18, 0.14))
+    return img
+
+
+def main_kit_composite(color, n=5):
+    """5-pack with handles, product only (owner, 11/23: mains are the product on white, no box, no text):
+    five cutouts of ILLUCO's real mirror photo of the same product, heads on top, in a row, pure white
+    background with a soft contact shadow."""
+    return _row_of(single_mirror_vertical_solid('lb') if color == 'lb' else kit_db_mirror_from_pack(), n)
+
+
+def main_ds_composite(color, n=5):
+    """Double-Sided 5-pack, product only: five whole Double-Sided mirrors (ds_mirror_full) in a row."""
+    return _row_of(ds_mirror_full(color), n)
+
+
+def main_heads_row(n=5):
+    """Single-sided heads 5-pack, product only: five cutouts of the real single-head photo side by side,
+    slightly overlapping, pure white background, no box."""
+    hd = A.single_head()
+    a = K.scale(hd, int(H * 0.74) / hd.height)
+    img = white()
+    span = int(W * 0.88)
+    step = (span - a.width) / (n - 1)
+    x0 = (W - span) / 2
+    y = (H - a.height) / 2
+    for i in range(n):
+        K.paste(img, a, (x0 + step * i, y), shadow=(8, 12, 14, 0.12))
     return img
 
 
