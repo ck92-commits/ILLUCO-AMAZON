@@ -14,7 +14,7 @@ import sys, copy, csv, openpyxl
 from openpyxl.styles import PatternFill
 from openpyxl.comments import Comment
 sys.path.insert(0, 'scripts')
-from existing_listing_content import ROWS, B_HD, B_AUTO, HANDLE, INTRO, CARE, KW_CORE, lead_case
+from existing_listing_content import ROWS, B_HD, B_AUTO, HANDLE, INTRO, CARE, KW_CORE, lead_case, size_name
 
 TPL, READY, OUT, PLAN = sys.argv[1:5]
 PT, BRAND = 'PROFESSIONAL_HEALTHCARE', 'ILLUCO'
@@ -222,7 +222,7 @@ def harmonized_model(size, n, color, fam):
     elif 'Double-Sided' in str(size):
         s = f'Size 4 Double-Sided, {n} Pack, {color}' if fam == 'A' else f'Size 4 Double-Sided Heads, {m}, {n} Pack'
     elif fam == 'B':
-        s = f'Size 4 Heads, {m}, {n} Pack'
+        s = f'Size 4 Single-Sided Heads, {m}, {n} Pack'
     else:
         s = f'Size 4, {m}, {n} Pack, {color}'
     assert len(s) <= 40, s
@@ -388,36 +388,74 @@ with open('data/build/missing_images.csv', 'w', newline='') as f:
 # something". This upload carries NO images: a partial update leaves what the live listings show now (their mains are
 # all on pure white), and the new products start without images. Only the main-image cells that need a new photo are
 # marked yellow; data/build/image_list.csv and the Image List tab of the report say what to shoot.
-need_main = {(m['sku']): m for m in missing if m['column'] == 'T'}
+# Owner, 11/23-24: no generated images; use a REAL image where one exists, leave the cell blank where none does. Live
+# listings need no images in a partial update (a blank cell keeps what they show), except where the 11/21-11/23 uploads
+# left something wrong: the suppressed Dark Blue 2X/3X (no main), the Light Blue 5-packs (their product-only main had
+# been swapped for a box shot) and image 2 of the heads (a composite). Their own pre-11/21 mains are restored from
+# Amazon's image server; new products get ILLUCO's own photos (illuco.com, or the Drive originals in
+# image_kit/illuco_originals, unchanged). Every main is on a white background.
+AMZ_I = 'https://m.media-amazon.com/images/I/'
+ORIG_SHA = subprocess.run(['git', 'log', '-1', '--format=%H', '--', 'image_kit/illuco_originals'], capture_output=True,
+                          text=True, check=True).stdout.strip()
+ORIG = f'https://raw.githubusercontent.com/ck92-commits/ILLUCO-AMAZON/{ORIG_SHA}/image_kit/illuco_originals/'
+N_LB = ("Restored: this listing's own main from before 11/21 (5 Light Blue mirrors, product only, pure white). It is "
+        "500 px, so no zoom: replace it with Ashley's photo.")
+N_DB = ("Restored: this listing's own main from before 11/21 (5 Dark Blue mirrors, product only, pure white, 500 px). It "
+        "lifts the suppression if Amazon accepts it; Amazon refused the 2000 px copy of this photo on 11/21 (100560). If "
+        "it refuses again, Ashley's Dark Blue 5-pack photo is the fix.")
+N_GR = ("ILLUCO's own photo, white background, but it shows 1 of the 2 mirrors and the handle runs off the frame. "
+        "Replace with Ashley's 2-mirror photo.")
+N_DS = ("ILLUCO's own photo, white background, but it shows 2 of the 5 mirrors with the handles cut off at the frame. "
+        "Replace with Ashley's photo.")
+N_DH = "ILLUCO's own photo, white background, but it shows 1 of the 5 heads, from the side. Replace with Ashley's photo."
+N_HD = ("Left blank: the live main (box + 5 heads, white background) stays. Replace it with Ashley's photo of 5 heads, "
+        "no box.")
+REAL = {   # ASIN (live) or SKU (new) -> {column: (url, note on the stand-in or None)}
+    **{a: {'T': (AMZ_I + '41Uw02dXsML.jpg', N_LB)} for a in ('B0F84VWGG5', 'B0FCMVZH31', 'B0F857HKBG')},
+    **{a: {'T': (AMZ_I + '41%2BEMJIHFJL.jpg', N_DB)} for a in ('B0F84TKGLS', 'B0F85B5BDC')},
+    **{a: {'T': (None, N_HD), 'U': (SHOP + 'single-head.jpg', None)} for a in ('B0FBPG5CS9', 'B0FCHH2SQB', 'B0FCJY3H9H')},
+    **{k: {'T': (SHOP + 'main_1b36fb35-6c34-4a82-81aa-68ef89447d58.jpg', N_GR), 'U': (SHOP + 'grand-01.jpg', None),
+           'V': (SHOP + 'grand-02.jpg', None), 'W': (ORIG + 'grand-04.jpg', None)} for k in ('IDM-2C101LB', 'IDM-2C102LB')},
+    **{k: {'T': (SHOP + 'main_db.jpg', N_GR), 'U': (ORIG + 'grand-01_db.jpg', None), 'V': (SHOP + 'grand-02.jpg', None),
+           'W': (ORIG + 'grand-04.jpg', None)} for k in ('IDM-2C101DB', 'IDM-2C102DB')},
+    'IDM-2CD41LB': {'T': (SHOP + 'main.jpg', N_DS), 'U': (SHOP + 'dsdm-01.jpg', None), 'V': (SHOP + 'dsdm-02.jpg', None),
+                    'W': (SHOP + 'dsdm-03.jpg', None), 'X': (SHOP + 'dsdm-04.jpg', None)},
+    'IDM-2CD41DB': {'T': (ORIG + 'ds_main_db.jpg', N_DS), 'U': (ORIG + 'dsdm-01_db.jpg', None),
+                    'V': (ORIG + 'dsdm-02_db.jpg', None), 'W': (ORIG + 'dsdm-03_db.jpg', None), 'X': (SHOP + 'dsdm-04.jpg', None)},
+    'IDM-3CD41H': {'T': (SHOP + 'double-head_7873821b-dd72-4a9a-8cea-7147a90c92c9.jpg', N_DH)},
+}
 image_list = []
 for r in range(8, row):
     if t[f'D{r}'].value != 'Child':
         continue
     sku = t[f'A{r}'].value
     new = str(t[f'C{r}'].value).startswith('Create')
+    asin = '(new)' if new else sku_asin.get(sku, '')
     for col in IMG_COLS + ['AB']:
         c = t[f'{col}{r}']
         c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
-    asin = '(new)' if new else sku_asin.get(sku, '')
-    if sku in need_main:
-        m = need_main[sku]
-        c = t[f'T{r}']
-        c.fill = YEL
-        c.comment = Comment(f'Main image to come from Ashley: {m["photo"]}. Pure white background (RGB 255), product only, '
-                            f'no box, no text. Now: {m["meanwhile"]}.', 'ILLUCO audit')
-        main_now, action, spec = m['meanwhile'], 'New main needed', m['photo']
+    plan_ = REAL.get(sku if new else asin, {})
+    for col, (url, note) in plan_.items():
+        c = t[f'{col}{r}']
+        c.value = url
+        if note:
+            c.fill = YEL
+            c.comment = Comment(note, 'ILLUCO audit')
+    main_url, main_note = plan_.get('T', (None, None))
+    if main_url:
+        main_after = 'restored own main from before 11/21' if main_note in (N_LB, N_DB) else "ILLUCO's own photo"
     else:
-        main_now = 'real photo on pure white, product only' if not new else 'none'
-        action, spec = 'OK, keep', ''
-    others = ('none yet' if new else
-              'its 4 own photos + 5 slides uploaded 11/21-11/23 stay' if asin == 'B0G2DYRY7T' else
-              '7 images uploaded 11/21-11/23 stay until replaced')
+        main_after = ('box + heads photo stays (white background)' if main_note else
+                      'its own photo stays (real photo on white, product only)')
+    sent = [col for col in IMG_COLS if t[f'{col}{r}'].value]
     image_list.append(dict(sku=sku, asin=asin, family=FAM_OF_PARENT[t[f'E{r}'].value], size=t[f'BB{r}'].value or '',
-                           color=t[f'BA{r}'].value or '', main_now=main_now, main_action=action, main_photo=spec,
-                           other_images_now=others))
+                           color=t[f'BA{r}'].value or '', main_after=main_after,
+                           main_action="Replace with Ashley's photo" if main_note else 'OK',
+                           note=main_note or '', images_in_upload=', '.join(sent) or 'none'))
 with open('data/build/image_list.csv', 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(image_list[0].keys())); w.writeheader(); w.writerows(image_list)
-print('images in the upload: none | main cells marked for Ashley:', len(need_main))
+print('image cells filled with real images:', sum(len([1 for v in d.values() if v[0]]) for d in REAL.values()),
+      '| rows with a stand-in to replace:', sum(1 for x in image_list if x['note']))
 with open('data/build/step1_mains.csv', 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['sku', 'asin', 'main_url']); w.writeheader(); w.writerows(step1_mains)
 print('mains moved to step 1:', len(step1_mains))
@@ -502,6 +540,20 @@ for r in range(8, row):
         t[f'EO{r}'].comment = Comment('Estimate: same box size as the Double-Sided 5-pack kit (8.27 x 3.94 x 1.38 in) and about '
                                       '0.3 lb (the single-sided heads list 3.2 oz). Measure the heads box and correct; FBA '
                                       're-measures at check-in.', YEL_NOTE)
+
+# Size values as shoppers see them: magnification first (owner, 11/24). All logic above used the internal keys.
+for r in range(8, row):
+    if t[f'D{r}'].value == 'Child' and t[f'BB{r}'].value:
+        t[f'BB{r}'] = size_name(t[f'BB{r}'].value)
+for p in plan:
+    if p.get('size'):
+        p['size'] = size_name(p['size'])
+_seen = {}
+for r in range(8, row):
+    if t[f'D{r}'].value == 'Child':
+        k = (t[f'E{r}'].value, t[f'BB{r}'].value, t[f'BA{r}'].value)
+        _seen.setdefault(k, set()).add(asin_by_sku.get(t[f'A{r}'].value) or t[f'A{r}'].value)
+assert all(len(v) == 1 for v in _seen.values()), {k: v for k, v in _seen.items() if len(v) > 1}
 
 from xlsx_thin import thin_rows
 thin_rows(wb)   # owner: every row at the default thin height

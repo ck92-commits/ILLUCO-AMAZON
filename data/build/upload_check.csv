@@ -1,8 +1,1 @@
 level,row,sku,column,issue
-WARN,16,IDM-2CD41LB,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)
-WARN,17,IDM-2CD41DB,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)
-WARN,29,IDM-2C101LB,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)
-WARN,30,IDM-2C101DB,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)
-WARN,31,IDM-2C102LB,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)
-WARN,32,IDM-2C102DB,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)
-WARN,37,IDM-3CD41H,T Main Image URL,new product has no main image URL yet (upload works; listing is not buyable until an image is added)

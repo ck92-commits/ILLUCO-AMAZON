@@ -107,9 +107,9 @@ def kit(mag, color, sku_model, asin, rating, note=''):
 
 def heads(mag, asin, model, rating, note=''):
     magtxt = '1X' if mag == 1 else f'{mag}X magnifying'
-    title = ("ILLUCO UHD Dental Mirror Heads, Size 4 (22mm), 1X, 5 Pack, Cone Socket" if mag == 1 else
-             f"ILLUCO UHD {mag}X Magnifying Dental Mirror Heads, Size 4 (22mm), 5 Pack")
-    title = title.replace(", 5 Pack, Cone Socket", ", 5 Pack")
+    # "Single-Sided" in the name: the heads family also has Double-Sided heads (owner, 11/24); one pattern for all four,
+    # under 75 characters so Amazon still shows the Item Highlight
+    title = f"ILLUCO Single-Sided UHD Dental Mirror Heads, Size 4 (22mm), {mag}X, 5 Pack"
     return dict(
         family='Replacement Heads 5-Pack', parent='B0FCNL53JN', asin=asin, mag=mag, color='',
         model_suggested=model, rating=rating, title=title,
@@ -261,6 +261,15 @@ def dtc_price(r):
     if r['family'] == 'Replacement Heads 5-Pack':
         return PRICE_DTC[r['model_suggested']]
     return PRICE_DTC[f"single-{r['mag']}"]
+
+
+def size_name(v):
+    """Shopper-facing Size value, magnification first so the variation swatch shows what differs even when Amazon cuts
+    it short (owner, 11/24: '3X - Size 4 (22 mm)'). Internal keys like 'Size 4 (22mm) Single-Sided 3X' stay in the code."""
+    v = str(v)
+    mag = v.split()[-1]
+    size = 'Size 10 (34 mm)' if 'Size 10' in v else 'Size 4 (22 mm)'
+    return f'{mag} Double-Sided - {size}' if 'Double-Sided' in v else f'{mag} - {size}'
 
 
 SIZE_A = {1: 'Size 4 (22mm) 1X', 2: 'Size 4 (22mm) 2X', 3: 'Size 4 (22mm) 3X'}
