@@ -1,18 +1,20 @@
-"""One-time file that deletes the 3 OLD parent listings, so their children can join the new families.
+"""One-time file that deletes the parent listing IDM-HANDLE-FAMILY-PARENT before the upload.
 
-Amazon warning 8032 (11/21): a child can belong to only one parent. Deleting a parent removes only that
-parent listing; the children keep their ASINs, reviews, stock and offers. Parent SKUs as shown in
-Manage All Inventory on 11/21 (owner screenshots). Upload this first, wait for it to finish, then upload
-ILLUCO_Amazon_UPLOAD.xlsx again.
+That family (uploaded 11/21) mixed pack sizes under theme SIZE/COLOR/NUMBER_OF_ITEMS. The owner wants one pack size
+per family with Color and Size as the choices (11/23), so its children move to new parents: IDM-5PACK-FAMILY-PARENT,
+IDM-SINGLE-FAMILY-PARENT and IDM-GRAND-FAMILY-PARENT. A live family's theme cannot be changed in place, and a child
+can belong to only one parent (Amazon 8032), so the old parent goes first. Deleting a parent removes only that
+parent listing; the children keep their ASINs, reviews, stock and offers. IDM-HEADS-FAMILY-PARENT stays.
+Upload this first, wait for its processing report, then upload ILLUCO_Amazon_UPLOAD.xlsx.
+(The first version of this file, 11/21, deleted the three original parents IDM3C4XXX / B0FDCGG69J,
+0Z-AYA6-3N2M / B0GGD9DVP9 and 6B-536I-O2ME / B0FCNL53JN; that is done.)
 usage: build_delete_old_parents.py <template .xlsx> <out .xlsx>"""
 import sys, copy, openpyxl
 sys.path.insert(0, 'scripts')
 from xlsx_thin import thin_rows
 
 OLD_PARENTS = [   # (parent SKU, parent ASIN, family)
-    ('IDM3C4XXX', 'B0FDCGG69J', '5-pack with handles'),
-    ('0Z-AYA6-3N2M', 'B0GGD9DVP9', 'single mirror with handle'),
-    ('6B-536I-O2ME', 'B0FCNL53JN', 'replacement heads'),
+    ('IDM-HANDLE-FAMILY-PARENT', '', 'mirrors with handles, mixed pack sizes (uploaded 11/21)'),
 ]
 TPL, OUT = sys.argv[1:3]
 wb = openpyxl.load_workbook(TPL)

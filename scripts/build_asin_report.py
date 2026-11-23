@@ -47,7 +47,7 @@ lines = [
  ('5. Heads 1X is the top earner ($3,420, 17.4% conversion; half the units to business buyers) despite a 2.0 rating.', False),
  ('6. Sponsored Products Aug 1-Nov 20: $3,059 spend, $8,400 sales, 36.4% ACoS; the dermatoscope campaign spent $740 for 2 orders.', False),
  ('7. Sales team (Claudia): the coating is cooked off by standard 20-minute autoclave cycles because the 5-minute instructions are almost hidden; lead with High Definition, sell 2X / 3X as premium, make the 5-minute autoclave a time saver, say 100+ cycles.', False),
- ('Fix: ILLUCO_Amazon_UPLOAD.xlsx (the only upload) merges all mirrors except photo mirrors into two families, rewrites the copy to the sales direction and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. Upload Check tab: 0 errors.', False),
+ ('Fix: ILLUCO_Amazon_UPLOAD.xlsx puts all mirrors except photo mirrors into four families, one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) with Color and Size as the choices, rewrites the copy to the sales direction, gives every listing a product-only main image on white and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. Upload ILLUCO_Amazon_DELETE_old_parents.xlsx first (it deletes only IDM-HANDLE-FAMILY-PARENT, the 11/21 family that mixed pack sizes). Upload Check tab: 0 errors.', False),
  ('', False),
  ('How to read', True),
  ('Yellow cells with blue text are inputs. Paste Seller Central numbers there; CVR, ACoS and TACoS calculate automatically.', False),
@@ -83,7 +83,7 @@ COMPLAINTS = {
                               'Double-Sided head; Amazon Business quantity pricing.'),
  'Single Mirror with Handle': ('Family 5.0, but 3X Dark Blue (B0GGDGRHRR) has a 1-star: "water shedding last for 1-2 sterilization cycles" and a 20% '
                                'NCX rate. Image 2 shows five mirrors on a 1-pack.',
-                               'Merge all singles into family A; replace image 2; 5-minute autoclave message and bigger instruction card; respond to the NCX flag.'),
+                               'Merge all singles into one 1 Pack family; replace image 2; 5-minute autoclave message and bigger instruction card; respond to the NCX flag.'),
  'Dental Photo Mirror': ('No ratings; 20 sessions and 1 sale in the report period. Left as is (owner decision).',
                          'No change for now. Note: model number placeholder "IDMXXX" and price $165 vs $155 on illuco.com.'),
 }
@@ -107,30 +107,38 @@ gal = {'B0FCZBD1KY': 7, 'B0FBPG5CS9': 5, 'B0GGDQ15DD': 6, 'B0G2DYRY7T': 4, 'B0GG
 # Rows follow the upload: each parent, then its children (owner request 11/20). New parents and new products have
 # no ASIN until Amazon processes the upload, so they are listed by SKU.
 NEW_ROWS = {
-    'IDM-2CD41LB': ('A: Double-Sided 5-pack', 'Double-Sided 1X, Light Blue, 5 mirrors + 5 handles', 179.00),
-    'IDM-2CD41DB': ('A: Double-Sided 5-pack', 'Double-Sided 1X, Dark Blue, 5 mirrors + 5 handles', 179.00),
-    'IDM-2C101LB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 1X, Light Blue, 2 mirrors + 2 handles', 124.00),
-    'IDM-2C101DB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 1X, Dark Blue, 2 mirrors + 2 handles', 124.00),
-    'IDM-2C102LB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 2X, Light Blue, 2 mirrors + 2 handles', 129.00),
-    'IDM-2C102DB': ('A: Grand 2-pack', 'Grand Size 10 (34mm) 2X, Dark Blue, 2 mirrors + 2 handles', 129.00),
-    'IDM-3CD41H': ('B: Double-Sided heads', 'Double-Sided heads 1X, 5 pack, handles not included', 139.00),
+    'IDM-2CD41LB': ('5 Pack family: Double-Sided', 'Double-Sided 1X, Light Blue, 5 mirrors + 5 handles', 179.00),
+    'IDM-2CD41DB': ('5 Pack family: Double-Sided', 'Double-Sided 1X, Dark Blue, 5 mirrors + 5 handles', 179.00),
+    'IDM-2C101LB': ('Grand 2 Pack family', 'Grand Size 10 (34mm) 1X, Light Blue, 2 mirrors + 2 handles', 124.00),
+    'IDM-2C101DB': ('Grand 2 Pack family', 'Grand Size 10 (34mm) 1X, Dark Blue, 2 mirrors + 2 handles', 124.00),
+    'IDM-2C102LB': ('Grand 2 Pack family', 'Grand Size 10 (34mm) 2X, Light Blue, 2 mirrors + 2 handles', 129.00),
+    'IDM-2C102DB': ('Grand 2 Pack family', 'Grand Size 10 (34mm) 2X, Dark Blue, 2 mirrors + 2 handles', 129.00),
+    'IDM-3CD41H': ('Heads family: Double-Sided', 'Double-Sided heads 1X, 5 pack, handles not included', 139.00),
 }
 NEWFAM = {}
 for _a in ('B0F84VWGG5', 'B0FCZBD1KY', 'B0FCMVZH31', 'B0F84TKGLS', 'B0F857HKBG', 'B0F85B5BDC'):
-    NEWFAM[_a] = 'A: 5-pack with handles'
+    NEWFAM[_a] = '5 Pack family'
 for _a in ('B0G2DYRY7T', 'B0GGF37FSB', 'B0GGDV4J6B', 'B0GGD95T8Z', 'B0GGDS9MVF', 'B0GGDGRHRR'):
-    NEWFAM[_a] = 'A: Single mirror with handle'
+    NEWFAM[_a] = '1 Pack family'
 for _a in ('B0FBPG5CS9', 'B0FCHH2SQB', 'B0FCJY3H9H'):
-    NEWFAM[_a] = 'B: Heads 5-pack'
-LAYOUT = [
-    ('parent', 'IDM-HANDLE-FAMILY-PARENT', 'PARENT A (new): ILLUCO UHD Dental Mirrors with Handles',
-     'Variation theme: Size / Color / Number of Items',
-     '18 listings under it: 12 existing (moved in) + 6 new. Its ASIN appears after Amazon processes the upload.'),
-    *[('asin', a) for a in ('B0F84VWGG5', 'B0FCZBD1KY', 'B0FCMVZH31', 'B0F84TKGLS', 'B0F857HKBG', 'B0F85B5BDC',
-                            'B0G2DYRY7T', 'B0GGF37FSB', 'B0GGDV4J6B', 'B0GGD95T8Z', 'B0GGDS9MVF', 'B0GGDGRHRR')],
-    *[('new', k) for k in ('IDM-2CD41LB', 'IDM-2CD41DB', 'IDM-2C101LB', 'IDM-2C101DB', 'IDM-2C102LB', 'IDM-2C102DB')],
-    ('parent', 'IDM-HEADS-FAMILY-PARENT', 'PARENT B (new): ILLUCO UHD Dental Mirror Heads', 'Variation theme: Size',
-     '4 listings under it: 3 existing (moved in) + 1 new. Its ASIN appears after Amazon processes the upload.'),
+    NEWFAM[_a] = 'Heads family'
+LAYOUT = [   # one family per pack size (owner, 11/23); IDM-HANDLE-FAMILY-PARENT (11/21) is deleted before the upload
+    ('parent', 'IDM-5PACK-FAMILY-PARENT', 'PARENT (new): ILLUCO UHD Dental Mirrors with Handles, 5 Pack',
+     'Variation theme: Color / Size',
+     '8 listings under it: 6 existing 5-packs (moved in) + 2 new Double-Sided 5-packs. Its ASIN appears after Amazon processes the upload.'),
+    *[('asin', a) for a in ('B0F84VWGG5', 'B0FCZBD1KY', 'B0FCMVZH31', 'B0F84TKGLS', 'B0F857HKBG', 'B0F85B5BDC')],
+    *[('new', k) for k in ('IDM-2CD41LB', 'IDM-2CD41DB')],
+    ('parent', 'IDM-SINGLE-FAMILY-PARENT', 'PARENT (new): ILLUCO UHD Dental Mirror with Handle, 1 Pack',
+     'Variation theme: Color / Size',
+     '6 listings under it, all existing (moved in). Its ASIN appears after Amazon processes the upload.'),
+    *[('asin', a) for a in ('B0G2DYRY7T', 'B0GGF37FSB', 'B0GGDV4J6B', 'B0GGD95T8Z', 'B0GGDS9MVF', 'B0GGDGRHRR')],
+    ('parent', 'IDM-GRAND-FAMILY-PARENT', 'PARENT (new): ILLUCO Grand UHD Dental Mirrors with Handles, 2 Pack',
+     'Variation theme: Color / Size',
+     '4 listings under it, all new: they are created once GS1 shows brand ILLUCO for their UPCs.'),
+    *[('new', k) for k in ('IDM-2C101LB', 'IDM-2C101DB', 'IDM-2C102LB', 'IDM-2C102DB')],
+    ('parent', 'IDM-HEADS-FAMILY-PARENT', 'PARENT (live since 11/21, unchanged): ILLUCO UHD Dental Mirror Heads, 5 Pack',
+     'Variation theme: Size',
+     '4 listings under it: 3 existing + 1 new (Double-Sided heads).'),
     *[('asin', a) for a in ('B0FBPG5CS9', 'B0FCHH2SQB', 'B0FCJY3H9H')],
     ('new', 'IDM-3CD41H'),
     ('parent', 'B0FCPD1KKN', 'PARENT (live, unchanged): Dental Photo Mirror', 'Not in the upload (owner: left as is)',
@@ -180,7 +188,7 @@ for entry in LAYOUT:
                      BR.get(a, {}).get('sessions'), BR.get(a, {}).get('units'), BR.get(a, {}).get('sales'), None, None, None, None, None,
                      comp_txt, fix_txt, pri, 'Cenk', 'Not started'])
     kinds.append(kind if kind != 'asin' and kind != 'new' else ('child' if in_family else 'single'))
-hdr[1] = 'Parent ASIN (live today)'
+hdr[1] = 'Parent ASIN (11/20 scrape)'
 r_ws = wb.create_sheet('ASIN Report')
 table(r_ws, hdr, rows, [26, 14, 26, 30, 9, 7, 8, 26, 10, 9, 8, 9, 8, 10, 9, 10, 10, 8, 8, 55, 50, 7, 9, 11], input_cols=(12, 13, 14, 16, 17))
 for i in range(2, len(rows) + 2):
@@ -502,12 +510,17 @@ def _style_block(ws, first_row, last_row, ncols, wrap=True):
 uc = wb.create_sheet('Upload Check', 3)
 uc.cell(1, 1, 'ILLUCO_Amazon_UPLOAD.xlsx - what it contains and the pre-upload check').font = Font(name=F, bold=True, size=12)
 rows_up = _csv('data/build/upload_rows.csv')
-# same order as the upload: Parent A and its children, Parent B and its children
-sections = [('A', 'Parent A: ILLUCO UHD Dental Mirrors with Handles (IDM-HANDLE-FAMILY-PARENT) and its children'),
-            ('B', 'Parent B: ILLUCO UHD Dental Mirror Heads (IDM-HEADS-FAMILY-PARENT) and its children'),
+# same order as the upload: each parent and its children, one family per pack size (owner, 11/23)
+sections = [('5PK', 'IDM-5PACK-FAMILY-PARENT: ILLUCO UHD Dental Mirrors with Handles, 5 Pack, and its children'),
+            ('SINGLE', 'IDM-SINGLE-FAMILY-PARENT: ILLUCO UHD Dental Mirror with Handle, 1 Pack, and its children'),
+            ('GRAND', 'IDM-GRAND-FAMILY-PARENT: ILLUCO Grand UHD Dental Mirrors with Handles, 2 Pack, and its children'),
+            ('HEADS', 'IDM-HEADS-FAMILY-PARENT: ILLUCO UHD Dental Mirror Heads, 5 Pack, and its children'),
             ('-', 'Not in the upload')]
-TYPE = {'1 new parent': 'PARENT (new)', '2 new child': 'Child (new product): its UPC needs brand ILLUCO in GS1', '3 existing child': 'Child (existing listing)',
+TYPE = {'1 parent': 'PARENT', '2 new child': 'Child (new product): its UPC needs brand ILLUCO in GS1', '3 existing child': 'Child (existing listing)',
         '4 not re-parented': 'Seller Support case'}
+uc.cell(2, 1, 'Step 1: upload ILLUCO_Amazon_DELETE_old_parents.xlsx (1 row: deletes IDM-HANDLE-FAMILY-PARENT, the 11/21 family '
+              'that mixed pack sizes; its listings keep their ASINs, reviews and stock). Step 2: when its processing report is back, '
+              'upload ILLUCO_Amazon_UPLOAD.xlsx.').font = Font(name=F, size=10, bold=True)
 r0 = 3
 for key, label in sections:
     items = [x for x in rows_up if x['family'] == key]
@@ -517,7 +530,7 @@ for key, label in sections:
         c = uc.cell(r0, j, h); c.font = HFONT; c.fill = HFILL
     for x in items:
         r0 += 1
-        is_parent = x['section'] == '1 new parent'
+        is_parent = x['section'] == '1 parent'
         vals = [TYPE[x['section']], x['sku'], x['asin'], x['size'], x['color'], x['items'], x['action'], x['price_old'], x['price_new'], x['note']]
         for j, v in enumerate(vals, 1):
             c = uc.cell(r0, j, v); c.font = Font(name=F, size=10, bold=is_parent); c.alignment = Alignment(wrap_text=True, vertical='top'); c.border = BOX
@@ -558,7 +571,9 @@ lc = wb.create_sheet('Listing Copy', 4)
 lhdr = ['ASIN', 'Family', 'Mag', 'Color', 'Current title (live)', 'NEW title', 'Chars', 'NEW Item Highlight', 'Bullet 1', 'Bullet 2',
         'Bullet 3', 'Bullet 4', 'Bullet 5', 'Description', 'Backend keywords', 'Model no.', 'SKU(s)', 'Price', 'New family / size value', 'Note']
 lrows = []
-def _lc_key(rr):   # same order as the upload: family A (5-packs, then singles), family B (heads), duplicate last
+LC_FAM = {'5-Pack with Handles': '5 Pack family', 'Single Mirror with Handle': '1 Pack family',
+          'Replacement Heads 5-Pack': 'Heads family'}
+def _lc_key(rr):   # same order as the upload: 5 Pack family, 1 Pack family, heads family, duplicate last
     if rr['asin'] == 'B0GGDQ15DD':
         return (9, 0, 0, 0)
     sub = 0 if ('5' in rr['family'] and 'Pack' in rr['family'] and rr['new_family'] == 'A') else 1
@@ -569,7 +584,7 @@ for rr in sorted(_ROWS, key=_lc_key):
                   *rr['bullets'], rr['description'], rr['keywords'], rr['model_suggested'],
                   ', '.join(k + (' (inferred)' if v == 'inferred' else '') for k, v in rr['skus']), 'unchanged',
                   ('Merge into B0G2DYRY7T (Seller Support)' if rr['asin'] == 'B0GGDQ15DD' else
-                   f"{'A - with handle' if rr['new_family'] == 'A' else 'B - heads'} / {rr['var_size']}"), rr['note']])
+                   f"{LC_FAM[rr['family']]} / {rr['var_size']}"), rr['note']])
 table(lc, lhdr, lrows, [12, 18, 5, 10, 40, 40, 6, 40, 50, 50, 50, 50, 50, 60, 40, 15, 22, 8, 26, 40])
 for i in range(2, len(lrows) + 2):
     link(lc[f'A{i}'], dp(lc[f'A{i}'].value)); lc[f'R{i}'].number_format = '$#,##0.00'
@@ -578,14 +593,14 @@ lc.cell(n_, 1, 'Attribute fixes (not in the upload; Seller Support or Edit listi
 for k, x in enumerate(_FIX, 1):
     for j, v in enumerate(x, 1):
         c = lc.cell(n_ + k, j, v); c.font = BODY; c.alignment = Alignment(wrap_text=True, vertical='top')
-lc.cell(n_ + len(_FIX) + 2, 1, 'New Grand / Double-Sided / heads copy is in the upload file itself (rows 10-16).').font = Font(name=F, size=8, italic=True)
+lc.cell(n_ + len(_FIX) + 2, 1, 'New Grand / Double-Sided / heads copy is in the upload file itself (the rows with Listing Action "Create or Replace").').font = Font(name=F, size=8, italic=True)
 
 # ---- Sales Direction ----
 sd = wb.create_sheet('Sales Direction', 5)
 sd.cell(1, 1, 'Sales direction (Claudia, Nov 20) and where it is applied - use as the brief for Ashley').font = Font(name=F, bold=True, size=12)
 sdr = [
  ['Lead with HIGH DEFINITION; fog resistance is secondary', 'Every Item Highlight starts "Ultra High Definition"; bullet 1 = "Ultra High Definition View"; fog / anti-fog removed from titles and highlights', 'Upload: all rows; image kit slot 3'],
- ['2X and 3X are the premium, new feature; 1X is basic', '2X/3X titles start "ILLUCO UHD 2X Magnifying ..."; bullet 2 = "2X Magnification, a Premium Upgrade: most mouth mirrors are 1X"; parent titles say "1X, 2X and 3X Magnifying"', 'Upload: titles + bullet 2; image kit slot 4'],
+ ['2X and 3X are the premium, new feature; 1X is basic', '2X/3X titles start "ILLUCO UHD 2X Magnifying ..."; bullet 2 = "2X Magnification, a Premium Upgrade: most mouth mirrors are 1X"; parent titles list the magnifications on offer', 'Upload: titles + bullet 2; image kit slot 4'],
  ['5-minute autoclave at 273°F is a time saver and must be prominent', 'Bullet "5-Minute Autoclave Saves Time" on every product; description care paragraph; image kit care card leads with 5 minutes', 'Upload: bullet 3; image kit slot 7'],
  ['Standard 20-minute cycles cook off the coating (cause of the bad reviews)', 'Copy says: do not use the standard 20-minute cycle at 273°F or any setting above 277°F (136°C); 20 min at 250°F (121°C) stays as the alternative', 'Upload: bullet 3 + description'],
  ['"100+ autoclave cycles", not "100"; the mirror still works after the coating life', '"On the 5-minute setting the coating is rated for 100+ cycles, and the mirror stays usable after that"; highlight "100+ Cycles"', 'Upload: bullet 3, highlight, description'],
@@ -669,8 +684,9 @@ sp = wb.create_sheet('Shopper Preview')
 sp.cell(1, 1, 'Shopper Preview: what each listing shows after ILLUCO_Amazon_UPLOAD.xlsx is processed. '
               'Read-only check; nothing here changes Amazon.').font = Font(name=F, bold=True, size=12)
 sp.cell(2, 1, 'Variations sit together only when they are the same product (one family per product line); anything else stays '
-              'separate: photo mirrors, dermatoscopes, headlights and loupes are not touched. On the family page shoppers pick '
-              'Size, Color and Number of Items (heads: Size). Model is the product-details line; the IDM code is the Part Number.'
+              'separate: photo mirrors, dermatoscopes, headlights and loupes are not touched. Each family holds one pack size '
+              '(owner, 11/23), so shoppers pick Color and Size (heads: Size). Model is the product-details line; the IDM code is '
+              'the Part Number.'
         ).font = Font(name=F, size=10, italic=True)
 _up = openpyxl.load_workbook('ILLUCO_Amazon_UPLOAD.xlsx')['Template']
 _plan = {x['sku'].replace(' (INFERRED)', ''): x for x in _csv('data/build/upload_rows.csv')}
@@ -679,6 +695,8 @@ sp_hdr = ['Family / listing', 'ASIN', 'SKU(s)', 'Title', 'Item Highlight', 'Size
 for j, h in enumerate(sp_hdr, 1):
     c = sp.cell(4, j, h); c.font = HFONT; c.fill = HFILL; c.border = BOX
 _rows, _seen = [], {}
+SP_FAM = {'IDM-5PACK-FAMILY-PARENT': '5 Pack', 'IDM-SINGLE-FAMILY-PARENT': '1 Pack', 'IDM-GRAND-FAMILY-PARENT': 'Grand 2 Pack',
+          'IDM-HEADS-FAMILY-PARENT': 'Heads 5 Pack'}
 for r in range(8, _up.max_row + 1):
     sku = _up[f'A{r}'].value
     if not sku:
@@ -692,14 +710,15 @@ for r in range(8, _up.max_row + 1):
     main = _up[f'T{r}'].value
     main_txt = ('-' if parent else (main.split('/image_kit/')[-1] if main else 'keeps its current main image'))
     if parent:
-        fam_txt = ('PARENT A: mirrors with handles' if sku.startswith('IDM-HANDLE') else 'PARENT B: replacement heads')
-        status = 'Created (theme: ' + str(_up[f'F{r}'].value) + ')'
+        fam_txt = 'PARENT: ' + SP_FAM[sku]
+        status = (('Exists; re-sent unchanged' if sku == 'IDM-HEADS-FAMILY-PARENT' else 'Created') +
+                  ' (theme: ' + str(_up[f'F{r}'].value) + ')')
     else:
-        fam_txt = '    ' + ('A' if _up[f'E{r}'].value == 'IDM-HANDLE-FAMILY-PARENT' else 'B') + ' child'
+        fam_txt = '    child of ' + SP_FAM[_up[f'E{r}'].value]
         status = ('New: goes live once GS1 shows brand ILLUCO for its UPC' if str(_up[f'C{r}'].value).startswith('Create')
                   else 'Live listing: updated')
     _seen[key] = len(_rows)
-    _rows.append([fam_txt, asin if asin.startswith('B0') else '(new)', sku, _up[f'G{r}'].value, _up[f'H{r}'].value,
+    _rows.append([fam_txt, asin if asin.startswith('B0') else (asin or '(new)'), sku, _up[f'G{r}'].value, _up[f'H{r}'].value,
                   _up[f'BB{r}'].value, _up[f'BA{r}'].value, _up[f'AY{r}'].value, _up[f'P{r}'].value, _up[f'BC{r}'].value,
                   main_txt, status])
 PFILL_SP = PatternFill(fill_type='solid', fgColor='DDEBF7')

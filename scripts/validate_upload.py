@@ -5,6 +5,7 @@ from openpyxl.utils import range_boundaries, get_column_letter
 sys.path.insert(0, 'scripts')
 from existing_listing_content import ROWS
 F = sys.argv[1] if len(sys.argv) > 1 else 'ILLUCO_Amazon_UPLOAD.xlsx'
+DELETED_PARENTS = {'IDM-HANDLE-FAMILY-PARENT'}   # ILLUCO_Amazon_DELETE_old_parents.xlsx removes it first (11/23)
 wb = openpyxl.load_workbook(F)
 t = wb['Template']
 hdr = {c.column_letter: c.value for c in t[4] if c.value}
@@ -78,10 +79,15 @@ for r in rows:
         for col in req:
             if not t[f'{col}{r}'].value:
                 add('ERROR', r, col, 'required for Create rows')
+    if 'NUMBER_OF_ITEMS' in str(t[f'F{r}'].value or ''):
+        add('ERROR', r, 'F', 'one pack size per family (owner, 11/23): the theme must not vary Number of Items')
     if lvl == 'Child':
         p = t[f'E{r}'].value
-        known = {'IDM-HANDLE-FAMILY-PARENT': 'SIZE/COLOR/NUMBER_OF_ITEMS', 'IDM-HEADS-FAMILY-PARENT': 'SIZE'}
-        if p not in parents and p in known:
+        known = {'IDM-5PACK-FAMILY-PARENT': 'COLOR/SIZE', 'IDM-SINGLE-FAMILY-PARENT': 'COLOR/SIZE',
+                 'IDM-GRAND-FAMILY-PARENT': 'COLOR/SIZE', 'IDM-HEADS-FAMILY-PARENT': 'SIZE'}
+        if p in DELETED_PARENTS:
+            add('ERROR', r, 'E', f'parent {p} is deleted by the delete file before this upload')
+        elif p not in parents and p in known:
             if t[f'F{r}'].value != known[p]:   # parent comes from ILLUCO_Amazon_UPLOAD.xlsx, uploaded first
                 add('ERROR', r, 'F', 'variation theme differs from the parent')
         elif p not in parents:
@@ -92,17 +98,25 @@ for r in rows:
             for col in need.get(part, []):
                 if t[f'{col}{r}'].value in (None, ''):
                     add('ERROR', r, col, f'theme {t[f"F{r}"].value} needs this value')
-# 3. one ASIN per variation combination (several SKUs of one ASIN may share it)
+# 3. one ASIN per variation combination of the family's theme (several SKUs of one ASIN may share it), and one pack
+# size per family (owner, 11/23: "separate the quantities")
 asin_of = {sku: rr['asin'] for rr in ROWS for sku, _ in rr['skus']}
-combo = {}
+theme_col = {'SIZE': 'BB', 'COLOR': 'BA', 'NUMBER_OF_ITEMS': 'AY'}
+combo, packs = {}, {}
 for r in rows:
     if t[f'D{r}'].value != 'Child':
         continue
-    key = (t[f'E{r}'].value, t[f'BB{r}'].value, t[f'BA{r}'].value, t[f'AY{r}'].value)
+    key = (t[f'E{r}'].value,) + tuple(t[f'{theme_col.get(p, "BB")}{r}'].value for p in str(t[f'F{r}'].value or '').split('/'))
     combo.setdefault(key, set()).add(asin_of.get(t[f'A{r}'].value, 'new:' + t[f'A{r}'].value))
+    packs.setdefault(t[f'E{r}'].value, {}).setdefault(t[f'AY{r}'].value, []).append(r)
 for key, asins in combo.items():
     if len(asins) > 1:
         add('ERROR', rows[0], 'BB', f'two different products share {key}: {sorted(asins)}')
+for p, by_n in packs.items():
+    if len(by_n) > 1:
+        for n, rs in by_n.items():
+            for r in rs:
+                add('ERROR', r, 'AY', f'family {p} mixes pack sizes {sorted(map(str, by_n))}: keep one per family')
 # 4. text limits and style rules
 caps = re.compile(r'\b[A-Z]{4,}\b')
 for r in rows:

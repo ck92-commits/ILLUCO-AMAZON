@@ -1,30 +1,32 @@
 section,sku,asin,family,size,color,items,action,price_old,price_new,note
-1 new parent,IDM-HANDLE-FAMILY-PARENT,(new),A,,,,Create or Replace (Full Update),,,Family A parent
-3 existing child,IDM2C41LB,B0F84VWGG5,A,Size 4 (22mm) 1X,Light Blue,5,Edit (Partial Update),95.0,unchanged,
-3 existing child,IDM2C41DB,B0FCZBD1KY,A,Size 4 (22mm) 1X,Dark Blue,5,Edit (Partial Update),95.0,unchanged,
-3 existing child,IDM2C42LB,B0FCMVZH31,A,Size 4 (22mm) 2X,Light Blue,5,Edit (Partial Update),125.0,unchanged,
-3 existing child,IDM2C42DB,B0F84TKGLS,A,Size 4 (22mm) 2X,Dark Blue,5,Edit (Partial Update),125.0,unchanged,
-3 existing child,IDM2C43LB,B0F857HKBG,A,Size 4 (22mm) 3X,Light Blue,5,Edit (Partial Update),140.0,unchanged,
-3 existing child,IDM2C43LB-FBM,B0F857HKBG,A,Size 4 (22mm) 3X,Light Blue,5,Edit (Partial Update),140.0,unchanged,
-3 existing child,IDM2C43DB,B0F85B5BDC,A,Size 4 (22mm) 3X,Dark Blue,5,Edit (Partial Update),140.0,unchanged,
-3 existing child,A2-3YBP-WRV7,B0G2DYRY7T,A,Size 4 (22mm) 1X,Light Blue,1,Edit (Partial Update),19.99,unchanged,Becomes the 1X Light Blue child of the merged family (keeps its sales history). Confirm it ships the current product (its photos show a black shank) and replace its photos and A+ (A+ describes photo mirrors).
-3 existing child,IDM-2C41DB-1X,B0GGF37FSB,A,Size 4 (22mm) 1X,Dark Blue,1,Edit (Partial Update),19.99,unchanged,
-3 existing child,IDM-2C41LB-2X,B0GGDV4J6B,A,Size 4 (22mm) 2X,Light Blue,1,Edit (Partial Update),27.99,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
-3 existing child,IDM2C41LB-2X-FBA,B0GGDV4J6B,A,Size 4 (22mm) 2X,Light Blue,1,Edit (Partial Update),27.99,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
-3 existing child,IDM-2C41DB-2X,B0GGD95T8Z,A,Size 4 (22mm) 2X,Dark Blue,1,Edit (Partial Update),27.99,unchanged,
-3 existing child,IDM2C41DB-2X-FBA,B0GGD95T8Z,A,Size 4 (22mm) 2X,Dark Blue,1,Edit (Partial Update),27.99,unchanged,
-3 existing child,IDM-2C41LB-3X,B0GGDS9MVF,A,Size 4 (22mm) 3X,Light Blue,1,Edit (Partial Update),31.9,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
-3 existing child,IDM2C41LB-3X-FBA,B0GGDS9MVF,A,Size 4 (22mm) 3X,Light Blue,1,Edit (Partial Update),31.9,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
-3 existing child,IDM-2C41DB-3X-FBA,B0GGDGRHRR,A,Size 4 (22mm) 3X,Dark Blue,1,Edit (Partial Update),31.9,unchanged,Detached from family B0GGD9DVP9; re-attached here as 3X Dark Blue. Answer the NCX flag in Voice of the Customer.
-2 new child,IDM-2CD41LB,(new),A,Size 4 (22mm) Double-Sided 1X,Light Blue,5,Create or Replace (Full Update),,179.00,
-2 new child,IDM-2CD41DB,(new),A,Size 4 (22mm) Double-Sided 1X,Dark Blue,5,Create or Replace (Full Update),,179.00,
-2 new child,IDM-2C101LB,(new),A,Size 10 (34mm) Grand 1X,Light Blue,2,Create or Replace (Full Update),,124.00,
-2 new child,IDM-2C101DB,(new),A,Size 10 (34mm) Grand 1X,Dark Blue,2,Create or Replace (Full Update),,124.00,
-2 new child,IDM-2C102LB,(new),A,Size 10 (34mm) Grand 2X,Light Blue,2,Create or Replace (Full Update),,129.00,
-2 new child,IDM-2C102DB,(new),A,Size 10 (34mm) Grand 2X,Dark Blue,2,Create or Replace (Full Update),,129.00,
-1 new parent,IDM-HEADS-FAMILY-PARENT,(new),B,,,,Create or Replace (Full Update),,,Family B parent
-3 existing child,IDM3C41NA,B0FBPG5CS9,B,Size 4 (22mm) Single-Sided 1X,,5,Edit (Partial Update),60.0,unchanged,
-3 existing child,IDM3C42NA,B0FCHH2SQB,B,Size 4 (22mm) Single-Sided 2X,,5,Edit (Partial Update),90.0,unchanged,
-3 existing child,IDM3C43NA,B0FCJY3H9H,B,Size 4 (22mm) Single-Sided 3X,,5,Edit (Partial Update),105.0,unchanged,
-2 new child,IDM-3CD41H,(new),B,Size 4 (22mm) Double-Sided 1X,,5,Create or Replace (Full Update),,139.00,
+1 parent,IDM-5PACK-FAMILY-PARENT,(new),5PK,,,,Create or Replace (Full Update),,,New parent: 5 mirrors + 5 handles (Size 4 1X / 2X / 3X and Double-Sided)
+3 existing child,IDM2C41LB,B0F84VWGG5,5PK,Size 4 (22mm) 1X,Light Blue,5,Edit (Partial Update),95.0,unchanged,
+3 existing child,IDM2C41DB,B0FCZBD1KY,5PK,Size 4 (22mm) 1X,Dark Blue,5,Edit (Partial Update),95.0,unchanged,
+3 existing child,IDM2C42LB,B0FCMVZH31,5PK,Size 4 (22mm) 2X,Light Blue,5,Edit (Partial Update),125.0,unchanged,
+3 existing child,IDM2C42DB,B0F84TKGLS,5PK,Size 4 (22mm) 2X,Dark Blue,5,Edit (Partial Update),125.0,unchanged,
+3 existing child,IDM2C43LB,B0F857HKBG,5PK,Size 4 (22mm) 3X,Light Blue,5,Edit (Partial Update),140.0,unchanged,
+3 existing child,IDM2C43LB-FBM,B0F857HKBG,5PK,Size 4 (22mm) 3X,Light Blue,5,Edit (Partial Update),140.0,unchanged,
+3 existing child,IDM2C43DB,B0F85B5BDC,5PK,Size 4 (22mm) 3X,Dark Blue,5,Edit (Partial Update),140.0,unchanged,
+2 new child,IDM-2CD41LB,(new),5PK,Size 4 (22mm) Double-Sided 1X,Light Blue,5,Create or Replace (Full Update),,179.00,
+2 new child,IDM-2CD41DB,(new),5PK,Size 4 (22mm) Double-Sided 1X,Dark Blue,5,Create or Replace (Full Update),,179.00,
+1 parent,IDM-SINGLE-FAMILY-PARENT,(new),SINGLE,,,,Create or Replace (Full Update),,,New parent: 1 mirror + 1 handle (Size 4 1X / 2X / 3X)
+3 existing child,A2-3YBP-WRV7,B0G2DYRY7T,SINGLE,Size 4 (22mm) 1X,Light Blue,1,Edit (Partial Update),19.99,unchanged,Becomes the 1X Light Blue child of the merged family (keeps its sales history). Confirm it ships the current product (its photos show a black shank) and replace its photos and A+ (A+ describes photo mirrors).
+3 existing child,IDM-2C41DB-1X,B0GGF37FSB,SINGLE,Size 4 (22mm) 1X,Dark Blue,1,Edit (Partial Update),19.99,unchanged,
+3 existing child,IDM-2C41LB-2X,B0GGDV4J6B,SINGLE,Size 4 (22mm) 2X,Light Blue,1,Edit (Partial Update),27.99,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
+3 existing child,IDM2C41LB-2X-FBA,B0GGDV4J6B,SINGLE,Size 4 (22mm) 2X,Light Blue,1,Edit (Partial Update),27.99,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
+3 existing child,IDM-2C41DB-2X,B0GGD95T8Z,SINGLE,Size 4 (22mm) 2X,Dark Blue,1,Edit (Partial Update),27.99,unchanged,
+3 existing child,IDM2C41DB-2X-FBA,B0GGD95T8Z,SINGLE,Size 4 (22mm) 2X,Dark Blue,1,Edit (Partial Update),27.99,unchanged,
+3 existing child,IDM-2C41LB-3X,B0GGDS9MVF,SINGLE,Size 4 (22mm) 3X,Light Blue,1,Edit (Partial Update),31.9,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
+3 existing child,IDM2C41LB-3X-FBA,B0GGDS9MVF,SINGLE,Size 4 (22mm) 3X,Light Blue,1,Edit (Partial Update),31.9,unchanged,"Variation value ""Blue"" -> ""Light Blue""."
+3 existing child,IDM-2C41DB-3X-FBA,B0GGDGRHRR,SINGLE,Size 4 (22mm) 3X,Dark Blue,1,Edit (Partial Update),31.9,unchanged,Detached from family B0GGD9DVP9; re-attached here as 3X Dark Blue. Answer the NCX flag in Voice of the Customer.
+1 parent,IDM-GRAND-FAMILY-PARENT,(new),GRAND,,,,Create or Replace (Full Update),,,New parent: 2 mirrors + 2 handles (Grand Size 10 1X / 2X)
+2 new child,IDM-2C101LB,(new),GRAND,Size 10 (34mm) Grand 1X,Light Blue,2,Create or Replace (Full Update),,124.00,
+2 new child,IDM-2C101DB,(new),GRAND,Size 10 (34mm) Grand 1X,Dark Blue,2,Create or Replace (Full Update),,124.00,
+2 new child,IDM-2C102LB,(new),GRAND,Size 10 (34mm) Grand 2X,Light Blue,2,Create or Replace (Full Update),,129.00,
+2 new child,IDM-2C102DB,(new),GRAND,Size 10 (34mm) Grand 2X,Dark Blue,2,Create or Replace (Full Update),,129.00,
+1 parent,IDM-HEADS-FAMILY-PARENT,(exists),HEADS,,,,Create or Replace (Full Update),,,Exists since 11/21 (unchanged): 5 replacement heads
+3 existing child,IDM3C41NA,B0FBPG5CS9,HEADS,Size 4 (22mm) Single-Sided 1X,,5,Edit (Partial Update),60.0,unchanged,
+3 existing child,IDM3C42NA,B0FCHH2SQB,HEADS,Size 4 (22mm) Single-Sided 2X,,5,Edit (Partial Update),90.0,unchanged,
+3 existing child,IDM3C43NA,B0FCJY3H9H,HEADS,Size 4 (22mm) Single-Sided 3X,,5,Edit (Partial Update),105.0,unchanged,
+2 new child,IDM-3CD41H,(new),HEADS,Size 4 (22mm) Double-Sided 1X,,5,Create or Replace (Full Update),,139.00,
 4 not re-parented,IDM2C41LB-1X-FBA / IDM-2C41LB-1X,B0GGDQ15DD,-,,,,Seller Support: merge duplicate ASIN into B0G2DYRY7T,19.99,,"DUPLICATE of B0G2DYRY7T (same 1X Light Blue single). Not re-parented: open a Seller Support case to merge this ASIN into B0G2DYRY7T so the two review histories combine, then close this offer."

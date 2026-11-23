@@ -1,12 +1,12 @@
 # ILLUCO-AMAZON
 
-Amazon audit and listing rebuild for ILLUCO dental mirrors (Nov 20, 2026). **Three deliverables:**
+Amazon audit and listing rebuild for ILLUCO dental mirrors (Nov 20, 2026). **Deliverables:**
 
 | File | What it is |
 |---|---|
-| `ILLUCO_Amazon_UPLOAD.xlsx` | **The only file to upload:** the 2 new parents, the 20 rows of existing listings and the 7 new products (Seller Central > Catalog > Add Products via Upload). Merges every dental mirror except the photo mirrors into two variation families, rewrites all copy to the sales direction (Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles), keeps the current Amazon prices and creates the Grand, Double-Sided and Double-Sided head products. Checked against the template's own rules: 0 errors (see the Upload Check tab of the report). |
-| `ILLUCO_Amazon_DELETE_old_parents.xlsx` | **One-time, before the next upload:** deletes only the 3 old parent listings (B0FDCGG69J, B0GGD9DVP9, B0FCNL53JN) so their children can join the new families (Amazon warning 8032). Children keep their ASINs, reviews and stock. |
-| `ILLUCO_Amazon_Report.xlsx` | Everything else in one workbook (15 tabs): Summary, What I Need, ASIN Report, Upload Check, Listing Copy, Sales Direction (brief for design), Review Analysis, Competitors, Keywords + Search Query Performance, PPC Plan, PPC Apply (pauses, negatives, harvests), Images A+ Video, Image Kit, External Traffic, Action Plan. |
+| `ILLUCO_Amazon_UPLOAD.xlsx` | **Step 2 (the upload):** 4 parents, the 19 rows of existing listings and the 7 new products (Seller Central > Catalog > Add Products via Upload). Puts every dental mirror except the photo mirrors into four variation families with one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) and Color and Size as the choices (heads: Size), rewrites all copy to the sales direction (Ultra High Definition first, 2X / 3X as premium, 5-minute autoclave, 100+ cycles), keeps the current Amazon prices, gives every listing a product-only main image on white and creates the Grand, Double-Sided and Double-Sided head products. Checked against the template's own rules: 0 errors (see the Upload Check tab of the report). |
+| `ILLUCO_Amazon_DELETE_old_parents.xlsx` | **Step 1, one time, before the upload:** deletes only `IDM-HANDLE-FAMILY-PARENT`, the 11/21 family that mixed pack sizes, so its listings can join the new families (a live family's theme cannot be changed in place, and a child can have only one parent: Amazon warning 8032). The listings keep their ASINs, reviews and stock. Its first version (11/21, already uploaded) deleted the three original parents. |
+| `ILLUCO_Amazon_Report.xlsx` | Everything else in one workbook (16 tabs): Summary, Shopper Preview, What I Need, ASIN Report, Upload Check, Listing Copy, Sales Direction (brief for design), Review Analysis, Competitors, Keywords + Search Query Performance, PPC Plan, PPC Apply (pauses, negatives, harvests), Images A+ Video, Image Kit, External Traffic, Action Plan. |
 | `image_kit/` | Amazon images per product and color (2000 x 2000) with `manifest.csv`, contact sheets and `README.md`. The upload links every child to its 8 images here (raw GitHub links at a fixed commit), so the images go up with the upload. |
 
 Findings doc: https://claude.ai/artifact/Xmwhj6EuFnc7G8b6uaePFV
@@ -23,6 +23,7 @@ Not in the upload on purpose: photo mirrors (unchanged) and `B0GGDQ15DD` (duplic
 
 ```bash
 python3 scripts/fill_grand_ds_upload.py uploads_in/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_original.xlsx /tmp/ready.xlsx data/build/grand_ds_changes.csv
+python3 scripts/build_delete_old_parents.py uploads_in/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_original.xlsx ILLUCO_Amazon_DELETE_old_parents.xlsx
 python3 scripts/build_merge_upload.py uploads_in/ILLUCO_Grand_DoubleSided_Mirrors_Amazon_Upload_original.xlsx /tmp/ready.xlsx ILLUCO_Amazon_UPLOAD.xlsx data/build/upload_rows.csv
 python3 scripts/validate_upload.py ILLUCO_Amazon_UPLOAD.xlsx
 python3 scripts/build_asin_report.py ILLUCO_Amazon_Report.xlsx

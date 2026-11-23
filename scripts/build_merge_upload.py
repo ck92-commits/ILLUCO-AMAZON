@@ -1,6 +1,12 @@
-"""Build ONE upload file that merges all ILLUCO dental mirrors (except photo mirrors) into two families:
-  A  IDM-HANDLE-FAMILY-PARENT  theme SIZE/COLOR/NUMBER_OF_ITEMS  (singles, 5-pack kits, Double-Sided, Grand)
-  B  IDM-HEADS-FAMILY-PARENT   theme SIZE                        (replacement heads incl. Double-Sided heads)
+"""Build ONE upload file with ILLUCO's dental mirrors (except photo mirrors) in four variation families. Each family
+holds one pack size and its children vary by Color and Size only (owner, 11/23: "separate the quantities"):
+  IDM-5PACK-FAMILY-PARENT   COLOR/SIZE  5 mirrors + 5 handles: Size 4 1X / 2X / 3X kits and the Double-Sided 5-pack
+  IDM-SINGLE-FAMILY-PARENT  COLOR/SIZE  1 mirror + 1 handle: Size 4 1X / 2X / 3X
+  IDM-GRAND-FAMILY-PARENT   COLOR/SIZE  2 mirrors + 2 handles: Grand Size 10 1X / 2X
+  IDM-HEADS-FAMILY-PARENT   SIZE        5 replacement heads: single-sided 1X / 2X / 3X and Double-Sided
+The family uploaded on 11/21 (IDM-HANDLE-FAMILY-PARENT, theme SIZE/COLOR/NUMBER_OF_ITEMS) is deleted first by
+ILLUCO_Amazon_DELETE_old_parents.xlsx: a live family's theme cannot be changed in place, and a child can belong to
+only one parent (Amazon 8032).
 Existing ASINs are re-parented with "Edit (Partial Update)" (their ASINs, sales history and reviews stay);
 new Grand / Double-Sided / head SKUs are created with "Create or Replace (Full Update)".
 usage: build_merge_upload.py <ILLUCO template .xlsx> <Grand/DS READY .xlsx> <out .xlsx> <plan .csv>"""
@@ -13,8 +19,30 @@ from existing_listing_content import ROWS, B_HD, B_AUTO, HANDLE, INTRO, CARE, KW
 TPL, READY, OUT, PLAN = sys.argv[1:5]
 PT, BRAND = 'PROFESSIONAL_HEALTHCARE', 'ILLUCO'
 ITK = 'Industrial & Scientific > Professional Dental Supplies > Handpieces & Instruments > Mirrors (professional-dental-laryngeal-mirrors)'
-PA, PB = 'IDM-HANDLE-FAMILY-PARENT', 'IDM-HEADS-FAMILY-PARENT'
-TA, TB = 'SIZE/COLOR/NUMBER_OF_ITEMS', 'SIZE'
+FAM = {   # family -> (parent SKU, variation theme); one pack size per family
+    '5PK': ('IDM-5PACK-FAMILY-PARENT', 'COLOR/SIZE'),
+    'SINGLE': ('IDM-SINGLE-FAMILY-PARENT', 'COLOR/SIZE'),
+    'GRAND': ('IDM-GRAND-FAMILY-PARENT', 'COLOR/SIZE'),
+    'HEADS': ('IDM-HEADS-FAMILY-PARENT', 'SIZE'),
+}
+FAM_ORDER = list(FAM)
+FAM_OF_PARENT = {p: f for f, (p, _) in FAM.items()}
+DELETED_PARENT = 'IDM-HANDLE-FAMILY-PARENT'   # removed by the delete file before this upload
+
+
+def family_of(kind, size, items):
+    """kind 'A' = mirror with handle, 'B' = replacement heads (existing_listing_content's new_family)."""
+    if kind == 'B':
+        return 'HEADS'
+    if 'Grand' in str(size):
+        return 'GRAND'
+    return {5: '5PK', 1: 'SINGLE'}[int(float(items))]
+
+
+def kind_of(fam):
+    return 'B' if fam == 'HEADS' else 'A'
+
+
 CREATE, EDIT = 'Create or Replace (Full Update)', 'Edit (Partial Update)'
 YEL = PatternFill('solid', fgColor='FFFF00')
 SHOP = 'https://cdn.shopify.com/s/files/1/0795/1348/5611/files/'
@@ -90,20 +118,45 @@ def put(vals, flags=None, note=None):
         t[f'{col}{row}'].comment = Comment(msg, 'ILLUCO audit')
     row += 1
 
-# ---- parents ----
-put({'A': PA, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TA, 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable',
-     'G': 'ILLUCO UHD Dental Mirrors with Handles, 1X, 2X and 3X Magnifying, Size 4 and Grand Size 10',
-     'AD': INTRO + ('Choose the format that fits your operatory: single Size 4 (22mm) mirrors or 5-pack kits in 1X, or 2X and 3X '
-                    'magnifying for fine detail (most mouth mirrors stop at 1X); the Double-Sided Size 4 with 99% reflectance on both '
-                    'faces; or the Grand Size 10 (34mm) for a 2.4x wider view. Every mirror comes on an ergonomic anti-rotation '
-                    'handle in Light Blue or Dark Blue. ' + CARE),
+# ---- parents: one per pack size (owner, 11/23) ----
+PARENT_BASE = {'B': PT, 'C': CREATE, 'D': 'Parent', 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable'}
+CLINICIANS = ('BUILT FOR CLINICIANS: Made for general dentists, hygienists, orthodontists, oral surgeons and dental students '
+              'who want a brighter, ghost-free view.')
+put({**PARENT_BASE, 'A': FAM['5PK'][0], 'F': FAM['5PK'][1],
+     'G': 'ILLUCO UHD Dental Mirrors with Handles, 5 Pack, Size 4 (22mm), 1X, 2X, 3X or Double-Sided',
+     'AD': INTRO + ('Each pack holds 5 Size 4 (22mm) mirrors on 5 ergonomic anti-rotation handles, in Light Blue or Dark Blue. '
+                    'Choose 1X for a life-size view, 2X or 3X magnifying for fine detail (most mouth mirrors stop at 1X), or the '
+                    'Double-Sided 1X with 99% reflectance on both faces. ' + CARE + 'Each pack includes 5 mirrors, 5 handles '
+                    'and an autoclave sterilization and care guide.'),
+     'AE': B_HD,
+     'AF': ('1X, 2X OR 3X, OR DOUBLE-SIDED: Most mouth mirrors are 1X. Choose ILLUCO 2X or 3X to see margins, caries and calculus '
+            'larger, 1X for a life-size view, or Double-Sided 1X to retract with one face and view with the other.'),
+     'AG': B_AUTO, 'AH': HANDLE,
+     'AI': ('5 MIRRORS AND 5 HANDLES PER PACK: Equip a whole operatory at once, in Light Blue or Dark Blue. Built for general '
+            'dentists, hygienists, orthodontists and dental students.'),
+     'AJ': 'mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist orthodontist front surface number 4 set kit double sided ' + KW_CORE})
+put({**PARENT_BASE, 'A': FAM['SINGLE'][0], 'F': FAM['SINGLE'][1],
+     'G': 'ILLUCO UHD Dental Mirror with Handle, 1 Pack, Size 4 (22mm), 1X, 2X or 3X Magnifying',
+     'AD': INTRO + ('One Size 4 (22mm) mirror on an ergonomic anti-rotation handle, in Light Blue or Dark Blue. Choose 1X for a '
+                    'life-size view, or 2X or 3X magnifying for fine detail (most mouth mirrors stop at 1X). ' + CARE +
+                    'Includes 1 mirror and 1 handle. Also available in 5 packs and as replacement heads.'),
      'AE': B_HD,
      'AF': ('2X AND 3X MAGNIFICATION, OR TRUE 1X: Most mouth mirrors are 1X. Choose ILLUCO 2X or 3X to see margins, caries and '
-            'calculus larger, or 1X for a life-size view. Also Double-Sided Size 4 and Grand Size 10 (34mm). Light Blue or Dark Blue handles.'),
-     'AG': B_AUTO, 'AH': HANDLE,
-     'AI': 'BUILT FOR CLINICIANS: Made for general dentists, hygienists, orthodontists, oral surgeons and dental students who want a brighter, ghost-free view.',
-     'AJ': 'mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist orthodontist front surface number 4 size 10 large double sided professional ' + KW_CORE})
-put({'A': PB, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TB, 'I': BRAND, 'L': ITK, 'EZ': 'Republic of Korea', 'FX': 'Not Applicable',
+            'calculus larger, or 1X for a life-size view. Light Blue or Dark Blue handle.'),
+     'AG': B_AUTO, 'AH': HANDLE, 'AI': CLINICIANS,
+     'AJ': 'mouth mirror dentist tools dental instruments tooth teeth oral exam intraoral hygienist student front surface number 4 professional single ' + KW_CORE})
+put({**PARENT_BASE, 'A': FAM['GRAND'][0], 'F': FAM['GRAND'][1],
+     'G': 'ILLUCO Grand UHD Dental Mirrors with Handles, 2 Pack, Size 10 (34mm), 1X or 2X Magnifying',
+     'AD': INTRO + GRAND_MID + ('Choose 1X for a life-size view or 2X magnifying for fine detail. ' + CARE + 'Each kit includes '
+                                '2 Grand Size 10 mirror heads, 2 ergonomic anti-rotation handles in Light Blue or Dark Blue and an '
+                                'autoclave sterilization and care guide.'),
+     'AE': B_HD,
+     'AF': ('GRAND SIZE 10 (34MM), 2.4X WIDER VIEW: See a whole quadrant, multi-unit restorations or full-arch alignment in one '
+            'glance and spend less time repositioning. Choose 1X or 2X magnifying.'),
+     'AG': B_AUTO, 'AH': HANDLE, 'AI': CLINICIANS,
+     'AJ': ('large mouth mirror oversize jumbo wide view dentist orthodontist oral surgery retractor intraoral photography quadrant '
+            'tooth teeth oral exam hygienist uhd ' + KW_CORE.replace(' 2x 3x', ' 2x'))})
+put({**PARENT_BASE, 'A': FAM['HEADS'][0], 'F': FAM['HEADS'][1],
      'G': 'ILLUCO UHD Dental Mirror Heads, 1X, 2X and 3X Magnifying, Size 4 (22mm), Cone Socket, 5 Pack',
      'AD': INTRO + ('These Size 4 (22mm) replacement heads thread onto standard cone socket mirror handles, including ILLUCO ergonomic handles '
                     '(sold separately). Choose single-sided heads in 1X, or 2X and 3X magnifying for fine detail, or Double-Sided heads with '
@@ -114,8 +167,12 @@ put({'A': PB, 'B': PT, 'C': CREATE, 'D': 'Parent', 'F': TB, 'I': BRAND, 'L': ITK
      'AH': B_AUTO,
      'AI': '5 REPLACEMENT HEADS PER PACK: Restock every operatory with the same bright, ghost-free view.',
      'AJ': 'mouth mirror heads replacement refill tops screw on cone socket dentist dental instruments tooth teeth oral exam hygienist number 4 professional double sided ' + KW_CORE})
-plan += [dict(section='1 new parent', sku=PA, asin='(new)', family='A', size='', color='', items='', action=CREATE, price_old='', price_new='', note='Family A parent'),
-         dict(section='1 new parent', sku=PB, asin='(new)', family='B', size='', color='', items='', action=CREATE, price_old='', price_new='', note='Family B parent')]
+PARENT_NOTE = {'5PK': 'New parent: 5 mirrors + 5 handles (Size 4 1X / 2X / 3X and Double-Sided)',
+               'SINGLE': 'New parent: 1 mirror + 1 handle (Size 4 1X / 2X / 3X)',
+               'GRAND': 'New parent: 2 mirrors + 2 handles (Grand Size 10 1X / 2X)',
+               'HEADS': 'Exists since 11/21 (unchanged): 5 replacement heads'}
+plan += [dict(section='1 parent', sku=FAM[f][0], asin='(new)' if f != 'HEADS' else '(exists)', family=f, size='', color='',
+              items='', action=CREATE, price_old='', price_new='', note=PARENT_NOTE[f]) for f in FAM_ORDER]
 
 # ---- new children from the Grand / Double-Sided file ----
 NEW = {'IDM-2C101LB': ('A', 'Size 10 (34mm) Grand 1X'), 'IDM-2C101DB': ('A', 'Size 10 (34mm) Grand 1X'),
@@ -124,7 +181,7 @@ NEW = {'IDM-2C101LB': ('A', 'Size 10 (34mm) Grand 1X'), 'IDM-2C101DB': ('A', 'Si
        'IDM-3CD41H': ('B', 'Size 4 (22mm) Double-Sided 1X')}
 for r in range(9, 16):
     sku = rd[f'A{r}'].value
-    fam, size = NEW[sku]
+    kind, size = NEW[sku]
     for c in rd[r]:
         tc = t.cell(row, c.column)
         if c.has_style:
@@ -132,9 +189,9 @@ for r in range(9, 16):
         tc.value = c.value
         if c.comment:
             tc.comment = Comment(c.comment.text, 'ILLUCO audit')
+    fam = family_of(kind, size, t[f'AY{row}'].value)
     t[f'C{row}'] = CREATE; t[f'D{row}'] = 'Child'
-    t[f'E{row}'] = PA if fam == 'A' else PB
-    t[f'F{row}'] = TA if fam == 'A' else TB
+    t[f'E{row}'], t[f'F{row}'] = FAM[fam]
     t[f'BB{row}'] = size
     title, hl, b1, desc, kw = new_row_copy(sku, t[f'BA{row}'].value)
     t[f'G{row}'] = title; t[f'H{row}'] = hl; t[f'AE{row}'] = b1; t[f'AH{row}'] = B_AUTO; t[f'AD{row}'] = desc; t[f'AJ{row}'] = kw
@@ -182,35 +239,42 @@ for rr in ROWS:
         plan.append(dict(section='4 not re-parented', sku='IDM2C41LB-1X-FBA / IDM-2C41LB-1X', asin=rr['asin'], family='-', size='', color='',
                          items='', action='Seller Support: merge duplicate ASIN into B0G2DYRY7T', price_old=amz_price.get(rr['asin']), price_new='', note=rr['note']))
         continue
-    fam = rr['new_family']
+    fam = family_of(rr['new_family'], rr['var_size'], rr['items'])
     for sku, status in rr['skus']:
         flags = {}
         if status == 'inferred':
             flags['A'] = f"SKU inferred from the IDM pattern for {rr['asin']} - confirm in Manage All Inventory before upload."
         old = amz_price.get(rr['asin'])   # live Amazon price; the upload leaves it as is
-        vals = {'A': sku, 'B': PT, 'C': EDIT, 'D': 'Child', 'E': PA if fam == 'A' else PB, 'F': TA if fam == 'A' else TB,
+        vals = {'A': sku, 'B': PT, 'C': EDIT, 'D': 'Child', 'E': FAM[fam][0], 'F': FAM[fam][1],
                 'G': rr['title'], 'H': rr['highlight'], 'AD': rr['description'],
                 'AE': rr['bullets'][0], 'AF': rr['bullets'][1], 'AG': rr['bullets'][2], 'AH': rr['bullets'][3], 'AI': rr['bullets'][4],
                 'AJ': rr['keywords'], 'P': harmonized_model(rr['var_size'], rr['items'], rr['color'], rr['new_family']), 'BC': rr['model_suggested'], 'AY': rr['items'],
                 'BB': rr['var_size'], 'BM': rr['included']}
-        if fam == 'A':
+        if kind_of(fam) == 'A':
             vals['BA'] = rr['color']
         put(vals, flags)
         plan.append(dict(section='3 existing child', sku=sku + (' (INFERRED)' if status == 'inferred' else ''), asin=rr['asin'], family=fam,
                          size=rr['var_size'], color=rr['color'], items=rr['items'], action=EDIT, price_old=old, price_new='unchanged', note=rr['note']))
 
-# sanity: unique variation combos per family, valid theme values, title length
-combos = {}
+# sanity: one product per variation combination (several SKUs of ONE ASIN may share it: FBA + FBM offers),
+# one pack size per family (owner, 11/23), title length
+THEME_COL = {'SIZE': 'BB', 'COLOR': 'BA', 'NUMBER_OF_ITEMS': 'AY'}
+asin_by_sku = {p['sku'].replace(' (INFERRED)', ''): p['asin'] for p in plan}
+combos, counts = {}, {}
 for r in range(8, row):
     if t[f'D{r}'].value != 'Child':
         continue
-    key = (t[f'E{r}'].value, t[f'BB{r}'].value, t[f'BA{r}'].value, t[f'AY{r}'].value)
-    asin_key = t[f'A{r}'].value
-    combos.setdefault(key, set()).add(asin_key)
+    sku, par = t[f'A{r}'].value, t[f'E{r}'].value
+    key = (par,) + tuple(t[f'{THEME_COL[p]}{r}'].value for p in t[f'F{r}'].value.split('/'))
+    assert all(key[1:]), (sku, key)
+    a = asin_by_sku.get(sku)
+    combos.setdefault(key, set()).add(a if a and a != '(new)' else 'new:' + sku)
+    counts.setdefault(par, set()).add(int(float(t[f'AY{r}'].value)))
+    assert par in FAM_OF_PARENT and t[f'F{r}'].value == FAM[FAM_OF_PARENT[par]][1], (sku, par)
 dups = {k: v for k, v in combos.items() if len(v) > 1}
-for k, v in dups.items():
-    # several SKUs of ONE ASIN share a combo legitimately (FBA + FBM offers)
-    print('shared combo', k, v)
+assert not dups, dups
+assert all(len(v) == 1 for v in counts.values()), counts
+print('pack size per family:', {FAM_OF_PARENT[p]: sorted(v)[0] for p, v in counts.items()})
 assert all(len(str(t[f'G{r}'].value or '')) < 200 for r in range(8, row))
 for r in range(8, row):
     for col in ('AE', 'AF', 'AG', 'AH', 'AI'):
@@ -239,8 +303,10 @@ IMG_COLS = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']   # main image + other imag
 # B0G2DYRY7T ships the black-shank version (owner, 11/20): its 4 current photos stay (main + other 1-3, left blank so
 # the partial update does not touch them) and 5 related kit images fill its empty slots (other 4-8).
 KEEP_CURRENT = {'B0G2DYRY7T': ['03_key_benefit', '07_care', '04_magnification', '05_comparison', '06_handle']}
-# Amazon rejected the reused 1X Dark Blue main on the 2X and 3X Dark Blue 5-packs (error 100560, 11/21): keep their own main
-KEEP_MAIN = {'B0F84TKGLS', 'B0F85B5BDC'}
+# Amazon refused the 1X Dark Blue 5-pack photo (the live main of B0FCZBD1KY) as the main of the 2X and 3X Dark Blue
+# 5-packs: error 100560 "does not accurately represent the product", then 18320 "main image missing" (both listings
+# suppressed, 11/21 and 11/23). They get their own main: a new image, as the Light Blue 5-packs got (accepted).
+MAIN_OVERRIDE = {'B0F84TKGLS': 'main_alt_2x3x.jpg', 'B0F85B5BDC': 'main_alt_2x3x.jpg'}
 sku_asin = {p['sku']: p['asin'] for p in plan}
 for r in range(8, row):
     if t[f'D{r}'].value != 'Child':
@@ -259,39 +325,29 @@ for r in range(8, row):
         continue
     for col, name in zip(IMG_COLS, files):
         c = t[f'{col}{r}']
-        if col == 'T' and key in KEEP_MAIN:
-            c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
-            continue
+        if col == 'T' and key in MAIN_OVERRIDE:
+            name = MAIN_OVERRIDE[key]
+            assert Path('image_kit', folder, name).is_file(), name
         c.value = IMG_BASE + folder + '/' + name
         c.fill = PatternFill(fill_type=None)
         c.comment = None
     c = t[f'AB{r}']; c.value = None; c.fill = PatternFill(fill_type=None); c.comment = None
 print('images linked at', IMG_SHA[:7])
 
-# ---- order the rows parent -> its children (owner: "Parent A, its children, Parent B, its children") ----
-# Within a family: 5-packs, singles, Double-Sided, Grand (heads: single-sided, then double-sided); then 1X/2X/3X,
-# Light Blue before Dark Blue. Parent rows are bold on a light fill and child SKUs are indented (formatting only).
+# ---- order the rows parent -> its children (owner: "Parent, its children, next parent, its children") ----
+# Families: 5-pack, single, Grand, heads. Within a family: single-sided before Double-Sided, then 1X/2X/3X, Light Blue
+# before Dark Blue. Parent rows are bold on a light fill and child SKUs are indented (formatting only).
 import re as _re
 from openpyxl.styles import Font, Alignment
-SUB_ORDER = {'kit': 0, 'single': 1, 'ds': 2, 'grand': 3, 'heads': 0, 'ds_heads': 1}
 COLOR_ORDER = {'Light Blue': 0, 'Dark Blue': 1}
 def row_key(r):
     sku = t[f'A{r}'].value
     if t[f'D{r}'].value == 'Parent':
-        return (0 if sku == PA else 1, 0, 0, '', 0, '')
-    fam = 0 if t[f'E{r}'].value == PA else 1
+        return (FAM_ORDER.index(FAM_OF_PARENT[sku]), 0, 0, '', 0, '')
     size = str(t[f'BB{r}'].value or '')
-    items = int(float(t[f'AY{r}'].value or 0))
-    if 'Grand' in size:
-        sub = 'grand'
-    elif 'Double-Sided' in size:
-        sub = 'ds' if fam == 0 else 'ds_heads'
-    elif fam == 1:
-        sub = 'heads'
-    else:
-        sub = 'kit' if items == 5 else 'single'
     m = _re.search(r'(\d)X$', size)
-    return (fam, 1, SUB_ORDER[sub], m.group(1) if m else '9', COLOR_ORDER.get(t[f'BA{r}'].value, 2), sku)
+    return (FAM_ORDER.index(FAM_OF_PARENT[t[f'E{r}'].value]), 1, 1 if 'Double-Sided' in size else 0,
+            m.group(1) if m else '9', COLOR_ORDER.get(t[f'BA{r}'].value, 2), sku)
 order = sorted(range(8, row), key=row_key)
 maxc = t.max_column
 snap = [[(t.cell(r, c_).value, copy.copy(t.cell(r, c_)._style), copy.copy(t.cell(r, c_).comment) if t.cell(r, c_).comment else None)
@@ -324,7 +380,7 @@ print('row order:', ' | '.join(f"{t[f'A{r}'].value}" for r in range(8, row)))
 # required on new listings (parents too); the new Double-Sided heads need package size and weight.
 YEL_NOTE = 'ILLUCO audit'
 def components(r):
-    size = str(t[f'BB{r}'].value or ''); n = int(float(t[f'AY{r}'].value or 0)); fam = 'A' if t[f'E{r}'].value == PA else 'B'
+    size = str(t[f'BB{r}'].value or ''); n = int(float(t[f'AY{r}'].value or 0)); fam = kind_of(FAM_OF_PARENT[t[f'E{r}'].value])
     if 'Grand' in size:
         return f'{n} Grand Mirrors and {n} Handles'
     if 'Double-Sided' in size:
@@ -337,7 +393,7 @@ THICK = {'A': ('0.4', 'Estimate: the handle is about 10 mm (0.4 in) at its thick
          'B': ('0.15', 'Estimate: a mirror head is about 4 mm (0.15 in) thick. Measure one and correct if different.')}
 for r in range(8, row):
     is_parent = t[f'D{r}'].value == 'Parent'
-    fam = ('A' if t[f'A{r}'].value == PA else 'B') if is_parent else ('A' if t[f'E{r}'].value == PA else 'B')
+    fam = kind_of(FAM_OF_PARENT[t[f'A{r}'].value if is_parent else t[f'E{r}'].value])
     if not is_parent:
         t[f'BM{r}'] = components(r)
         t[f'P{r}'] = harmonized_model(t[f'BB{r}'].value, t[f'AY{r}'].value, t[f'BA{r}'].value or '', fam)
@@ -348,7 +404,7 @@ for r in range(8, row):
         t[f'BV{r}'] = val; t[f'BW{r}'] = val; t[f'BX{r}'] = 'Inches'
         t[f'BV{r}'].fill = YEL; t[f'BV{r}'].comment = Comment(note, YEL_NOTE)
         if is_parent:
-            t[f'FA{r}'] = 'No'          # Are batteries required? (Amazon review flagged it on both parents)
+            t[f'FA{r}'] = 'No'          # Are batteries required? (Amazon review flagged it on the parents)
         else:
             t[f'EW{r}'] = 1             # Number of Boxes: each product ships in one box (flagged on the 7 new children)
     if t[f'A{r}'].value == 'IDM-3CD41H':
