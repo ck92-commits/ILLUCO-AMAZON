@@ -237,7 +237,7 @@ for x in json.load(open('data/raw/illuco_catalog.json')):
 for rr in ROWS:
     if rr['asin'] == 'B0GGDQ15DD':
         plan.append(dict(section='4 not re-parented', sku='IDM2C41LB-1X-FBA / IDM-2C41LB-1X', asin=rr['asin'], family='-', size='', color='',
-                         items='', action='Seller Support: merge duplicate ASIN into B0G2DYRY7T', price_old=amz_price.get(rr['asin']), price_new='', note=rr['note']))
+                         items='', action='Retired: owner deleted both SKUs (11/24)', price_old=amz_price.get(rr['asin']), price_new='', note=rr['note']))
         continue
     fam = family_of(rr['new_family'], rr['var_size'], rr['items'])
     for sku, status in rr['skus']:

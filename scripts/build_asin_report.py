@@ -182,7 +182,7 @@ for entry in LAYOUT:
         if a == 'B0FCZBD1KY': comp_txt = 'Most traffic in the line (861 sessions) but 2.3% conversion; 9 FBA returns incl. 3 fog / "not as described". ' + comp_txt
         if a == 'B0FCMVZH31': comp_txt = '600 sessions, 1.5% conversion - the weakest converter. ' + comp_txt
         if a == 'B0GGDQ15DD':
-            comp_txt = 'DUPLICATE of B0G2DYRY7T: not in the upload; merge it through a Seller Support case. ' + comp_txt
+            comp_txt = 'DUPLICATE of B0G2DYRY7T: retired, both SKUs deleted by the owner on 11/24. ' + comp_txt
         rows.append([a, par, NEWFAM.get(a, fam), variant, (float(x['price'].replace('$','').replace(',','')) if x.get('price') else None), x.get('rating'), x.get('review_count'), bsr,
                      x.get('estimated_monthly_sales'), 'FBA' if x.get('is_fba') else 'FBM / SFP', gal.get(a, len(x.get('images') or [])),
                      BR.get(a, {}).get('sessions'), BR.get(a, {}).get('units'), BR.get(a, {}).get('sales'), None, None, None, None, None,
@@ -460,7 +460,7 @@ ap = wb.create_sheet('Action Plan')
 apr = [
  ['Nov 20', 'Claudia reads the new copy', 'Cenk / sales team', 'Listing Copy tab', 'Not started'],
  ['Nov 20', 'Upload ILLUCO_Amazon_UPLOAD.xlsx (2 families, new copy, new products; Amazon prices unchanged)', 'Cenk', 'Upload Check tab', 'Not started'],
- ['Nov 20', 'Seller Support: merge B0GGDQ15DD into B0G2DYRY7T; re-classify dermatoscopes', 'Cenk', 'What I Need tab', 'Not started'],
+ ['Nov 20', 'Seller Support: re-classify dermatoscopes (B0GGDQ15DD duplicate retired 11/24, no merge needed)', 'Cenk', 'What I Need tab', 'Not started'],
  ['Nov 21', 'Images go up with the upload (8 per child); then make the GitHub repo private', 'Cenk', 'Image Kit tab', 'Not started'],
  ['Nov 21', 'Apply negatives and harvests from the PPC audit (no budget change)', 'Cenk', 'PPC Apply tab', 'Not started'],
  ['Nov 21', 'Supplier: top-coat durability and test reports', 'Cenk', '', 'Not started'],
@@ -517,7 +517,7 @@ sections = [('5PK', 'IDM-5PACK-FAMILY-PARENT: ILLUCO UHD Dental Mirrors with Han
             ('HEADS', 'IDM-HEADS-FAMILY-PARENT: ILLUCO UHD Dental Mirror Heads, 5 Pack, and its children'),
             ('-', 'Not in the upload')]
 TYPE = {'1 parent': 'PARENT', '2 new child': 'Child (new product): its UPC needs brand ILLUCO in GS1', '3 existing child': 'Child (existing listing)',
-        '4 not re-parented': 'Seller Support case'}
+        '4 not re-parented': 'Retired duplicate (SKUs deleted 11/24)'}
 uc.cell(2, 1, 'Step 1: upload ILLUCO_Amazon_STEP1_delete_parent.xlsx (1 row): it deletes IDM-HANDLE-FAMILY-PARENT, the 11/21 '
               'family that mixed pack sizes; its listings keep their ASINs, reviews and stock. Step 2: when its processing report is '
               'back, upload ILLUCO_Amazon_UPLOAD.xlsx (22 rows, no UPCs). Step 3, once Verified by GS1 shows brand ILLUCO for '
@@ -603,7 +603,7 @@ for rr in sorted(_ROWS, key=_lc_key):
     lrows.append([rr['asin'], rr['family'], f"{rr['mag']}X", rr['color'], live.get('title'), rr['title'], len(rr['title']), rr['highlight'],
                   *rr['bullets'], rr['description'], rr['keywords'], rr['model_suggested'],
                   ', '.join(k + (' (inferred)' if v == 'inferred' else '') for k, v in rr['skus']), 'unchanged',
-                  ('Merge into B0G2DYRY7T (Seller Support)' if rr['asin'] == 'B0GGDQ15DD' else
+                  ('Retired 11/24: both SKUs deleted (duplicate of B0G2DYRY7T)' if rr['asin'] == 'B0GGDQ15DD' else
                    f"{LC_FAM[rr['family']]} / {size_name(rr['var_size'])}"), rr['note']])
 table(lc, lhdr, lrows, [12, 18, 5, 10, 40, 40, 6, 40, 50, 50, 50, 50, 50, 60, 40, 15, 22, 8, 26, 40])
 for i in range(2, len(lrows) + 2):

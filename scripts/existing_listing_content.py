@@ -223,8 +223,8 @@ ROWS = [
     single(3, 'Dark Blue', 'B0GGDGRHRR', 'IDM-2C41DB-3X', '1.0 (1 rating): "water shedding last for 1-2 sterilization cycles"; NCX 20%',
            'Detached from family B0GGD9DVP9; re-attached here as 3X Dark Blue. Answer the NCX flag in Voice of the Customer.'),
     single(1, 'Light Blue', 'B0GGDQ15DD', 'IDM-2C41LB-1X', '5.0 (1 rating)',
-           'DUPLICATE of B0G2DYRY7T (same 1X Light Blue single). Not re-parented: open a Seller Support case to merge '
-           'this ASIN into B0G2DYRY7T so the two review histories combine, then close this offer.'),
+           'DUPLICATE of B0G2DYRY7T (same 1X Light Blue single). Not in any family; the owner deleted both its SKUs on '
+           '11/24 (retired, no merge needed).'),
 ]
 
 # Seller SKUs per ASIN. Verified = from ILLUCO's Listing Summary, FBA returns or reimbursement reports.

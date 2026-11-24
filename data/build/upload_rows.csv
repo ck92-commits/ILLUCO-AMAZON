@@ -29,4 +29,4 @@ section,sku,asin,family,size,color,items,action,price_old,price_new,note
 3 existing child,IDM3C42NA,B0FCHH2SQB,HEADS,2X - Size 4 (22 mm),,5,Edit (Partial Update),90.0,unchanged,
 3 existing child,IDM3C43NA,B0FCJY3H9H,HEADS,3X - Size 4 (22 mm),,5,Edit (Partial Update),105.0,unchanged,
 2 new child,IDM-3CD41H,(new),HEADS,1X Double-Sided - Size 4 (22 mm),,5,Create or Replace (Full Update),,139.00,
-4 not re-parented,IDM2C41LB-1X-FBA / IDM-2C41LB-1X,B0GGDQ15DD,-,,,,Seller Support: merge duplicate ASIN into B0G2DYRY7T,19.99,,"DUPLICATE of B0G2DYRY7T (same 1X Light Blue single). Not re-parented: open a Seller Support case to merge this ASIN into B0G2DYRY7T so the two review histories combine, then close this offer."
+4 not re-parented,IDM2C41LB-1X-FBA / IDM-2C41LB-1X,B0GGDQ15DD,-,,,,Retired: owner deleted both SKUs (11/24),19.99,,"DUPLICATE of B0G2DYRY7T (same 1X Light Blue single). Not in any family; the owner deleted both its SKUs on 11/24 (retired, no merge needed)."
