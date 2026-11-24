@@ -17,6 +17,8 @@ Amazon audit and listing rebuild for ILLUCO dental mirrors (Nov 20, 2026). **Del
 
 Findings doc: https://claude.ai/artifact/Xmwhj6EuFnc7G8b6uaePFV
 
+**Delete rule (11/24):** a delete file never removes a family parent unless the owner asked for that parent by name. `validate_upload.py` refuses any Delete row whose SKU is a parent in the Business Report, carries PARENT in its name, or looks like a parent (no price, Incomplete); run it with `ALR=<All Listings Report .txt>` or it refuses every Delete row.
+
 The repository is public, which lets Amazon read those image links. It also exposes `data/account/` (Seller Central exports). Keep it public until Amazon has processed steps 1-3 (step 3 = ILLUCO_Amazon_NEW_PRODUCTS.xlsx after the GS1 fix) (each processing downloads the images from these links), then make it private.
 
 Not in the upload on purpose: photo mirrors (unchanged) and `B0GGDQ15DD` (duplicate of `B0G2DYRY7T`; merged through a Seller Support case).

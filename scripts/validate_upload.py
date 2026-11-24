@@ -223,6 +223,29 @@ if 'STEP1' in F:
                 add('ERROR', r, 'T', f'step-1 image rows carry SKU, product type, action and main image only (also: {filled})')
         else:
             add('ERROR', r, 'C', f'unexpected action in step 1: {act}')
+# 11/24: a delete file removed HD-FBGB, the Skinsoft family parent, read as an unfinished draft (no price, Incomplete),
+# and broke that family. Every Delete row is now checked: a family parent is never deleted unless it is listed above.
+dels = [r for r in rows if str(t[f'C{r}'].value) == 'Delete' and t[f'A{r}'].value not in DELETED_PARENTS]
+if dels:
+    with open('data/account/BusinessReport-11-20-26.csv', encoding='utf-8-sig') as f:
+        parent_asins = {x[0] for x in list(csv.reader(f))[1:] if x[0] != x[1]}
+    alr = os.environ.get('ALR')
+    if not alr:
+        for r in dels:
+            add('ERROR', r, 'A', 'Delete row: run with ALR=<All Listings Report .txt> so the SKU is checked for being a family parent')
+    else:
+        with open(alr, encoding='utf-8-sig') as f:
+            listed = {x['seller-sku']: x for x in csv.DictReader(f, delimiter='\t')}
+        for r in dels:
+            sku = str(t[f'A{r}'].value)
+            x = listed.get(sku)
+            if x is None:
+                add('WARN', r, 'A', 'SKU not in the All Listings Report (already deleted?)')
+            elif x['asin1'] in parent_asins or 'PARENT' in sku.upper():
+                add('ERROR', r, 'A', f'{sku} ({x["asin1"]}) is a family PARENT: deleting it breaks the family')
+            elif not x['price'] and x['status'] == 'Incomplete':
+                add('ERROR', r, 'A', f'{sku} ({x["asin1"]}) has no price and is Incomplete, which is how a family parent looks: '
+                                     'confirm with the owner it is not one before deleting')
 for r in rows:
     if t[f'D{r}'].value == 'Child' and t[f'C{r}'].value.startswith('Create') and not t[f'T{r}'].value:
         add('WARN', r, 'T', 'new product has no main image URL yet (upload works; listing is not buyable until an image is added)')
