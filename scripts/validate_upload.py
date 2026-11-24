@@ -132,7 +132,7 @@ for r in rows:
         bad = [w for w in caps.findall(b) if w not in ('ILLUCO', 'UHD')]
         if bad:
             add('WARN', r, col, f'all-caps words: {bad[:4]}')
-    if t[f'D{r}'].value == 'Child':            # harmony: names follow one pattern (owner, 11/21)
+    if t[f'D{r}'].value == 'Child' and g:     # harmony: names follow one pattern (owner, 11/21); link-only rows carry no title
         pm = str(t[f'P{r}'].value or '')
         if not pm or pm.upper().startswith('IDM') or len(pm) > 40:
             add('ERROR', r, 'P', f'Model Number must read as a product name (max 40), not a code: {pm!r}')
