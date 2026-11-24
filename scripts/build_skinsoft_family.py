@@ -2,7 +2,7 @@
 deleting its parent HD-FBGB (B0GXC5GWBL). Recreates parent HD-FBGB and links the 2, 3 and 5 packs to it as link-only
 Edit rows. Product type COSMETIC_BRUSH and brand Hansderma (owner's screenshot of the 2-pack Edit page, 11/24). Theme
 NUMBER_OF_ITEMS (2, 3, 5). The parent gets the required fields: description (the listings' own text), bullets drawn from
-it, country of origin (China: CHECK on a pack's Edit page). No item type keyword: the children's face-brushes is not
+it, country of origin (Republic of Korea, owner 11/24). No item type keyword: the children's face-brushes is not
 among this template's 6 values, and the field is optional. Needs a COSMETIC_BRUSH template: a template carries its product types (settings 'ptds'), and
 the Professional Healthcare one would refuse these rows. Columns are found by attribute key (row 5), not by letter.
 validate_upload.py reads Healthcare column letters, so it does not apply here; checked against the template's
@@ -23,7 +23,7 @@ BULLETS = ["Soft, Full Bristles: Smooth, even coverage when applying facial mask
            "Reaches Small Areas: Easy to use around the eyes, nose and other hard-to-reach parts of the face.",
            "For Masks and Make-Up: Apply and smooth facial masks, or use it for make-up.",
            "Choose Your Pack: 2, 3 or 5 brushes per pack."]
-COUNTRY = 'China'
+COUNTRY = 'Republic of Korea'   # owner, 11/24
 # pack-count themes in order of preference; the first one the template offers is used
 THEMES = [('NUMBER_OF_ITEMS', 'number_of_items'), ('ITEM_PACKAGE_QUANTITY', 'item_package_quantity'), ('SIZE', 'size')]
 
