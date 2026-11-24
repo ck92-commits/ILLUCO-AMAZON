@@ -47,7 +47,7 @@ lines = [
  ('5. Heads 1X is the top earner ($3,420, 17.4% conversion; half the units to business buyers) despite a 2.0 rating.', False),
  ('6. Sponsored Products Aug 1-Nov 20: $3,059 spend, $8,400 sales, 36.4% ACoS; the dermatoscope campaign spent $740 for 2 orders.', False),
  ('7. Sales team (Claudia): the coating is cooked off by standard 20-minute autoclave cycles because the 5-minute instructions are almost hidden; lead with High Definition, sell 2X / 3X as premium, make the 5-minute autoclave a time saver, say 100+ cycles.', False),
- ('Fix: ILLUCO_Amazon_UPLOAD.xlsx puts all mirrors except photo mirrors into four families, one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) with Color and Size as the choices, rewrites the copy to the sales direction, and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. It goes second: ILLUCO_Amazon_STEP1_delete_parent.xlsx first deletes only IDM-HANDLE-FAMILY-PARENT (the 11/21 family that mixed pack sizes). The upload sends real images only where needed (earlier mains restored, ILLUCO photos for new products; every main on white) and the Image List tab shows them. Upload Check tab: 0 errors in both files.', False),
+ ('Fix: ILLUCO_Amazon_UPLOAD.xlsx puts all mirrors except photo mirrors into four families, one pack size each (5 Pack, 1 Pack, Grand 2 Pack, Heads 5 Pack) with Color and Size as the choices, rewrites the copy to the sales direction, and adds the Grand, Double-Sided and Double-Sided head products. Amazon prices stay as they are. It goes second: ILLUCO_Amazon_STEP1_delete_parent.xlsx first deletes only IDM-HANDLE-FAMILY-PARENT (the 11/21 family that mixed pack sizes). The upload sends real images only where needed (earlier mains restored, ILLUCO photos for new products; every main on white) and the Image List tab shows them. The 7 new products are in ILLUCO_Amazon_NEW_PRODUCTS.xlsx for after the GS1 fix. Upload Check tab: 0 errors in every file.', False),
  ('', False),
  ('How to read', True),
  ('Yellow cells with blue text are inputs. Paste Seller Central numbers there; CVR, ACoS and TACoS calculate automatically.', False),
@@ -520,7 +520,8 @@ TYPE = {'1 parent': 'PARENT', '2 new child': 'Child (new product): its UPC needs
         '4 not re-parented': 'Seller Support case'}
 uc.cell(2, 1, 'Step 1: upload ILLUCO_Amazon_STEP1_delete_parent.xlsx (1 row): it deletes IDM-HANDLE-FAMILY-PARENT, the 11/21 '
               'family that mixed pack sizes; its listings keep their ASINs, reviews and stock. Step 2: when its processing report is '
-              'back, upload ILLUCO_Amazon_UPLOAD.xlsx. Its images are listed in the Image List tab.'
+              'back, upload ILLUCO_Amazon_UPLOAD.xlsx (22 rows, no UPCs). Step 3, once Verified by GS1 shows brand ILLUCO for '
+              'the 7 new UPCs: upload ILLUCO_Amazon_NEW_PRODUCTS.xlsx (the 7 new products and the Grand parent).'
               ).font = Font(name=F, size=10, bold=True)
 r0 = 3
 for key, label in sections:
@@ -707,7 +708,7 @@ sp.cell(2, 1, 'Variations sit together only when they are the same product (one 
               '(owner, 11/23), so shoppers pick Color and Size (heads: Size). Model is the product-details line; the IDM code is '
               'the Part Number.'
         ).font = Font(name=F, size=10, italic=True)
-_up = openpyxl.load_workbook('ILLUCO_Amazon_UPLOAD.xlsx')['Template']
+_up = openpyxl.load_workbook('data/build/upload_full.xlsx')['Template']
 _plan = {x['sku'].replace(' (INFERRED)', ''): x for x in _csv('data/build/upload_rows.csv')}
 _s1 = {x['sku']: x['main_url'] for x in _csv('data/build/step1_mains.csv')}
 _miss = {}

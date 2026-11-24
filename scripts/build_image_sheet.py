@@ -63,9 +63,9 @@ prev_blob = subprocess.run(['git', 'show', '0ad78e0:ILLUCO_Amazon_UPLOAD.xlsx'],
 prev_path = '/tmp/claude-0/-home-user-ILLUCO-AMAZON/708abc4c-dc51-5eee-9ea1-f0a7d8d91b8a/scratchpad/upload_1123.xlsx'
 open(prev_path, 'wb').write(prev_blob)
 prev = rows_of(prev_path)
-cur_wb = openpyxl.load_workbook('ILLUCO_Amazon_UPLOAD.xlsx')
+cur_wb = openpyxl.load_workbook('data/build/upload_full.xlsx')
 cur_t = cur_wb['Template']
-cur = rows_of('ILLUCO_Amazon_UPLOAD.xlsx')
+cur = rows_of('data/build/upload_full.xlsx')
 order = [cur_t[f'A{r}'].value for r in range(8, cur_t.max_row + 1) if cur_t[f'A{r}'].value]
 plan = {x['sku'].replace(' (INFERRED)', ''): x for x in csv.DictReader(open('data/build/upload_rows.csv', encoding='utf-8'))}
 notes = {x['sku']: x for x in csv.DictReader(open('data/build/image_list.csv', encoding='utf-8'))}
