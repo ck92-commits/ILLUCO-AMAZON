@@ -103,10 +103,10 @@ ws = wb.active
 ws.title = 'SKUs and Images'
 ws['A1'] = 'ILLUCO SKUs and images: what each listing shows AFTER ILLUCO_Amazon_UPLOAD.xlsx is processed'
 ws['A1'].font = Font(name=F, bold=True, size=13)
-ws['A2'] = ('Green = real photo, fine.  Yellow = stand-in, replace with Ashley\'s photo.  Orange = live image with a known '
-            'problem.  Red = no main.  "NEW" = this upload sets it; everything else is already live and stays.')
+ws['A2'] = ('Green = real photo.  Orange = live image with a known issue, for later (nothing requested now).  '
+            '"NEW" = this upload sets it; everything else is already live and stays.')
 ws['A2'].font = Font(name=F, size=10, italic=True)
-hdr = ['Family', 'Listing', 'ASIN', 'SKU(s)', 'This upload sets'] + SLOT_NAME + ['For Ashley']
+hdr = ['Family', 'Listing', 'ASIN', 'SKU(s)', 'This upload sets'] + SLOT_NAME + ['Note']
 for j, h in enumerate(hdr, 1):
     c = ws.cell(4, j, h)
     c.font = Font(name=F, bold=True, size=10, color='FFFFFF')
@@ -151,9 +151,7 @@ for g in groups:
             continue
         kit = re.search(r'image_kit/[AB]_\w+/(\w+/\w+)\.jpg$', url)
         tag = kit.group(1) if kit else short(url)
-        if s == 'T' and note:
-            fill = YELLOW
-        elif tag in ISSUE:
+        if tag in ISSUE:
             fill = ORANGE
         else:
             fill = GREEN
@@ -174,8 +172,6 @@ for g in groups:
     c.font = Font(name=F, size=9)
     c.alignment = Alignment(vertical='center', wrap_text=True)
     c.border = BOX
-    if note:
-        c.fill = PatternFill('solid', fgColor=YELLOW)
     ws.row_dimensions[r].height = 112
     r += 1
 for col, wdt in zip('ABCDE', (11, 22, 12, 17, 26)):
@@ -190,29 +186,5 @@ ws.page_setup.fitToHeight = 0
 ws.sheet_properties.pageSetUpPr.fitToPage = True
 ws.print_title_rows = '4:4'
 
-# second sheet: the 8 main photos to shoot
-s2 = wb.create_sheet('Photos for Ashley')
-s2['A1'] = 'Main photos to shoot (pure white background, product only, no box, no text, at least 2000 x 2000 px)'
-s2['A1'].font = Font(name=F, bold=True, size=12)
-miss = [x for x in csv.DictReader(open('data/build/missing_images.csv', encoding='utf-8')) if x['column'] == 'T']
-photos = {}
-for x in miss:
-    photos.setdefault(x['photo'], []).append(x)
-order2 = sorted(photos.items(), key=lambda kv: (0 if 'suppressed' in kv[1][0]['meanwhile'] else
-                                                1 if 'new product' not in kv[1][0]['meanwhile'] else 2, kv[0]))
-for j, h in enumerate(['#', 'Photo to shoot', 'For SKU (ASIN)', 'Meanwhile the listing uses'], 1):
-    c = s2.cell(3, j, h)
-    c.font = Font(name=F, bold=True, size=10, color='FFFFFF')
-    c.fill = PatternFill('solid', fgColor='1F3864')
-    c.border = BOX
-for i, (photo, xs) in enumerate(order2, 1):
-    used = ', '.join(sorted({x['sku'] + (f" ({x['asin']})" if x['asin'].startswith('B0') else ' (new)') for x in xs}))
-    for j, v in enumerate([i, photo, used, notes.get(xs[0]['sku'], {}).get('note', '')], 1):
-        c = s2.cell(3 + i, j, v)
-        c.font = Font(name=F, size=10, bold=(i == 1))
-        c.alignment = Alignment(vertical='top', wrap_text=True)
-        c.border = BOX
-for col, wdt in zip('ABCD', (4, 60, 60, 70)):
-    s2.column_dimensions[col].width = wdt
 wb.save(OUT)
 print('listings', len(groups), 'thumbnails', len(tmp_imgs))
